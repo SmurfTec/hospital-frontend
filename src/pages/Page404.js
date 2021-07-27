@@ -13,8 +13,8 @@ const RootStyle = styled(Page)(({ theme }) => ({
   display: 'flex',
   minHeight: '100%',
   alignItems: 'center',
-  paddingTop: theme.spacing(15),
-  paddingBottom: theme.spacing(10)
+  paddingTop: theme.spacing(5),
+  paddingBottom: theme.spacing(5)
 }));
 
 // ----------------------------------------------------------------------

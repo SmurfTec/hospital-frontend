@@ -1,0 +1,34 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "email": "u.ahmadnode@gmail.com",
+      "password": "pass1234",
+      "role": "admin"
+    },
+    {
+      "id": 2,
+      "email": "u.ahmadnode1@gmail.com",
+      "password": "pass1234",
+      "role": "manager"
+    },
+    {
+      "id": 3,
+      "email": "u.ahmadnode2@gmail.com",
+      "password": "pass1234",
+      "role": "manager"
+    },
+    {
+      "id": 4,
+      "email": "umadahmad1928@gmail.com",
+      "password": "pass1234",
+      "role": "employ"
+    },
+    {
+      "id": 5,
+      "email": "umadahmad1928bgmail.com",
+      "password": "pass1234",
+      "role": "employ"
+    }
+  ]
+}

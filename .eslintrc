@@ -10,11 +10,7 @@
     "plugin:jsx-a11y/recommended",
     "plugin:react-hooks/recommended"
   ],
-  "plugins": [
-    "prettier",
-    "react",
-    "react-hooks"
-  ],
+  "plugins": ["prettier", "react", "react-hooks"],
   "parser": "@babel/eslint-parser",
   "parserOptions": {
     "ecmaVersion": 8,
@@ -25,6 +21,10 @@
     }
   },
   "rules": {
+    "import/no-unresolved": "off",
+    "import/order": "off",
+    "react/self-closing-comp": "off",
+    "arrow-body-style": "off",
     "import": 0,
     "max-len": 0,
     "no-alert": 0,

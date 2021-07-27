@@ -1,4 +1,5 @@
 import { Navigate, useRoutes } from 'react-router-dom';
+import img from 'assets/images/loader2.gif';
 // layouts
 import DashboardLayout from './layouts/dashboard';
 import LogoOnlyLayout from './layouts/LogoOnlyLayout';
@@ -10,11 +11,19 @@ import Products from './pages/Products';
 import Blog from './pages/Blog';
 import User from './pages/User';
 import NotFound from './pages/Page404';
+import { AuthContext } from 'contexts/AuthContext';
+import { useContext } from 'react';
 
 // ----------------------------------------------------------------------
 
+const Loader = () => {
+  return <img src={img} alt="loader"></img>;
+};
+
 export default function Router() {
-  return useRoutes([
+  const { token, user } = useContext(AuthContext);
+  let routes;
+  const protechtedRoutes = [
     {
       path: '/dashboard',
       element: <DashboardLayout />,
@@ -25,19 +34,31 @@ export default function Router() {
         { path: 'products', element: <Products /> },
         { path: 'blog', element: <Blog /> }
       ]
-    },
+    }
+  ];
+
+  const publicRoutes = [
     {
       path: '/',
       element: <LogoOnlyLayout />,
       children: [
         { path: 'login', element: <Login /> },
-        { path: 'register', element: <Register /> },
-        { path: '404', element: <NotFound /> },
-        { path: '/', element: <Navigate to="/dashboard" /> },
-        { path: '*', element: <Navigate to="/404" /> }
+        { path: '*', element: <Navigate to="/login" /> }
       ]
-    },
+    }
+  ];
 
-    { path: '*', element: <Navigate to="/404" replace /> }
-  ]);
+  const loaderRoute = [
+    {
+      path: '*',
+      element: <Loader />
+    }
+  ];
+
+  if (token) {
+    if (user) routes = protechtedRoutes;
+    else routes = loaderRoute;
+  } else routes = publicRoutes;
+
+  return useRoutes(routes);
 }
