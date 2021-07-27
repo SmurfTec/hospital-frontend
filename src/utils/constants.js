@@ -1,4 +1,5 @@
-const API_BASE_URL = `http://localhost:5000/api/v1`;
+const API_BASE_URL = `http://localhost:3000`;
+// const API_BASE_URL = `http://localhost:5000/api/v1`;
 
 const makeReq = (endpoint, { body, ...customConfig } = {}, method = 'GET') => {
   const token = localStorage.getItem('jwt');
