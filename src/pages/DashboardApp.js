@@ -3,12 +3,12 @@ import { Box, Grid, Container, Typography } from '@material-ui/core';
 // components
 import Page from '../components/Page';
 import {
-  AppTasks,
-  AppNewUsers,
+  AppTodos,
+  AppEmploys,
   AppBugReports,
-  AppItemOrders,
+  AppTasks,
   AppNewsUpdate,
-  AppWeeklySales,
+  AppManagers,
   AppOrderTimeline,
   AppCurrentVisits,
   AppWebsiteVisits,
@@ -28,13 +28,13 @@ export default function DashboardApp() {
         </Box>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
-            <AppWeeklySales />
+            <AppManagers />
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
-            <AppNewUsers />
+            <AppEmploys />
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
-            <AppItemOrders />
+            <AppTasks />
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
             <AppBugReports />
@@ -69,7 +69,7 @@ export default function DashboardApp() {
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>
-            <AppTasks />
+            <AppTodos />
           </Grid>
         </Grid>
       </Container>

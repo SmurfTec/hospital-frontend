@@ -25,6 +25,7 @@
     "import/order": "off",
     "react/self-closing-comp": "off",
     "arrow-body-style": "off",
+    "jsx-a11y/aria-role": "off",
     "import": 0,
     "max-len": 0,
     "no-alert": 0,

@@ -1,5 +1,15 @@
-const API_BASE_URL = `http://localhost:3000`;
-// const API_BASE_URL = `http://localhost:5000/api/v1`;
+import { toast } from 'react-toastify';
+
+const photoURL = '/static/mock-images/avatars/avatar_default.jpg';
+
+const API_BASE_URL = `http://localhost:8001/api`;
+
+const handleCatch = (err) => {
+  console.log(`err`, err);
+  let errMsg = 'Something Went Wrong';
+  if (err.message) errMsg = err.message;
+  toast.error(errMsg);
+};
 
 const makeReq = (endpoint, { body, ...customConfig } = {}, method = 'GET') => {
   const token = localStorage.getItem('jwt');
@@ -36,4 +46,4 @@ const makeReq = (endpoint, { body, ...customConfig } = {}, method = 'GET') => {
   });
 };
 
-export { API_BASE_URL, makeReq };
+export { API_BASE_URL, makeReq, handleCatch, photoURL };

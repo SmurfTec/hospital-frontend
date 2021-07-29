@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { useFormik, Form, FormikProvider } from 'formik';
 import { Icon } from '@iconify/react';
@@ -9,12 +9,15 @@ import eyeOffFill from '@iconify/icons-eva/eye-off-fill';
 import { Link, Stack, TextField, IconButton, InputAdornment } from '@material-ui/core';
 import { LoadingButton } from '@material-ui/lab';
 import axios from 'axios';
-import { API_BASE_URL } from 'utils/constants';
+import { API_BASE_URL, handleCatch } from 'utils/constants';
+import { AuthContext } from 'contexts/AuthContext';
 
 // ----------------------------------------------------------------------
+import { toast } from 'react-toastify';
 
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
+  const { signInUser } = useContext(AuthContext);
 
   const LoginSchema = Yup.object().shape({
     email: Yup.string().email('Email must be a valid email address').required('Email is required'),
@@ -29,15 +32,14 @@ export default function LoginForm() {
     validationSchema: LoginSchema,
     onSubmit: async (values) => {
       try {
-        // const res = await axios.post(`${API_BASE_URL}/auth/users`, {
-        const res = await axios.get(`${API_BASE_URL}/users`, {
+        const res = await axios.post(`${API_BASE_URL}/users/login`, {
           ...values
         });
-        console.clear();
-        console.log(`values`, values);
-        console.log(`res`, res);
+        console.log(`RES LOGIN : \n`, res);
+        toast.success('Login Successfull!');
+        signInUser(res.data.token, res.data.user);
       } catch (err) {
-        console.log(`err`, err);
+        handleCatch(err);
       }
     }
   });

@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { makeReq } from 'utils/constants';
+import { useNavigate } from 'react-router-dom';
 
 export const AuthContext = React.createContext();
 
 export const AuthProvider = ({ children }) => {
   let tokenLocal;
+
+  const navigate = useNavigate();
 
   try {
     tokenLocal = window.localStorage.getItem('jwt');
@@ -44,6 +47,8 @@ export const AuthProvider = ({ children }) => {
     setTimeout(() => {
       setToken(tk);
       setUser(us);
+
+      navigate('/dashboard', { replace: true });
     }, 1000);
   };
 

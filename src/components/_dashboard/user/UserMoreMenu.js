@@ -9,9 +9,20 @@ import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText } from '@materia
 
 // ----------------------------------------------------------------------
 
-export default function UserMoreMenu() {
+export default function UserMoreMenu({ currentUser, setSelected, toggleDelOpen, toggleEditOpen }) {
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
+
+  const handleDelete = () => {
+    setSelected(currentUser._id);
+    setIsOpen(false);
+    toggleDelOpen();
+  };
+  const handleEdit = () => {
+    setSelected(currentUser);
+    setIsOpen(false);
+    toggleEditOpen();
+  };
 
   return (
     <>
@@ -29,14 +40,19 @@ export default function UserMoreMenu() {
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <MenuItem sx={{ color: 'text.secondary' }}>
+        <MenuItem sx={{ color: 'text.secondary' }} onClick={handleDelete}>
           <ListItemIcon>
             <Icon icon={trash2Outline} width={24} height={24} />
           </ListItemIcon>
           <ListItemText primary="Delete" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
 
-        <MenuItem component={RouterLink} to="#" sx={{ color: 'text.secondary' }}>
+        <MenuItem
+          component={RouterLink}
+          to="#"
+          sx={{ color: 'text.secondary' }}
+          onClick={handleEdit}
+        >
           <ListItemIcon>
             <Icon icon={editFill} width={24} height={24} />
           </ListItemIcon>

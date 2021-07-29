@@ -10,16 +10,25 @@ import { AuthProvider } from 'contexts/AuthContext';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import reportWebVitals from './reportWebVitals';
+import { DataProvider } from 'contexts/DataContext';
+
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 
 // ----------------------------------------------------------------------
+
 ReactDOM.render(
-  <AuthProvider>
-    <HelmetProvider>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </HelmetProvider>
-  </AuthProvider>,
+  <BrowserRouter>
+    <AuthProvider>
+      <DataProvider>
+        <HelmetProvider>
+          <App />
+          <ToastContainer />
+        </HelmetProvider>
+      </DataProvider>
+    </AuthProvider>
+  </BrowserRouter>,
   document.getElementById('root')
 );
 
