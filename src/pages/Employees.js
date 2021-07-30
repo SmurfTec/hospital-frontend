@@ -32,7 +32,7 @@ import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dash
 
 import { DataContext } from 'contexts/DataContext';
 import { AuthContext } from 'contexts/AuthContext';
-import UpdateManagerModal from 'dialogs/UpdateManagerModal';
+import AddorEditModal from 'dialogs/AddorEditModal';
 
 // ----------------------------------------------------------------------
 
@@ -288,13 +288,13 @@ export default function Employees() {
         dialogTitle="Delete This Employee ?"
         success={handleDelete}
       />
-      <UpdateManagerModal
+      <AddorEditModal
         isOpen={isCreateOpen}
         closeDialog={toggleCreateOpen}
         createNew={addNewEmployee}
         role="Employee"
       />
-      <UpdateManagerModal
+      <AddorEditModal
         isOpen={isEditOpen}
         closeDialog={toggleEditOpen}
         updateUser={editEmployee}

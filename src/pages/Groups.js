@@ -33,7 +33,7 @@ import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dash
 
 import { DataContext } from 'contexts/DataContext';
 import { AuthContext } from 'contexts/AuthContext';
-import UpdateManager from 'dialogs/UpdateManagerModal';
+import AddorEditModal from 'dialogs/AddorEditModal';
 
 // ----------------------------------------------------------------------
 
@@ -297,13 +297,13 @@ export default function Groups() {
         dialogTitle="Delete This Group ?"
         success={handleDelete}
       />
-      <UpdateManager
+      <AddorEditModal
         isOpen={isCreateOpen}
         closeDialog={toggleCreateOpen}
         createNew={addNewGroup}
         role="Group"
       />
-      <UpdateManager
+      <AddorEditModal
         isOpen={isEditOpen}
         closeDialog={toggleEditOpen}
         updateUser={editGroup}

@@ -32,7 +32,7 @@ import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dash
 //
 
 import { DataContext } from 'contexts/DataContext';
-import UpdateManagerModal from 'dialogs/UpdateManagerModal';
+import AddorEditModal from 'dialogs/AddorEditModal';
 import { AuthContext } from 'contexts/AuthContext';
 
 // ----------------------------------------------------------------------
@@ -287,13 +287,13 @@ export default function Managers() {
         dialogTitle="Delete This Manager ?"
         success={handleDelete}
       />
-      <UpdateManagerModal
+      <AddorEditModal
         isOpen={isCreateOpen}
         closeDialog={toggleCreateOpen}
         createNew={addNewManager}
         role="Manager"
       />
-      <UpdateManagerModal
+      <AddorEditModal
         isOpen={isEditOpen}
         closeDialog={toggleEditOpen}
         updateUser={editManager}
