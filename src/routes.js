@@ -9,11 +9,12 @@ import Products from './pages/Products';
 import Blog from './pages/Blog';
 import User from './pages/User';
 import { AuthContext } from 'contexts/AuthContext';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import NotFound from 'pages/Page404';
 import Employees from 'pages/Employees';
 import Managers from 'pages/Managers';
 import Groups from 'pages/Groups';
+import Logout from 'pages/Logout';
 
 // ----------------------------------------------------------------------
 
@@ -36,7 +37,6 @@ const Loader = () => {
 
 export default function Router() {
   const { token, user } = useContext(AuthContext);
-  let routes;
   const protechtedRoutes = [
     {
       path: '/dashboard',
@@ -51,6 +51,7 @@ export default function Router() {
         // { path: 'groups', element: <User /> }
       ]
     },
+    { path: 'logout', element: <Logout /> },
     { path: '/', element: <Navigate to="/dashboard/app" replace /> },
     { path: '*', element: <NotFound /> }
   ];
@@ -67,10 +68,14 @@ export default function Router() {
     }
   ];
 
-  if (token) {
-    if (user) routes = protechtedRoutes;
-    else routes = loaderRoute;
-  } else routes = publicRoutes;
+  const [routes, setRoutes] = useState(loaderRoute);
+
+  useEffect(() => {
+    if (token) {
+      if (user) setRoutes(protechtedRoutes);
+      else setRoutes(loaderRoute);
+    } else setRoutes(publicRoutes);
+  }, [token, user]);
 
   return useRoutes(routes);
 }
