@@ -31,6 +31,8 @@ import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dash
 //
 
 import { DataContext } from 'contexts/DataContext';
+import { AuthContext } from 'contexts/AuthContext';
+import UpdateManagerModal from 'dialogs/UpdateManagerModal';
 
 // ----------------------------------------------------------------------
 
@@ -76,7 +78,8 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function Employees() {
-  const { employs, deleteEmployee } = useContext(DataContext);
+  const { employs, deleteEmployee, addNewEmployee, editEmployee } = useContext(DataContext);
+  const { user } = useContext(AuthContext);
   const [filteredEmploys, setFilteredEmploys] = useState([]);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
@@ -84,6 +87,7 @@ export default function Employees() {
   const [orderBy, setOrderBy] = useState('name');
   const [isDelOpen, setIsDelOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -104,6 +108,7 @@ export default function Employees() {
 
   const toggleDelOpen = () => setIsDelOpen((st) => !st);
   const toggleEditOpen = () => setIsEditOpen((st) => !st);
+  const toggleCreateOpen = () => setIsCreateOpen((st) => !st);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -136,20 +141,21 @@ export default function Employees() {
   };
 
   return (
-    <Page title="User | Task Manager App">
+    <Page title="Employees | Task Manager App">
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            User
+            Employees
           </Typography>
-          <Button
-            variant="contained"
-            component={RouterLink}
-            to="#"
-            startIcon={<Icon icon={plusFill} />}
-          >
-            New User
-          </Button>
+          {user && user.role === 'Manager' && (
+            <Button
+              variant="contained"
+              onClick={toggleCreateOpen}
+              startIcon={<Icon icon={plusFill} />}
+            >
+              New Employee
+            </Button>
+          )}
         </Stack>
 
         <Card>
@@ -157,6 +163,7 @@ export default function Employees() {
             numSelected={0}
             filterName={filterName}
             onFilterName={handleFilterByName}
+            slug="Employees"
           />
 
           <Scrollbar>
@@ -210,14 +217,16 @@ export default function Employees() {
                               <TableCell align="left">{email}</TableCell>
                               <TableCell align="left">{groups ? groups.length : 0}</TableCell>
                               <TableCell align="left">{tasks ? tasks.length : 0}</TableCell>
-                              <TableCell align="right">
-                                <UserMoreMenu
-                                  _id={_id}
-                                  toggleDelOpen={toggleDelOpen}
-                                  toggleEditOpen={toggleEditOpen}
-                                  setSelected={setSelected}
-                                />
-                              </TableCell>
+                              {user && user.role === 'Manager' && (
+                                <TableCell align="right">
+                                  <UserMoreMenu
+                                    currentUser={row}
+                                    toggleDelOpen={toggleDelOpen}
+                                    toggleEditOpen={toggleEditOpen}
+                                    setSelected={setSelected}
+                                  />
+                                </TableCell>
+                              )}
                             </TableRow>
                           );
                         })
@@ -278,6 +287,20 @@ export default function Employees() {
         toggleDialog={toggleDelOpen}
         dialogTitle="Delete This Employee ?"
         success={handleDelete}
+      />
+      <UpdateManagerModal
+        isOpen={isCreateOpen}
+        closeDialog={toggleCreateOpen}
+        createNew={addNewEmployee}
+        role="Employee"
+      />
+      <UpdateManagerModal
+        isOpen={isEditOpen}
+        closeDialog={toggleEditOpen}
+        updateUser={editEmployee}
+        editUser={selected}
+        isEdit
+        role="Employee"
       />
     </Page>
   );

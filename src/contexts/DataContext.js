@@ -22,15 +22,26 @@ export const DataProvider = ({ children }) => {
     fetchGroups();
   }, [user]);
 
+  // * Fetch Operations
   const fetchUsers = async () => {
     try {
-      const resData = await makeReq(`/users`);
-      const resManagers = resData.users.filter((el) => el.role === 'Manager');
-      const resEmploys = resData.users.filter((el) => el.role === 'Employee');
+      if (user && user.role === 'Admin') {
+        const resData = await makeReq(`/users`);
+        const resManagers = resData.users.filter((el) => el.role === 'Manager');
+        const resEmploys = resData.users.filter((el) => el.role === 'Employee');
 
-      console.log(`RES USERS`, resData);
-      setManagers(resManagers);
-      setEmploys(resEmploys);
+        console.log(`RES USERS`, resData);
+        setManagers(resManagers);
+        setEmploys(resEmploys);
+      } else if (user) {
+        const resData = await makeReq(`/employee/myEmployees`);
+        const resEmploys = resData.employees;
+
+        console.log(`RES employees`, resData);
+        setEmploys(resEmploys);
+      }
+      // } else if (user && user.role === 'Employee') {
+      // }
     } catch (err) {
       handleCatch(err);
     }
@@ -58,7 +69,94 @@ export const DataProvider = ({ children }) => {
     }
   };
 
-  const addNew = (key, body) => {};
+  // * +Add Operations
+  const addNewManager = async (body) => {
+    try {
+      const resData = await makeReq(`/users`, { body: { ...body, role: 'Manager' } }, 'POST');
+      console.log(`resData`, resData);
+      toast.success(`Manager ${resData.user.name} Created Successfully`);
+      setManagers((st) => [...st, resData.user]);
+    } catch (err) {
+      handleCatch(err);
+    }
+  };
+
+  const addNewEmployee = async (body) => {
+    try {
+      const resData = await makeReq(`/employee`, { body: { ...body } }, 'POST');
+      console.log(`resData`, resData);
+      toast.success(`Employee ${resData.employee.name} Created Successfully`);
+      setEmploys((st) => [...st, resData.employee]);
+    } catch (err) {
+      handleCatch(err);
+    }
+  };
+
+  const addNewGroup = async (body) => {
+    try {
+      const resData = await makeReq(`/group`, { body: { ...body } }, 'POST');
+      console.log(`resData`, resData);
+      toast.success(`Group ${resData.group.name} Created Successfully`);
+      setGroups((st) => [...st, resData.group]);
+    } catch (err) {
+      handleCatch(err);
+    }
+  };
+
+  // * /Edit Opetations
+
+  const editManager = async (id, body) => {
+    try {
+      const resData = await makeReq(`/users/${id}`, { body: { ...body } }, 'PATCH');
+      console.log(`resData`, resData);
+      toast.success(`Manager ${resData.user.name} Updated Successfully`);
+      setManagers((st) =>
+        st.map((el) => {
+          console.log(`el`, el);
+          console.log(`body`, body);
+          return el._id === id ? { ...el, ...body } : el;
+        })
+      );
+    } catch (err) {
+      handleCatch(err);
+    }
+  };
+
+  const editEmployee = async (id, body) => {
+    try {
+      const resData = await makeReq(`/employee/${id}`, { body: { ...body } }, 'PATCH');
+      console.log(`resData`, resData);
+      toast.success(`Employee ${resData.employee.name} Updated Successfully`);
+      setEmploys((st) =>
+        st.map((el) => {
+          console.log(`el`, el);
+          console.log(`body`, body);
+          return el._id === id ? { ...el, ...body } : el;
+        })
+      );
+    } catch (err) {
+      handleCatch(err);
+    }
+  };
+  const editGroup = async (id, body) => {
+    try {
+      const resData = await makeReq(`/group/${id}`, { body: { ...body } }, 'PATCH');
+      console.log(`resData`, resData);
+      toast.success(`Group ${resData.group.name} Updated Successfully`);
+      setGroups((st) =>
+        st.map((el) => {
+          console.log(`el`, el);
+          console.log(`body`, body);
+          return el._id === id ? { ...el, ...body } : el;
+        })
+      );
+    } catch (err) {
+      handleCatch(err);
+    }
+  };
+
+  // ! -Delete Operations
+
   const deleteManager = async (id) => {
     try {
       const resData = await makeReq(`/users/${id}`, {}, 'DELETE');
@@ -81,45 +179,12 @@ export const DataProvider = ({ children }) => {
     }
   };
 
-  const editManager = async (id, body) => {
-    try {
-      const resData = await makeReq(`/users/${id}`, { body: { ...body } }, 'PATCH');
-      console.log(`resData`, resData);
-      toast.success(`Manager ${resData.user.name} Updated Successfully`);
-      setManagers((st) =>
-        st.map((el) => {
-          console.log(`el`, el);
-          console.log(`body`, body);
-          return el._id === id ? { ...el, ...body } : el;
-        })
-      );
-    } catch (err) {
-      handleCatch(err);
-    }
-  };
-  const editEmployee = async (id, body) => {
-    try {
-      const resData = await makeReq(`/users/${id}`, { body: { ...body } }, 'PATCH');
-      console.log(`resData`, resData);
-      toast.success(`Employee ${resData.user.name} Updated Successfully`);
-      setEmploys((st) =>
-        st.map((el) => {
-          console.log(`el`, el);
-          console.log(`body`, body);
-          return el._id === id ? { ...el, ...body } : el;
-        })
-      );
-    } catch (err) {
-      handleCatch(err);
-    }
-  };
-
   const deleteGroup = async (id) => {
     try {
       const resData = await makeReq(`/group/${id}`, {}, 'DELETE');
       console.log(`resData`, resData);
       toast.success(`Group ${resData.group.name} Deleted Successfully`);
-      setEmploys((st) => st.filter((el) => el._id !== id));
+      setGroups((st) => st.filter((el) => el._id !== id));
     } catch (err) {
       handleCatch(err);
     }
@@ -140,7 +205,11 @@ export const DataProvider = ({ children }) => {
         deleteEmployee,
         deleteGroup,
         editManager,
-        editEmployee
+        editEmployee,
+        addNewManager,
+        addNewEmployee,
+        addNewGroup,
+        editGroup
       }}
     >
       {children}

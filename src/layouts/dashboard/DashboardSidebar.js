@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 // material
 import { styled } from '@material-ui/core/styles';
@@ -10,7 +10,7 @@ import Scrollbar from '../../components/Scrollbar';
 import NavSection from '../../components/NavSection';
 import { MHidden } from '../../components/@material-extend';
 //
-import sidebarConfig from './SidebarConfig';
+import { adminConfig, managerConfig, employeeConfig } from './SidebarConfig';
 import { photoURL } from 'utils/constants';
 import { AuthContext } from 'contexts/AuthContext';
 
@@ -43,6 +43,14 @@ DashboardSidebar.propTypes = {
 export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
   const { pathname } = useLocation();
   const { user } = useContext(AuthContext);
+  const [sidebarCondig, setSidebarCondig] = useState();
+
+  useEffect(() => {
+    if (!user || user.role === null) return;
+    if (user.role === 'Admin') setSidebarCondig(adminConfig);
+    if (user.role === 'Manager') setSidebarCondig(managerConfig);
+    if (user.role === 'Employee') setSidebarCondig(employeeConfig);
+  }, [user]);
 
   useEffect(() => {
     if (isOpenSidebar) {
@@ -80,8 +88,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
         </Link>
       </Box>
 
-      <NavSection navConfig={sidebarConfig} />
-
+      {sidebarCondig && <NavSection navConfig={sidebarCondig} />}
       <Box sx={{ flexGrow: 1 }} />
     </Scrollbar>
   );

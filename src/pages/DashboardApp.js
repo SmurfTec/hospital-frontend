@@ -5,12 +5,12 @@ import Page from '../components/Page';
 import {
   AppTodos,
   AppEmploys,
-  AppBugReports,
+  AppGroups,
   AppTasks,
   AppNewsUpdate,
   AppManagers,
   AppOrderTimeline,
-  AppCurrentVisits,
+  AppCurrentTasks,
   AppWebsiteVisits,
   AppTrafficBySite,
   AppCurrentSubject,
@@ -37,15 +37,15 @@ export default function DashboardApp() {
             <AppTasks />
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
-            <AppBugReports />
+            <AppGroups />
           </Grid>
 
-          <Grid item xs={12} md={6} lg={8}>
+          {/* <Grid item xs={12} md={6} lg={8}>
             <AppWebsiteVisits />
           </Grid>
 
           <Grid item xs={12} md={6} lg={4}>
-            <AppCurrentVisits />
+            <AppCurrentTasks />
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>
@@ -70,7 +70,7 @@ export default function DashboardApp() {
 
           <Grid item xs={12} md={6} lg={8}>
             <AppTodos />
-          </Grid>
+          </Grid> */}
         </Grid>
       </Container>
     </Page>

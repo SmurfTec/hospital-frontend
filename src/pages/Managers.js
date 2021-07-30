@@ -80,11 +80,12 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function Managers() {
-  const { managers, deleteManager, editManager } = useContext(DataContext);
+  const { managers, deleteManager, editManager, addNewManager } = useContext(DataContext);
   const { user } = useContext(AuthContext);
   const [filteredManagers, setFilteredManagers] = useState([]);
   const [isDelOpen, setIsDelOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState();
@@ -100,6 +101,7 @@ export default function Managers() {
 
   const toggleDelOpen = () => setIsDelOpen((st) => !st);
   const toggleEditOpen = () => setIsEditOpen((st) => !st);
+  const toggleCreateOpen = () => setIsCreateOpen((st) => !st);
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
@@ -140,25 +142,22 @@ export default function Managers() {
     setSelected(null);
   };
 
-  const handleUpdate = (body) => {
-    editManager(selected._id, body);
-  };
-
   return (
-    <Page title="User | Task Manager App">
+    <Page title="Managers | Task Manager App">
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            User
+            Managers
           </Typography>
-          <Button
-            variant="contained"
-            component={RouterLink}
-            to="#"
-            startIcon={<Icon icon={plusFill} />}
-          >
-            New User
-          </Button>
+          {user && user.role === 'Admin' && (
+            <Button
+              variant="contained"
+              onClick={toggleCreateOpen}
+              startIcon={<Icon icon={plusFill} />}
+            >
+              New Manager
+            </Button>
+          )}
         </Stack>
 
         <Card>
@@ -166,6 +165,7 @@ export default function Managers() {
             numSelected={0}
             filterName={filterName}
             onFilterName={handleFilterByName}
+            slug="Managers"
           />
 
           <Scrollbar>
@@ -216,14 +216,16 @@ export default function Managers() {
                               <TableCell align="left">{employees ? employees.length : 0}</TableCell>
                               <TableCell align="left">{tasks ? tasks.length : 0}</TableCell>
 
-                              <TableCell align="right">
-                                <UserMoreMenu
-                                  currentUser={row}
-                                  toggleDelOpen={toggleDelOpen}
-                                  toggleEditOpen={toggleEditOpen}
-                                  setSelected={setSelected}
-                                />
-                              </TableCell>
+                              {user && user.role === 'Admin' && (
+                                <TableCell align="right">
+                                  <UserMoreMenu
+                                    currentUser={row}
+                                    toggleDelOpen={toggleDelOpen}
+                                    toggleEditOpen={toggleEditOpen}
+                                    setSelected={setSelected}
+                                  />
+                                </TableCell>
+                              )}
                             </TableRow>
                           );
                         })
@@ -286,10 +288,15 @@ export default function Managers() {
         success={handleDelete}
       />
       <UpdateManagerModal
+        isOpen={isCreateOpen}
+        closeDialog={toggleCreateOpen}
+        createNew={addNewManager}
+        role="Manager"
+      />
+      <UpdateManagerModal
         isOpen={isEditOpen}
         closeDialog={toggleEditOpen}
-        updateUser={handleUpdate}
-        user={user}
+        updateUser={editManager}
         editUser={selected}
         isEdit
         role="Manager"

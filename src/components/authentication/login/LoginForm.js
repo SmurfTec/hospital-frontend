@@ -39,6 +39,7 @@ export default function LoginForm() {
         toast.success('Login Successfull!');
         signInUser(res.data.token, res.data.user);
       } catch (err) {
+        console.log(`ERR LOGIN`, err);
         handleCatch(err);
       }
     }

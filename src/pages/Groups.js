@@ -33,6 +33,7 @@ import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dash
 
 import { DataContext } from 'contexts/DataContext';
 import { AuthContext } from 'contexts/AuthContext';
+import UpdateManager from 'dialogs/UpdateManagerModal';
 
 // ----------------------------------------------------------------------
 
@@ -78,7 +79,7 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function Groups() {
-  const { groups, deleteGroup } = useContext(DataContext);
+  const { groups, deleteGroup, addNewGroup, editGroup } = useContext(DataContext);
   const { user } = useContext(AuthContext);
   const [filteredGroups, setFilteredGroups] = useState([]);
   const [page, setPage] = useState(0);
@@ -88,6 +89,7 @@ export default function Groups() {
   const [filterName, setFilterName] = useState('');
   const [isDelOpen, setIsDelOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const handleRequestSort = (event, property) => {
@@ -107,6 +109,7 @@ export default function Groups() {
 
   const toggleDelOpen = () => setIsDelOpen((st) => !st);
   const toggleEditOpen = () => setIsEditOpen((st) => !st);
+  const toggleCreateOpen = () => setIsCreateOpen((st) => !st);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -138,20 +141,21 @@ export default function Groups() {
   }, [groups]);
 
   return (
-    <Page title="User | Task Manager App">
+    <Page title="Groups | Task Manager App">
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            User
+            Groups
           </Typography>
-          <Button
-            variant="contained"
-            component={RouterLink}
-            to="#"
-            startIcon={<Icon icon={plusFill} />}
-          >
-            New User
-          </Button>
+          {user && user.role === 'Manager' && (
+            <Button
+              variant="contained"
+              onClick={toggleCreateOpen}
+              startIcon={<Icon icon={plusFill} />}
+            >
+              New Group
+            </Button>
+          )}
         </Stack>
 
         <Card>
@@ -159,6 +163,7 @@ export default function Groups() {
             numSelected={0}
             filterName={filterName}
             onFilterName={handleFilterByName}
+            slug="Groups"
           />
 
           <Scrollbar>
@@ -224,7 +229,7 @@ export default function Groups() {
                               {user && user.role === 'Manager' && (
                                 <TableCell align="right">
                                   <UserMoreMenu
-                                    _id={_id}
+                                    currentUser={row}
                                     toggleDelOpen={toggleDelOpen}
                                     toggleEditOpen={toggleEditOpen}
                                     setSelected={setSelected}
@@ -291,6 +296,20 @@ export default function Groups() {
         toggleDialog={toggleDelOpen}
         dialogTitle="Delete This Group ?"
         success={handleDelete}
+      />
+      <UpdateManager
+        isOpen={isCreateOpen}
+        closeDialog={toggleCreateOpen}
+        createNew={addNewGroup}
+        role="Group"
+      />
+      <UpdateManager
+        isOpen={isEditOpen}
+        closeDialog={toggleEditOpen}
+        updateUser={editGroup}
+        editUser={selected}
+        isEdit
+        role="Group"
       />
     </Page>
   );

@@ -1,7 +1,7 @@
-export { default as AppBugReports } from './AppBugReports';
+export { default as AppGroups } from './AppGroups';
 export { default as AppConversionRates } from './AppConversionRates';
 export { default as AppCurrentSubject } from './AppCurrentSubject';
-export { default as AppCurrentVisits } from './AppCurrentVisits';
+export { default as AppCurrentTasks } from './AppCurrentTasks';
 export { default as AppTasks } from './AppTasks';
 export { default as AppNewsUpdate } from './AppNewsUpdate';
 export { default as AppEmploys } from './AppEmploys';

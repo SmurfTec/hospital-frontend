@@ -25,7 +25,7 @@ const MENU_OPTIONS = [
   {
     label: 'Settings',
     icon: settings2Fill,
-    linkTo: '/logout'
+    linkTo: '/settings'
   }
 ];
 
@@ -108,7 +108,7 @@ export default function AccountPopover() {
         ))}
 
         <Box sx={{ p: 2, pt: 1.5 }}>
-          <Button fullWidth color="inherit" variant="outlined">
+          <Button component={RouterLink} fullWidth color="inherit" variant="outlined" to="/logout">
             Logout
           </Button>
         </Box>

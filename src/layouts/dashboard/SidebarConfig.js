@@ -8,7 +8,7 @@ import logOutFill from '@iconify/icons-eva/log-out-fill';
 
 const getIcon = (name) => <Icon icon={name} width={22} height={22} />;
 
-const sidebarConfig = [
+export const adminConfig = [
   {
     title: 'dashboard',
     path: '/dashboard/app',
@@ -45,5 +45,69 @@ const sidebarConfig = [
     icon: getIcon(logOutFill)
   }
 ];
+export const managerConfig = [
+  {
+    title: 'dashboard',
+    path: '/dashboard/app',
+    icon: getIcon(pieChart2Fill)
+  },
 
-export default sidebarConfig;
+  {
+    title: 'Employees',
+    path: '/dashboard/employees',
+    icon: getIcon(peopleFill)
+  },
+  {
+    title: 'Groups',
+    path: '/dashboard/groups',
+    icon: getIcon(peopleFill)
+  },
+  {
+    title: 'Tasks',
+    path: '/dashboard/tasks',
+    icon: getIcon(listFill)
+  },
+  {
+    title: 'User',
+    path: '/dashboard/users',
+    icon: getIcon(listFill)
+  },
+  {
+    title: 'logout',
+    path: '/logout',
+    icon: getIcon(logOutFill)
+  }
+];
+export const employeeConfig = [
+  {
+    title: 'dashboard',
+    path: '/dashboard/app',
+    icon: getIcon(pieChart2Fill)
+  },
+
+  {
+    title: 'Employees',
+    path: '/dashboard/employees',
+    icon: getIcon(peopleFill)
+  },
+  {
+    title: 'Groups',
+    path: '/dashboard/groups',
+    icon: getIcon(peopleFill)
+  },
+  {
+    title: 'Tasks',
+    path: '/dashboard/tasks',
+    icon: getIcon(listFill)
+  },
+  {
+    title: 'User',
+    path: '/dashboard/users',
+    icon: getIcon(listFill)
+  },
+  {
+    title: 'logout',
+    path: '/logout',
+    icon: getIcon(logOutFill)
+  }
+];

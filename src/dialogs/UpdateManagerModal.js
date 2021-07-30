@@ -18,7 +18,9 @@ const UpdateManager = (props) => {
   const { isOpen, closeDialog, createNew, role, isEdit, editUser, updateUser } = props;
   const initialState = {
     name: '',
-    email: ''
+    email: '',
+    password: '',
+    passwordConfirm: ''
   };
 
   const [state, setState] = useState(initialState);
@@ -30,6 +32,8 @@ const UpdateManager = (props) => {
         name: editUser.name,
         email: editUser.email
       });
+    } else {
+      setState(initialState);
     }
   }, [editUser, isEdit]);
 
@@ -38,12 +42,8 @@ const UpdateManager = (props) => {
   };
 
   const handleSubmit = (e) => {
-    updateUser(state);
-    e.preventDefault();
-  };
-
-  const handleEditSubmit = (e) => {
-    updateUser(state);
+    if (isEdit) updateUser(editUser._id, { name: state.name, email: state.email });
+    else createNew(state);
     e.preventDefault();
   };
 
@@ -59,24 +59,52 @@ const UpdateManager = (props) => {
             margin="dense"
             id="name"
             label="Name"
-            // type='email'
+            type="text"
             fullWidth
             value={state.name}
             name="name"
             onChange={handleChange}
           />
 
-          <TextField
-            autoFocus
-            margin="dense"
-            id="email"
-            name="email"
-            label="Email"
-            type="email"
-            fullWidth
-            value={state.email}
-            onChange={handleChange}
-          />
+          {role === 'Manager' ||
+            (role === 'Employee' && (
+              <TextField
+                margin="dense"
+                id="email"
+                name="email"
+                label="Email"
+                type="email"
+                fullWidth
+                value={state.email}
+                onChange={handleChange}
+              />
+            ))}
+
+          {(!isEdit && role === 'manager') ||
+            (role === 'Employee' && (
+              <>
+                <TextField
+                  margin="dense"
+                  id="password"
+                  name="password"
+                  label="Password"
+                  type="password"
+                  fullWidth
+                  value={state.password}
+                  onChange={handleChange}
+                />
+                <TextField
+                  margin="dense"
+                  id="passwordConfirm"
+                  name="passwordConfirm"
+                  label="Password Confirm"
+                  type="password"
+                  fullWidth
+                  value={state.passwordConfirm}
+                  onChange={handleChange}
+                />
+              </>
+            ))}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleSubmit} variant="contained" color="primary">
