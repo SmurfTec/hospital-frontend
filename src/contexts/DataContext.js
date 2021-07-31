@@ -103,6 +103,33 @@ export const DataProvider = ({ children }) => {
     }
   };
 
+  const addEmployeeToGroups = async (employeeId, groupId) => {
+    try {
+      const resData = await makeReq(`/group/${groupId}/addEmployee/${employeeId}`, {}, 'POST');
+      console.log(`resData`, resData);
+      toast.success(
+        `Employee "${resData.employee.name}" Added to group "${resData.group.name}" Successfully`
+      );
+      setGroups((st) => st.map((el) => (el._id === groupId ? resData.group : el)));
+    } catch (err) {
+      handleCatch(err);
+    }
+  };
+  const removeEmployeeGroup = async (employeeId, groupId) => {
+    try {
+      const resData = await makeReq(`/group/${groupId}/removeEmployee/${employeeId}`, {}, 'POST');
+      console.log(`resData`, resData);
+      // TODO UnComment these when API res fixed
+      //  toast.success(
+      //   `Employee "${resData.employee.name}" removed from group "${resData.group.name}" Successfully`
+      // );
+      toast.success(`Employee removed from group "${resData.group.name}" Successfully`);
+      setGroups((st) => st.map((el) => (el._id === groupId ? resData.group : el)));
+    } catch (err) {
+      handleCatch(err);
+    }
+  };
+
   // * /Edit Opetations
 
   const editManager = async (id, body) => {
@@ -209,7 +236,9 @@ export const DataProvider = ({ children }) => {
         addNewManager,
         addNewEmployee,
         addNewGroup,
-        editGroup
+        editGroup,
+        addEmployeeToGroups,
+        removeEmployeeGroup
       }}
     >
       {children}

@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
   cancelBtn: {}
 }));
 
-const UpdateManager = (props) => {
+const AddorEditModal = (props) => {
   const { isOpen, closeDialog, createNew, role, isEdit, editUser, updateUser } = props;
   const initialState = {
     name: '',
@@ -47,11 +47,16 @@ const UpdateManager = (props) => {
     e.preventDefault();
   };
 
+  const handleClose = () => {
+    setState(initialState);
+    closeDialog();
+  };
+
   return (
     <div>
       <Dialog open={isOpen} onClose={closeDialog} aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">
-          {isEdit ? `Edit ${editUser && editUser.role}` : `Add New ${role}`}
+          {isEdit ? `Edit ${editUser && role}` : `Add New ${role}`}
         </DialogTitle>
         <DialogContent>
           <TextField
@@ -110,7 +115,7 @@ const UpdateManager = (props) => {
           <Button onClick={handleSubmit} variant="contained" color="primary">
             {isEdit === true ? 'Update' : 'Create'}
           </Button>
-          <Button onClick={closeDialog} variant="contained" color="error">
+          <Button onClick={handleClose} variant="contained" color="error">
             Cancel
           </Button>
         </DialogActions>
@@ -119,4 +124,4 @@ const UpdateManager = (props) => {
   );
 };
 
-export default UpdateManager;
+export default AddorEditModal;

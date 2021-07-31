@@ -1,9 +1,7 @@
 import { filter } from 'lodash';
 import { Icon } from '@iconify/react';
-import { sentenceCase } from 'change-case';
 import { useContext, useEffect, useState } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
-import { Link as RouterLink } from 'react-router-dom';
 // material
 import {
   Card,
@@ -11,7 +9,6 @@ import {
   Stack,
   Avatar,
   Button,
-  Checkbox,
   TableRow,
   TableBody,
   TableCell,
@@ -138,7 +135,7 @@ export default function Groups() {
   useEffect(() => {
     if (!groups || groups === null) return;
     setFilteredGroups(applySortFilter(groups, getComparator(order, orderBy), filterName));
-  }, [groups]);
+  }, [groups, order, orderBy, filterName]);
 
   return (
     <Page title="Groups | Task Manager App">

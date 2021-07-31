@@ -2,7 +2,6 @@ import { filter } from 'lodash';
 import { Icon } from '@iconify/react';
 import { useContext, useEffect, useState } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
-import { Link as RouterLink } from 'react-router-dom';
 // material
 import { ConfirmDialog as ConfirmDeleteModal } from 'mui-confirm-dialog';
 import {
@@ -24,7 +23,7 @@ import {
 import Page from '../components/Page';
 // import Skeleton from '@material-ui/lab/Skeleton';
 import Skeleton from 'react-loading-skeleton';
-
+import AddToTableModal from 'dialogs/AddToTableModal';
 import Scrollbar from '../components/Scrollbar';
 import SearchNotFound from '../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dashboard/user';
@@ -78,16 +77,27 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function Employees() {
-  const { employs, deleteEmployee, addNewEmployee, editEmployee } = useContext(DataContext);
+  const {
+    employs,
+    deleteEmployee,
+    addNewEmployee,
+    editEmployee,
+    groups,
+    addEmployeeToGroups,
+    removeEmployeeGroup
+  } = useContext(DataContext);
   const { user } = useContext(AuthContext);
   const [filteredEmploys, setFilteredEmploys] = useState([]);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState();
+  const [selectedEmploy, setSelectedEmploy] = useState();
   const [orderBy, setOrderBy] = useState('name');
   const [isDelOpen, setIsDelOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isAddToOpen, setIsAddToOpen] = useState(false);
+  const [isRemoveFromOpen, setIsRemoveFromOpen] = useState(false);
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -109,6 +119,8 @@ export default function Employees() {
   const toggleDelOpen = () => setIsDelOpen((st) => !st);
   const toggleEditOpen = () => setIsEditOpen((st) => !st);
   const toggleCreateOpen = () => setIsCreateOpen((st) => !st);
+  const toggleAddToOpen = () => setIsAddToOpen((st) => !st);
+  const toggleRemoveFromOpen = () => setIsRemoveFromOpen((st) => !st);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -139,6 +151,8 @@ export default function Employees() {
     deleteEmployee(selected);
     setSelected(null);
   };
+
+  const handleAddMore = () => {};
 
   return (
     <Page title="Employees | Task Manager App">
@@ -224,6 +238,18 @@ export default function Employees() {
                                     toggleDelOpen={toggleDelOpen}
                                     toggleEditOpen={toggleEditOpen}
                                     setSelected={setSelected}
+                                    addToTable
+                                    toggleAddToOpen={() => {
+                                      setSelectedEmploy(_id);
+                                      toggleAddToOpen();
+                                    }}
+                                    addToSlug="Add to Group"
+                                    removeFromTable
+                                    handleRemoveFrom={() => {
+                                      setSelectedEmploy(_id);
+                                      toggleRemoveFromOpen();
+                                    }}
+                                    removeFromSlug="Remove from Group"
                                   />
                                 </TableCell>
                               )}
@@ -301,6 +327,22 @@ export default function Employees() {
         editUser={selected}
         isEdit
         role="Employee"
+      />
+      <AddToTableModal
+        isOpen={isAddToOpen}
+        closeDialog={toggleAddToOpen}
+        targetId={selectedEmploy}
+        addAction={addEmployeeToGroups}
+        data={groups}
+        slug="Add"
+      />
+      <AddToTableModal
+        isOpen={isRemoveFromOpen}
+        closeDialog={toggleRemoveFromOpen}
+        targetId={selectedEmploy}
+        addAction={removeEmployeeGroup}
+        data={groups}
+        slug="Remove"
       />
     </Page>
   );
