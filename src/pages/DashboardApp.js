@@ -40,11 +40,9 @@ export default function DashboardApp() {
           <Grid item xs={12} sm={6} md={3}>
             <AppEmploys data={employs} />
           </Grid>
-          {user && user.role !== 'Manager' && (
-            <Grid item xs={12} sm={6} md={3}>
-              <AppTasks data={tasks} />
-            </Grid>
-          )}
+          <Grid item xs={12} sm={6} md={3}>
+            <AppTasks data={tasks} />
+          </Grid>
           <Grid item xs={12} sm={6} md={3}>
             <AppGroups data={groups} />
           </Grid>

@@ -79,7 +79,13 @@ export default function UserMoreMenu({
           </MenuItem>
         )}
         {removeFromTable && (
-          <MenuItem sx={{ color: 'text.secondary' }} onClick={handleRemoveFrom}>
+          <MenuItem
+            sx={{ color: 'text.secondary' }}
+            onClick={() => {
+              setIsOpen(false);
+              handleRemoveFrom();
+            }}
+          >
             <ListItemIcon>
               <Icon icon={minusFill} width={24} height={24} />
             </ListItemIcon>

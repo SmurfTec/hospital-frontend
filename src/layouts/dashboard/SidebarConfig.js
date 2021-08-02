@@ -34,11 +34,11 @@ export const adminConfig = [
     path: '/dashboard/tasks',
     icon: getIcon(listFill)
   },
-  {
-    title: 'User',
-    path: '/dashboard/users',
-    icon: getIcon(listFill)
-  },
+  // {
+  //   title: 'User',
+  //   path: '/dashboard/users',
+  //   icon: getIcon(listFill)
+  // },
   {
     title: 'logout',
     path: '/logout',
@@ -63,8 +63,8 @@ export const managerConfig = [
     icon: getIcon(peopleFill)
   },
   {
-    title: 'User',
-    path: '/dashboard/users',
+    title: 'Tasks',
+    path: '/dashboard/tasks',
     icon: getIcon(listFill)
   },
   {
@@ -95,11 +95,7 @@ export const employeeConfig = [
     path: '/dashboard/tasks',
     icon: getIcon(listFill)
   },
-  {
-    title: 'User',
-    path: '/dashboard/users',
-    icon: getIcon(listFill)
-  },
+
   {
     title: 'logout',
     path: '/logout',

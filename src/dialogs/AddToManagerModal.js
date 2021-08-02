@@ -33,6 +33,7 @@ import { DataContext } from 'contexts/DataContext';
 import { AuthContext } from 'contexts/AuthContext';
 
 import { withStyles } from '@material-ui/styles';
+import Label from 'components/Label';
 
 const Styles = {
   Dialog: {
@@ -45,11 +46,9 @@ const Styles = {
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', alignRight: false },
-  { id: 'manager', label: 'Manager', alignRight: false },
   { id: 'employees', label: 'Employees', alignRight: false },
+  { id: 'groups', label: 'Groups', alignRight: false },
   { id: 'tasks', label: 'Tasks', alignRight: false },
-  // { id: 'isVerified', label: 'Verified', alignRight: false },
-  // { id: 'status', label: 'Status', alignRight: false },
   { id: '' }
 ];
 
@@ -66,15 +65,12 @@ function descendingComparator(a, b, orderBy) {
 const AddToTableModal = (props) => {
   const { isOpen, closeDialog, classes, targetId, data, addAction, slug } = props;
 
-  const [filteredGroups, setFilteredGroups] = useState([]);
+  const [filteredManagers, setFilteredManagers] = useState([]);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState();
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
-  const [isDelOpen, setIsDelOpen] = useState(false);
-  const [isEditOpen, setIsEditOpen] = useState(false);
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {}, [data]);
@@ -121,10 +117,6 @@ const AddToTableModal = (props) => {
     setSelected([]);
   };
 
-  const toggleDelOpen = () => setIsDelOpen((st) => !st);
-  const toggleEditOpen = () => setIsEditOpen((st) => !st);
-  const toggleCreateOpen = () => setIsCreateOpen((st) => !st);
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -140,11 +132,11 @@ const AddToTableModal = (props) => {
 
   const emptyRows = page > 0 && data ? Math.max(0, (1 + page) * rowsPerPage - data.length) : 0;
 
-  const isUserNotFound = filteredGroups.length === 0;
+  const isUserNotFound = filteredManagers.length === 0;
 
   useEffect(() => {
     if (!data || data === null) return;
-    setFilteredGroups(applySortFilter(data, getComparator(order, orderBy), filterName));
+    setFilteredManagers(applySortFilter(data, getComparator(order, orderBy), filterName));
   }, [data, order, orderBy, filterName]);
 
   const isAlreadyHere = (target, array) => {
@@ -185,10 +177,10 @@ const AddToTableModal = (props) => {
 
                   <TableBody>
                     {data
-                      ? filteredGroups
+                      ? filteredManagers
                           .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                           .map((row) => {
-                            const { _id, name, manager, tasks, employees } = row;
+                            const { _id, name, tasks, employees, groups } = row;
 
                             return (
                               <TableRow
@@ -203,7 +195,7 @@ const AddToTableModal = (props) => {
                                   <Checkbox
                                     checked={selected === _id}
                                     onChange={() => setSelected(_id)}
-                                    disabled={isAlreadyHere(targetId, row.employees)}
+                                    // disabled={isAlreadyHere(targetId, row.employees)}
                                   />
                                 </TableCell>
                                 <TableCell component="th" scope="row" padding="none">
@@ -219,11 +211,35 @@ const AddToTableModal = (props) => {
                                     </Typography>
                                   </Stack>
                                 </TableCell>
-                                <TableCell align="left">{manager && manager.name}</TableCell>
                                 <TableCell align="left">
-                                  {employees ? employees.length : 0}
+                                  {employees && employees.length > 0 ? (
+                                    employees.length
+                                  ) : (
+                                    <Label variant="ghost" color="error">
+                                      0
+                                    </Label>
+                                  )}
                                 </TableCell>
-                                <TableCell align="left">{tasks ? tasks.length : 0}</TableCell>
+
+                                <TableCell align="left">
+                                  {groups && groups.length > 0 ? (
+                                    groups.length
+                                  ) : (
+                                    <Label variant="ghost" color="error">
+                                      0
+                                    </Label>
+                                  )}
+                                </TableCell>
+
+                                <TableCell align="left">
+                                  {tasks && tasks.length > 0 ? (
+                                    tasks.length
+                                  ) : (
+                                    <Label variant="ghost" color="error">
+                                      0
+                                    </Label>
+                                  )}
+                                </TableCell>
                               </TableRow>
                             );
                           })

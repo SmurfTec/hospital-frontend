@@ -23,7 +23,8 @@ import {
 import Page from '../components/Page';
 // import Skeleton from '@material-ui/lab/Skeleton';
 import Skeleton from 'react-loading-skeleton';
-import AddToTableModal from 'dialogs/AddToTableModal';
+import AddToTableModal from 'dialogs/AddToManagerModal';
+import AddToGroupModal from 'dialogs/AddToGroupModal';
 import Scrollbar from '../components/Scrollbar';
 import SearchNotFound from '../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dashboard/user';
@@ -32,16 +33,16 @@ import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dash
 import { DataContext } from 'contexts/DataContext';
 import { AuthContext } from 'contexts/AuthContext';
 import AddorEditModal from 'dialogs/AddorEditModal';
+import Label from 'components/Label';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', alignRight: false },
-  { id: 'email', label: 'Email', alignRight: false },
-  { id: 'groups', label: 'Groups', alignRight: false },
-  { id: 'tasks', label: 'Tasks', alignRight: false },
-  // { id: 'isVerified', label: 'Verified', alignRight: false },
-  // { id: 'status', label: 'Status', alignRight: false },
+  { id: 'description', label: 'Description', alignRight: false },
+  { id: 'manager', label: 'Manager', alignRight: false },
+  { id: 'status', label: 'Status', alignRight: false },
+  { id: 'deadline', label: 'Deadline', alignRight: false },
   { id: '' }
 ];
 
@@ -76,28 +77,33 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function Employees() {
+const Tasks = () => {
   const {
     tasks,
-    deleteEmployee,
-    addNewEmployee,
-    editEmployee,
+    assignTaskToManager,
+    unAssignTaskFromManger,
+    managers,
+    deleteTask,
+    addNewTask,
+    updateTask,
     groups,
-    addEmployeeToGroups,
-    removeEmployeeGroup
+    assignTaskToGroup,
+    unAssignTaskFromGroup
   } = useContext(DataContext);
   const { user } = useContext(AuthContext);
   const [filteredtasks, setFilteredtasks] = useState([]);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState();
-  const [selectedEmploy, setSelectedEmploy] = useState();
+  const [selectedTask, setSelectedTask] = useState();
   const [orderBy, setOrderBy] = useState('name');
   const [isDelOpen, setIsDelOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isAddToOpen, setIsAddToOpen] = useState(false);
   const [isRemoveFromOpen, setIsRemoveFromOpen] = useState(false);
+  const [isAddToOpen2, setIsAddToOpen2] = useState(false);
+  const [isRemoveFromOpen2, setIsRemoveFromOpen2] = useState(false);
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -121,6 +127,8 @@ export default function Employees() {
   const toggleCreateOpen = () => setIsCreateOpen((st) => !st);
   const toggleAddToOpen = () => setIsAddToOpen((st) => !st);
   const toggleRemoveFromOpen = () => setIsRemoveFromOpen((st) => !st);
+  const toggleAddToOpen2 = () => setIsAddToOpen2((st) => !st);
+  const toggleRemoveFromOpen2 = () => setIsRemoveFromOpen2((st) => !st);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -146,27 +154,28 @@ export default function Employees() {
 
   const handleDelete = () => {
     toggleDelOpen();
-    console.log(`selected`, selected);
-    deleteEmployee(selected);
-    setSelected(null);
+    deleteTask(selected);
   };
 
-  const handleAddMore = () => {};
+  const getFormattedDate = (date) => {
+    const dt = new Date(date);
+    return dt.toDateString();
+  };
 
   return (
-    <Page title="Employees | Task Manager App">
+    <Page title="Tasks | Task Manager App">
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Employees
+            Tasks
           </Typography>
-          {user && user.role === 'Manager' && (
+          {user && user.role === 'Admin' && (
             <Button
               variant="contained"
               onClick={toggleCreateOpen}
               startIcon={<Icon icon={plusFill} />}
             >
-              New Employee
+              New Task
             </Button>
           )}
         </Stack>
@@ -176,7 +185,7 @@ export default function Employees() {
             numSelected={0}
             filterName={filterName}
             onFilterName={handleFilterByName}
-            slug="Employees"
+            slug="Tasks"
           />
 
           <Scrollbar>
@@ -197,8 +206,7 @@ export default function Employees() {
                     ? filteredtasks
                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                         .map((row) => {
-                          const { _id, name, email, groups, tasks, employees } = row;
-
+                          const { _id, description, name, manager, status, deadLine, group } = row;
                           return (
                             <TableRow
                               hover
@@ -216,39 +224,88 @@ export default function Employees() {
                               </TableCell>
                               <TableCell component="th" scope="row" padding="none">
                                 <Stack direction="row" alignItems="center" spacing={2}>
-                                  <Avatar
+                                  {/* <Avatar
                                     alt={name}
                                     src={`https://ui-avatars.com/api/?background=0D8ABC&color=fff&name=${name
                                       .split(' ')
                                       .join('%20')}`}
-                                  />
+                                  /> */}
                                   <Typography variant="subtitle2" noWrap>
                                     {name}
                                   </Typography>
                                 </Stack>
                               </TableCell>
-                              <TableCell align="left">{email}</TableCell>
-                              <TableCell align="left">{groups ? groups.length : 0}</TableCell>
-                              <TableCell align="left">{tasks ? tasks.length : 0}</TableCell>
-                              {user && user.role === 'Manager' && (
+                              <TableCell align="left">{description}</TableCell>
+                              <TableCell align="left">
+                                {manager ? (
+                                  manager.name
+                                ) : (
+                                  <Label variant="ghost" color="error">
+                                    Not Assigned
+                                  </Label>
+                                )}
+                              </TableCell>
+                              <TableCell align="left">
+                                {status === 'inProgress' ? (
+                                  <Label variant="ghost" color="warning">
+                                    {status}
+                                  </Label>
+                                ) : (
+                                  <Label variant="ghost" color="success">
+                                    {status}
+                                  </Label>
+                                )}
+                              </TableCell>
+                              <TableCell align="left">
+                                {deadLine && getFormattedDate(deadLine)}
+                              </TableCell>
+                              {user && user.role === 'Admin' && (
                                 <TableCell align="right">
                                   <UserMoreMenu
                                     currentUser={row}
                                     toggleDelOpen={toggleDelOpen}
                                     toggleEditOpen={toggleEditOpen}
                                     setSelected={setSelected}
-                                    addToTable
+                                    addToTable={!manager}
                                     toggleAddToOpen={() => {
-                                      setSelectedEmploy(_id);
+                                      setSelectedTask(_id);
                                       toggleAddToOpen();
                                     }}
-                                    addToSlug="Add to Group"
-                                    removeFromTable
+                                    addToSlug="Assign to Manager"
+                                    removeFromTable={!!manager}
                                     handleRemoveFrom={() => {
-                                      setSelectedEmploy(_id);
-                                      toggleRemoveFromOpen();
+                                      console.clear();
+                                      console.log(`row`, row);
+                                      console.log(`_id`, _id);
+                                      console.log(`manager._id`, manager._id);
+                                      const managerId = manager._id || manager;
+                                      unAssignTaskFromManger(_id, managerId);
                                     }}
-                                    removeFromSlug="Remove from Group"
+                                    removeFromSlug="UnAssign"
+                                  />
+                                </TableCell>
+                              )}
+                              {user && user.role === 'Manager' && (
+                                <TableCell align="right">
+                                  <UserMoreMenu
+                                    currentUser={row}
+                                    setSelected={setSelected}
+                                    addToTable={!group}
+                                    toggleAddToOpen={() => {
+                                      setSelectedTask(_id);
+                                      toggleAddToOpen2();
+                                    }}
+                                    addToSlug="Assign to Group"
+                                    removeFromTable={!group}
+                                    handleRemoveFrom={() => {
+                                      console.clear();
+                                      console.log(`row`, row);
+                                      console.log(`_id`, _id);
+                                      console.log(`group._id`, group._id);
+                                      const groupId =group ? group._id : group;
+                                      unAssignTaskFromGroup(_id, groupId);
+                                    }}
+                                    removeFromSlug="UnAssign"
                                   />
                                 </TableCell>
                               )}
@@ -310,39 +367,59 @@ export default function Employees() {
       <ConfirmDeleteModal
         open={isDelOpen}
         toggleDialog={toggleDelOpen}
-        dialogTitle="Delete This Employee ?"
+        dialogTitle="Delete This Task ?"
         success={handleDelete}
       />
       <AddorEditModal
         isOpen={isCreateOpen}
         closeDialog={toggleCreateOpen}
-        createNew={addNewEmployee}
-        role="Employee"
+        createNew={addNewTask}
+        role="Task"
       />
       <AddorEditModal
         isOpen={isEditOpen}
         closeDialog={toggleEditOpen}
-        updateUser={editEmployee}
+        updateUser={updateTask}
         editUser={selected}
         isEdit
-        role="Employee"
+        role="Task"
       />
       <AddToTableModal
         isOpen={isAddToOpen}
         closeDialog={toggleAddToOpen}
-        targetId={selectedEmploy}
-        addAction={addEmployeeToGroups}
-        data={groups}
-        slug="Add"
+        targetId={selectedTask}
+        addAction={assignTaskToManager}
+        data={managers}
+        slug="Assign"
       />
       <AddToTableModal
         isOpen={isRemoveFromOpen}
         closeDialog={toggleRemoveFromOpen}
-        targetId={selectedEmploy}
-        addAction={removeEmployeeGroup}
+        targetId={selectedTask}
+        addAction={unAssignTaskFromManger}
+        data={managers}
+        slug="unAssign"
+      />
+      <AddToGroupModal
+        isOpen={isAddToOpen2}
+        closeDialog={toggleAddToOpen2}
+        targetId={selectedTask}
+        addAction={assignTaskToGroup}
         data={groups}
-        slug="Remove"
+        slug="Assign"
+        resource="Task"
+      />
+      <AddToGroupModal
+        isOpen={isRemoveFromOpen2}
+        closeDialog={toggleRemoveFromOpen2}
+        targetId={selectedTask}
+        addAction={unAssignTaskFromGroup}
+        data={groups}
+        slug="unAssign"
+        resource="Task"
       />
     </Page>
   );
-}
+};
+
+export default Tasks;

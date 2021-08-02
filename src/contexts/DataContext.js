@@ -18,7 +18,7 @@ export const DataProvider = ({ children }) => {
     if (!user || user === null) return;
 
     fetchUsers();
-    if (user.role !== 'Manager') fetchTasks();
+    fetchTasks();
     fetchGroups();
   }, [user]);
 
@@ -36,7 +36,7 @@ export const DataProvider = ({ children }) => {
         setManagers(resManagers);
         setEmploys(resEmploys);
       } else if (user) {
-        const resData = await makeReq(`/employee/myEmployees`);
+        const resData = await makeReq(`/employee`);
         const resEmploys = resData.employees;
 
         console.log(`RES employees`, resData);
@@ -105,6 +105,17 @@ export const DataProvider = ({ children }) => {
     }
   };
 
+  const addNewTask = async (body) => {
+    try {
+      const resData = await makeReq(`/task`, { body: { ...body } }, 'POST');
+      console.log(`resData`, resData);
+      toast.success(`Task ${resData.task.name} Created Successfully`);
+      setTasks((st) => [...st, resData.task]);
+    } catch (err) {
+      handleCatch(err);
+    }
+  };
+
   const addEmployeeToGroups = async (employeeId, groupId) => {
     try {
       const resData = await makeReq(`/group/${groupId}/addEmployee/${employeeId}`, {}, 'POST');
@@ -167,6 +178,7 @@ export const DataProvider = ({ children }) => {
       handleCatch(err);
     }
   };
+
   const editGroup = async (id, body) => {
     try {
       const resData = await makeReq(`/group/${id}`, { body: { ...body } }, 'PATCH');
@@ -179,6 +191,69 @@ export const DataProvider = ({ children }) => {
           return el._id === id ? { ...el, ...body } : el;
         })
       );
+    } catch (err) {
+      handleCatch(err);
+    }
+  };
+
+  const assignTaskToManager = async (taskId, managerId) => {
+    try {
+      const resData = await makeReq(`/task/assignTask/${taskId}/manager/${managerId}`, {}, 'PATCH');
+      console.log(`resData ASSIGN TASK`, resData);
+      toast.success(`Task ${resData.task.name} Assigned Successfully`);
+      setTasks((st) => st.map((el) => (el._id === taskId ? resData.task : el)));
+      setManagers((st) => st.map((el) => (el._id === managerId ? resData.manager : el)));
+    } catch (err) {
+      handleCatch(err);
+    }
+  };
+
+  const unAssignTaskFromManger = async (taskId, managerId) => {
+    try {
+      const resData = await makeReq(
+        `/task/unAssignedTask/${taskId}/manager/${managerId}`,
+        {},
+        'PATCH'
+      );
+      console.log(`resData ASSIGN TASK`, resData);
+      toast.success(`Task ${resData.task.name} UnAssigned Successfully`);
+      setTasks((st) => st.map((el) => (el._id === taskId ? resData.task : el)));
+      setManagers((st) => st.map((el) => (el._id === managerId ? resData.manager : el)));
+    } catch (err) {
+      handleCatch(err);
+    }
+  };
+
+  const assignTaskToGroup = async (taskId, groupId) => {
+    try {
+      const resData = await makeReq(`/group/${groupId}/addTask/${taskId}`, {}, 'POST');
+      console.log(`resData ASSIGN TASK`, resData);
+      toast.success(`Task ${resData.task.name} Assigned Successfully`);
+      setTasks((st) => st.map((el) => (el._id === taskId ? resData.task : el)));
+      setGroups((st) => st.map((el) => (el._id === groupId ? resData.group : el)));
+    } catch (err) {
+      handleCatch(err);
+    }
+  };
+
+  const unAssignTaskFromGroup = async (taskId, groupId) => {
+    try {
+      const resData = await makeReq(`/group/${groupId}/removeTask/${taskId}`, {}, 'POST');
+      console.log(`resData ASSIGN TASK`, resData);
+      toast.success(`Task ${resData.task.name} UnAssigned Successfully`);
+      setTasks((st) => st.map((el) => (el._id === taskId ? resData.task : el)));
+      setGroups((st) => st.map((el) => (el._id === groupId ? resData.group : el)));
+    } catch (err) {
+      handleCatch(err);
+    }
+  };
+
+  const updateTask = async (taskId, body) => {
+    try {
+      const resData = await makeReq(`/task/${taskId}`, { body: { ...body } }, 'PATCH');
+      console.log(`resData`, resData);
+      toast.success(`Task ${resData.task.name} Updated Successfully`);
+      setTasks((st) => st.map((el) => (el._id === taskId ? resData.task : el)));
     } catch (err) {
       handleCatch(err);
     }
@@ -219,6 +294,17 @@ export const DataProvider = ({ children }) => {
     }
   };
 
+  const deleteTask = async (id) => {
+    try {
+      const resData = await makeReq(`/task/${id}`, {}, 'DELETE');
+      console.log(`resData`, resData);
+      toast.success(`Task ${resData.task.name} Deleted Successfully`);
+      setTasks((st) => st.filter((el) => el._id !== id));
+    } catch (err) {
+      handleCatch(err);
+    }
+  };
+
   return (
     <DataContext.Provider
       value={{
@@ -240,7 +326,14 @@ export const DataProvider = ({ children }) => {
         addNewGroup,
         editGroup,
         addEmployeeToGroups,
-        removeEmployeeGroup
+        removeEmployeeGroup,
+        assignTaskToManager,
+        unAssignTaskFromManger,
+        deleteTask,
+        addNewTask,
+        updateTask,
+        assignTaskToGroup,
+        unAssignTaskFromGroup
       }}
     >
       {children}

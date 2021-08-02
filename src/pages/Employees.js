@@ -23,7 +23,7 @@ import {
 import Page from '../components/Page';
 // import Skeleton from '@material-ui/lab/Skeleton';
 import Skeleton from 'react-loading-skeleton';
-import AddToTableModal from 'dialogs/AddToTableModal';
+import AddToTableModal from 'dialogs/AddToGroupModal';
 import Scrollbar from '../components/Scrollbar';
 import SearchNotFound from '../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dashboard/user';
@@ -364,6 +364,7 @@ const Employees = () => {
         addAction={addEmployeeToGroups}
         data={groups}
         slug="Add"
+        resource="Employee"
       />
       <AddToTableModal
         isOpen={isRemoveFromOpen}
@@ -372,6 +373,7 @@ const Employees = () => {
         addAction={removeEmployeeGroup}
         data={groups}
         slug="Remove"
+        resource="Employee"
       />
     </Page>
   );
