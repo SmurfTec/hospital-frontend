@@ -63,11 +63,6 @@ export const managerConfig = [
     icon: getIcon(peopleFill)
   },
   {
-    title: 'Tasks',
-    path: '/dashboard/tasks',
-    icon: getIcon(listFill)
-  },
-  {
     title: 'User',
     path: '/dashboard/users',
     icon: getIcon(listFill)

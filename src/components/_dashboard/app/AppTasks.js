@@ -37,16 +37,15 @@ const IconWrapperStyle = styled('div')(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-export default function AppItemOrders() {
-  const { tasks } = useContext(DataContext);
+export default function AppItemOrders({ data }) {
   return (
     <RootStyle>
       <IconWrapperStyle>
         <Icon icon={windowsFilled} width={24} height={24} />
       </IconWrapperStyle>
       <Typography variant="h3">
-        {tasks ? (
-          fShortenNumber(tasks.length)
+        {data ? (
+          fShortenNumber(data.length)
         ) : (
           <Loader
             type="Oval"

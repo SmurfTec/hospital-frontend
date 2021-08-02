@@ -3,27 +3,27 @@ import { Icon } from '@iconify/react';
 import { useContext, useEffect, useState } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
 // material
+import { ConfirmDialog as ConfirmDeleteModal } from 'mui-confirm-dialog';
 import {
   Card,
   Table,
   Stack,
   Avatar,
   Button,
+  Checkbox,
   TableRow,
   TableBody,
   TableCell,
   Container,
   Typography,
   TableContainer,
-  TablePagination,
-  Checkbox
+  TablePagination
 } from '@material-ui/core';
 // components
 import Page from '../components/Page';
 // import Skeleton from '@material-ui/lab/Skeleton';
 import Skeleton from 'react-loading-skeleton';
-import { ConfirmDialog as ConfirmDeleteModal } from 'mui-confirm-dialog';
-
+import AddToTableModal from 'dialogs/AddToTableModal';
 import Scrollbar from '../components/Scrollbar';
 import SearchNotFound from '../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dashboard/user';
@@ -32,14 +32,13 @@ import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dash
 import { DataContext } from 'contexts/DataContext';
 import { AuthContext } from 'contexts/AuthContext';
 import AddorEditModal from 'dialogs/AddorEditModal';
-import Label from 'components/Label';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', alignRight: false },
-  { id: 'manager', label: 'Manager', alignRight: false },
-  { id: 'employees', label: 'Employees', alignRight: false },
+  { id: 'email', label: 'Email', alignRight: false },
+  { id: 'groups', label: 'Groups', alignRight: false },
   { id: 'tasks', label: 'Tasks', alignRight: false },
   // { id: 'isVerified', label: 'Verified', alignRight: false },
   // { id: 'status', label: 'Status', alignRight: false },
@@ -77,20 +76,29 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function Groups() {
-  const { groups, deleteGroup, addNewGroup, editGroup } = useContext(DataContext);
+export default function Employees() {
+  const {
+    tasks,
+    deleteEmployee,
+    addNewEmployee,
+    editEmployee,
+    groups,
+    addEmployeeToGroups,
+    removeEmployeeGroup
+  } = useContext(DataContext);
   const { user } = useContext(AuthContext);
-  const [filteredGroups, setFilteredGroups] = useState([]);
+  const [filteredtasks, setFilteredtasks] = useState([]);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState();
-  const [selectedGroup, setSelectedGroup] = useState();
-
+  const [selectedEmploy, setSelectedEmploy] = useState();
   const [orderBy, setOrderBy] = useState('name');
-  const [filterName, setFilterName] = useState('');
   const [isDelOpen, setIsDelOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isAddToOpen, setIsAddToOpen] = useState(false);
+  const [isRemoveFromOpen, setIsRemoveFromOpen] = useState(false);
+  const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const handleRequestSort = (event, property) => {
@@ -101,7 +109,7 @@ export default function Groups() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = groups.map((n) => n.name);
+      const newSelecteds = tasks.map((n) => n.name);
       setSelected(newSelecteds);
       return;
     }
@@ -111,6 +119,8 @@ export default function Groups() {
   const toggleDelOpen = () => setIsDelOpen((st) => !st);
   const toggleEditOpen = () => setIsEditOpen((st) => !st);
   const toggleCreateOpen = () => setIsCreateOpen((st) => !st);
+  const toggleAddToOpen = () => setIsAddToOpen((st) => !st);
+  const toggleRemoveFromOpen = () => setIsRemoveFromOpen((st) => !st);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -125,33 +135,30 @@ export default function Groups() {
     setFilterName(event.target.value);
   };
 
+  const emptyRows = page > 0 && tasks ? Math.max(0, (1 + page) * rowsPerPage - tasks.length) : 0;
+
+  const isUserNotFound = filteredtasks.length === 0;
+
+  useEffect(() => {
+    if (!tasks || tasks === null) return;
+    setFilteredtasks(applySortFilter(tasks, getComparator(order, orderBy), filterName));
+  }, [tasks, order, orderBy, filterName]);
+
   const handleDelete = () => {
     toggleDelOpen();
     console.log(`selected`, selected);
-    deleteGroup(selected);
+    deleteEmployee(selected);
     setSelected(null);
   };
 
-  const emptyRows = page > 0 && groups ? Math.max(0, (1 + page) * rowsPerPage - groups.length) : 0;
-
-  const isUserNotFound = filteredGroups.length === 0;
-
-  useEffect(() => {
-    if (!groups || groups === null) return;
-    setFilteredGroups(applySortFilter(groups, getComparator(order, orderBy), filterName));
-  }, [groups, order, orderBy, filterName]);
-
-  const handleClick = (id) => {
-    if (selectedGroup === id) setSelectedGroup(undefined);
-    else setSelectedGroup(id);
-  };
+  const handleAddMore = () => {};
 
   return (
-    <Page title="Groups | Task Manager App">
+    <Page title="Employees | Task Manager App">
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Groups
+            Employees
           </Typography>
           {user && user.role === 'Manager' && (
             <Button
@@ -159,18 +166,17 @@ export default function Groups() {
               onClick={toggleCreateOpen}
               startIcon={<Icon icon={plusFill} />}
             >
-              New Group
+              New Employee
             </Button>
           )}
         </Stack>
 
         <Card>
           <UserListToolbar
-            numSelected={selectedGroup ? 1 : 0}
+            numSelected={0}
             filterName={filterName}
             onFilterName={handleFilterByName}
-            slug="Groups"
-            viewLink={`/dashboard/groups/${selectedGroup}`}
+            slug="Employees"
           />
 
           <Scrollbar>
@@ -180,18 +186,18 @@ export default function Groups() {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={groups ? groups.length : 0}
-                  numSelected={selectedGroup ? 1 : 0}
+                  rowCount={tasks ? tasks.length : 0}
+                  numSelected={0}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                 />
 
                 <TableBody>
-                  {groups
-                    ? filteredGroups
+                  {tasks
+                    ? filteredtasks
                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                         .map((row) => {
-                          const { _id, name, manager, tasks, employees } = row;
+                          const { _id, name, email, groups, tasks, employees } = row;
 
                           return (
                             <TableRow
@@ -203,10 +209,10 @@ export default function Groups() {
                               aria-checked={false}
                             >
                               <TableCell padding="checkbox">
-                                <Checkbox
-                                  checked={selectedGroup === _id}
-                                  onChange={() => handleClick(_id)}
-                                />
+                                {/* <Checkbox
+                                  checked={isItemSelected}
+                                  onChange={(event) => handleClick(event, name)}
+                                /> */}
                               </TableCell>
                               <TableCell component="th" scope="row" padding="none">
                                 <Stack direction="row" alignItems="center" spacing={2}>
@@ -221,42 +227,9 @@ export default function Groups() {
                                   </Typography>
                                 </Stack>
                               </TableCell>
-                              <TableCell align="left">
-                                {manager ? (
-                                  manager.name
-                                ) : (
-                                  <Label variant="ghost" color="error">
-                                    No Manager
-                                  </Label>
-                                )}{' '}
-                              </TableCell>
-                              <TableCell align="left">
-                                {employees && employees.length > 0 ? (
-                                  employees.length
-                                ) : (
-                                  <Label variant="ghost" color="error">
-                                    0
-                                  </Label>
-                                )}
-                              </TableCell>
-                              <TableCell align="left">
-                                {tasks && tasks.length > 0 ? (
-                                  tasks.length
-                                ) : (
-                                  <Label variant="ghost" color="error">
-                                    0
-                                  </Label>
-                                )}
-                              </TableCell>
-                              {/* <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell>
-                          <TableCell align="left">
-                            <Label
-                              variant="ghost"
-                              color={(status === 'banned' && 'error') || 'success'}
-                            >
-                              {sentenceCase(status)}
-                            </Label>
-                          </TableCell> */}
+                              <TableCell align="left">{email}</TableCell>
+                              <TableCell align="left">{groups ? groups.length : 0}</TableCell>
+                              <TableCell align="left">{tasks ? tasks.length : 0}</TableCell>
                               {user && user.role === 'Manager' && (
                                 <TableCell align="right">
                                   <UserMoreMenu
@@ -264,6 +237,18 @@ export default function Groups() {
                                     toggleDelOpen={toggleDelOpen}
                                     toggleEditOpen={toggleEditOpen}
                                     setSelected={setSelected}
+                                    addToTable
+                                    toggleAddToOpen={() => {
+                                      setSelectedEmploy(_id);
+                                      toggleAddToOpen();
+                                    }}
+                                    addToSlug="Add to Group"
+                                    removeFromTable
+                                    handleRemoveFrom={() => {
+                                      setSelectedEmploy(_id);
+                                      toggleRemoveFromOpen();
+                                    }}
+                                    removeFromSlug="Remove from Group"
                                   />
                                 </TableCell>
                               )}
@@ -298,7 +283,7 @@ export default function Groups() {
                     </TableRow>
                   )}
                 </TableBody>
-                {groups && isUserNotFound && (
+                {tasks && isUserNotFound && (
                   <TableBody>
                     <TableRow>
                       <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
@@ -314,7 +299,7 @@ export default function Groups() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={groups ? groups.length : 0}
+            count={tasks ? tasks.length : 0}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
@@ -325,22 +310,38 @@ export default function Groups() {
       <ConfirmDeleteModal
         open={isDelOpen}
         toggleDialog={toggleDelOpen}
-        dialogTitle="Delete This Group ?"
+        dialogTitle="Delete This Employee ?"
         success={handleDelete}
       />
       <AddorEditModal
         isOpen={isCreateOpen}
         closeDialog={toggleCreateOpen}
-        createNew={addNewGroup}
-        role="Group"
+        createNew={addNewEmployee}
+        role="Employee"
       />
       <AddorEditModal
         isOpen={isEditOpen}
         closeDialog={toggleEditOpen}
-        updateUser={editGroup}
+        updateUser={editEmployee}
         editUser={selected}
         isEdit
-        role="Group"
+        role="Employee"
+      />
+      <AddToTableModal
+        isOpen={isAddToOpen}
+        closeDialog={toggleAddToOpen}
+        targetId={selectedEmploy}
+        addAction={addEmployeeToGroups}
+        data={groups}
+        slug="Add"
+      />
+      <AddToTableModal
+        isOpen={isRemoveFromOpen}
+        closeDialog={toggleRemoveFromOpen}
+        targetId={selectedEmploy}
+        addAction={removeEmployeeGroup}
+        data={groups}
+        slug="Remove"
       />
     </Page>
   );

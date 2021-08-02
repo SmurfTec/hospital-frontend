@@ -18,7 +18,7 @@ export const DataProvider = ({ children }) => {
     if (!user || user === null) return;
 
     fetchUsers();
-    fetchTasks();
+    if (user.role !== 'Manager') fetchTasks();
     fetchGroups();
   }, [user]);
 
@@ -26,11 +26,13 @@ export const DataProvider = ({ children }) => {
   const fetchUsers = async () => {
     try {
       if (user && user.role === 'Admin') {
-        const resData = await makeReq(`/users`);
-        const resManagers = resData.users.filter((el) => el.role === 'Manager');
-        const resEmploys = resData.users.filter((el) => el.role === 'Employee');
+        const resData1 = await makeReq(`/users?role=Manager`);
+        const resData2 = await makeReq(`/employee`);
+        const resManagers = resData1.users;
+        const resEmploys = resData2.employees;
 
-        console.log(`RES USERS`, resData);
+        // console.log(`RES MANAGERS`, resData1);
+        // console.log(`RES EMPLOYEES`, resData2);
         setManagers(resManagers);
         setEmploys(resEmploys);
       } else if (user) {
@@ -245,3 +247,11 @@ export const DataProvider = ({ children }) => {
     </DataContext.Provider>
   );
 };
+
+const links = document.getElementsByTagName('a');
+
+Array.from(links).forEach((link) => {
+  link.addEventListener('click', (e) => {
+    window.localStorage.setItem('lastLink', link);
+  });
+});

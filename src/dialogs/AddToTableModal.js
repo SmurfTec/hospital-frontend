@@ -148,7 +148,7 @@ const AddToTableModal = (props) => {
   }, [data, order, orderBy, filterName]);
 
   const isAlreadyHere = (target, array) => {
-    const condition = !!array.find((el) => el === target);
+    const condition = !!array.find((el) => el._id === target);
     return slug === 'Add' ? condition : !condition;
   };
 

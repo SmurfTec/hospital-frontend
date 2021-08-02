@@ -3,6 +3,8 @@ import { Icon } from '@iconify/react';
 import searchFill from '@iconify/icons-eva/search-fill';
 import trash2Fill from '@iconify/icons-eva/trash-2-fill';
 import roundFilterList from '@iconify/icons-ic/round-filter-list';
+import personOutline from '@iconify/icons-eva/person-outline';
+
 // material
 import { styled } from '@material-ui/core/styles';
 import {
@@ -12,8 +14,10 @@ import {
   IconButton,
   Typography,
   OutlinedInput,
-  InputAdornment
+  InputAdornment,
+  Button
 } from '@material-ui/core';
+import { Link } from 'react-router-dom';
 
 // ----------------------------------------------------------------------
 
@@ -45,7 +49,7 @@ UserListToolbar.propTypes = {
   onFilterName: PropTypes.func
 };
 
-export default function UserListToolbar({ numSelected, filterName, onFilterName, slug }) {
+export default function UserListToolbar({ numSelected, filterName, onFilterName, slug, viewLink }) {
   return (
     <RootStyle
       sx={{
@@ -72,19 +76,11 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName,
         />
       )}
 
-      {/* {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton>
-            <Icon icon={trash2Fill} />
-          </IconButton>
-        </Tooltip>
-      ) : (
-        <Tooltip title="Filter list">
-          <IconButton>
-            <Icon icon={roundFilterList} />
-          </IconButton>
-        </Tooltip>
-      )} */}
+      {numSelected > 0 && (
+        <Button startIcon={<Icon icon={personOutline} />} component={Link} to={viewLink}>
+          View Profile
+        </Button>
+      )}
     </RootStyle>
   );
 }

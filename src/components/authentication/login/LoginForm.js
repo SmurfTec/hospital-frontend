@@ -32,7 +32,7 @@ export default function LoginForm() {
     validationSchema: LoginSchema,
     onSubmit: async (values) => {
       try {
-        const res = await axios.post(`${API_BASE_URL}/users/login`, {
+        const res = await axios.post(`${API_BASE_URL}/auth/login`, {
           ...values
         });
         console.log(`RES LOGIN : \n`, res);

@@ -14,7 +14,12 @@ import NotFound from 'pages/Page404';
 import Employees from 'pages/Employees';
 import Managers from 'pages/Managers';
 import Groups from 'pages/Groups';
+import Tasks from 'pages/Tasks';
 import Logout from 'pages/Logout';
+import ViewManager from 'pages/ViewManager';
+import ViewEmployee from 'pages/ViewEmployee';
+import ViewGroup from 'pages/ViewGroup';
+import ViewTask from 'pages/ViewTask';
 
 // ----------------------------------------------------------------------
 
@@ -44,11 +49,28 @@ export default function Router() {
       children: [
         { path: '/', element: <Navigate to="/dashboard/app" replace /> },
         { path: 'app', element: <DashboardApp /> },
-        { path: 'managers', element: <Managers /> },
-        { path: 'employees', element: <Employees /> },
-        { path: 'groups', element: <Groups /> },
+        {
+          path: 'managers',
+          element: <Managers />
+        },
+        {
+          path: 'employees',
+          element: <Employees />
+        },
+        {
+          path: 'groups',
+          element: <Groups />
+        },
+        {
+          path: 'tasks',
+          element: <Tasks />
+        },
+        { path: 'managers/:id', element: <ViewManager /> },
+        { path: 'employees/:id', element: <ViewEmployee /> },
+        { path: 'groups/:id', element: <ViewGroup /> },
+        { path: 'tasks/:id', element: <ViewTask /> },
+
         { path: 'users', element: <User /> }
-        // { path: 'groups', element: <User /> }
       ]
     },
     { path: 'logout', element: <Logout /> },

@@ -37,16 +37,15 @@ const IconWrapperStyle = styled('div')(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-export default function AppManagers() {
-  const { managers } = useContext(DataContext);
+export default function AppManagers({ data }) {
   return (
     <RootStyle>
       <IconWrapperStyle>
         <Icon icon={androidFilled} width={24} height={24} />
       </IconWrapperStyle>
       <Typography variant="h3">
-        {managers ? (
-          fShortenNumber(managers.length)
+        {data ? (
+          fShortenNumber(data.length)
         ) : (
           <Loader
             type="Oval"

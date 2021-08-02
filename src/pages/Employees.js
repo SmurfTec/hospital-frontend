@@ -32,6 +32,8 @@ import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dash
 import { DataContext } from 'contexts/DataContext';
 import { AuthContext } from 'contexts/AuthContext';
 import AddorEditModal from 'dialogs/AddorEditModal';
+import { makeStyles } from '@material-ui/styles';
+import Label from 'components/Label';
 
 // ----------------------------------------------------------------------
 
@@ -39,7 +41,7 @@ const TABLE_HEAD = [
   { id: 'name', label: 'Name', alignRight: false },
   { id: 'email', label: 'Email', alignRight: false },
   { id: 'groups', label: 'Groups', alignRight: false },
-  { id: 'tasks', label: 'Tasks', alignRight: false },
+  { id: 'manager', label: 'Manager', alignRight: false },
   // { id: 'isVerified', label: 'Verified', alignRight: false },
   // { id: 'status', label: 'Status', alignRight: false },
   { id: '' }
@@ -76,7 +78,14 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function Employees() {
+const useStyles = makeStyles((theme) => ({
+  redTableCell: {
+    color: `${theme.palette.error.main} !important`
+  }
+}));
+
+const Employees = () => {
+  const classes = useStyles();
   const {
     employs,
     deleteEmployee,
@@ -152,7 +161,10 @@ export default function Employees() {
     setSelected(null);
   };
 
-  const handleAddMore = () => {};
+  const handleClick = (id) => {
+    if (selectedEmploy === id) setSelectedEmploy(undefined);
+    else setSelectedEmploy(id);
+  };
 
   return (
     <Page title="Employees | Task Manager App">
@@ -174,10 +186,11 @@ export default function Employees() {
 
         <Card>
           <UserListToolbar
-            numSelected={0}
+            numSelected={selectedEmploy ? 1 : 0}
             filterName={filterName}
             onFilterName={handleFilterByName}
             slug="Employees"
+            viewLink={`/dashboard/employees/${selectedEmploy}`}
           />
 
           <Scrollbar>
@@ -188,7 +201,7 @@ export default function Employees() {
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
                   rowCount={employs ? employs.length : 0}
-                  numSelected={0}
+                  numSelected={selectedEmploy ? 1 : 0}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                 />
@@ -198,7 +211,7 @@ export default function Employees() {
                     ? filteredEmploys
                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                         .map((row) => {
-                          const { _id, name, email, groups, tasks, employees } = row;
+                          const { _id, name, email, group, manager } = row;
 
                           return (
                             <TableRow
@@ -210,10 +223,10 @@ export default function Employees() {
                               aria-checked={false}
                             >
                               <TableCell padding="checkbox">
-                                {/* <Checkbox
-                                  checked={isItemSelected}
-                                  onChange={(event) => handleClick(event, name)}
-                                /> */}
+                                <Checkbox
+                                  checked={selectedEmploy === _id}
+                                  onChange={() => handleClick(_id)}
+                                />
                               </TableCell>
                               <TableCell component="th" scope="row" padding="none">
                                 <Stack direction="row" alignItems="center" spacing={2}>
@@ -229,8 +242,24 @@ export default function Employees() {
                                 </Stack>
                               </TableCell>
                               <TableCell align="left">{email}</TableCell>
-                              <TableCell align="left">{groups ? groups.length : 0}</TableCell>
-                              <TableCell align="left">{tasks ? tasks.length : 0}</TableCell>
+                              <TableCell align="left">
+                                {group ? (
+                                  group.name
+                                ) : (
+                                  <Label variant="ghost" color="error">
+                                    No Group
+                                  </Label>
+                                )}
+                              </TableCell>
+                              <TableCell align="left">
+                                {manager ? (
+                                  manager.name
+                                ) : (
+                                  <Label variant="ghost" color="error">
+                                    No Manager
+                                  </Label>
+                                )}
+                              </TableCell>
                               {user && user.role === 'Manager' && (
                                 <TableCell align="right">
                                   <UserMoreMenu
@@ -346,4 +375,6 @@ export default function Employees() {
       />
     </Page>
   );
-}
+};
+
+export default Employees;

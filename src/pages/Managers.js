@@ -34,6 +34,7 @@ import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dash
 import { DataContext } from 'contexts/DataContext';
 import AddorEditModal from 'dialogs/AddorEditModal';
 import { AuthContext } from 'contexts/AuthContext';
+import Label from 'components/Label';
 
 // ----------------------------------------------------------------------
 
@@ -89,6 +90,7 @@ export default function Managers() {
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState();
+  const [selectedManager, setSelectedManager] = useState();
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -142,6 +144,11 @@ export default function Managers() {
     setSelected(null);
   };
 
+  const handleClick = (id) => {
+    if (selectedManager === id) setSelectedManager(undefined);
+    else setSelectedManager(id);
+  };
+
   return (
     <Page title="Managers | Task Manager App">
       <Container>
@@ -162,12 +169,12 @@ export default function Managers() {
 
         <Card>
           <UserListToolbar
-            numSelected={0}
+            numSelected={selectedManager ? 1 : 0}
             filterName={filterName}
             onFilterName={handleFilterByName}
             slug="Managers"
+            viewLink={`/dashboard/managers/${selectedManager}`}
           />
-
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
               <Table>
@@ -176,7 +183,7 @@ export default function Managers() {
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
                   rowCount={managers ? managers.length : 0}
-                  numSelected={0}
+                  numSelected={selectedManager ? 1 : 0}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                 />
@@ -194,10 +201,15 @@ export default function Managers() {
                               key={_id}
                               tabIndex={-1}
                               role="checkbox"
-                              selected={false}
+                              selected={selectedManager === _id}
                               aria-checked={false}
                             >
-                              <TableCell padding="checkbox"></TableCell>
+                              <TableCell padding="checkbox">
+                                <Checkbox
+                                  checked={selectedManager === _id}
+                                  onChange={() => handleClick(_id)}
+                                />
+                              </TableCell>
                               <TableCell component="th" scope="row" padding="none">
                                 <Stack direction="row" alignItems="center" spacing={2}>
                                   <Avatar
@@ -212,9 +224,33 @@ export default function Managers() {
                                 </Stack>
                               </TableCell>
                               <TableCell align="left">{email}</TableCell>
-                              <TableCell align="left">{groups ? groups.length : 0}</TableCell>
-                              <TableCell align="left">{employees ? employees.length : 0}</TableCell>
-                              <TableCell align="left">{tasks ? tasks.length : 0}</TableCell>
+                              <TableCell align="left">
+                                {groups && groups.length > 0 ? (
+                                  groups.length
+                                ) : (
+                                  <Label variant="ghost" color="error">
+                                    0
+                                  </Label>
+                                )}
+                              </TableCell>
+                              <TableCell align="left">
+                                {employees && employees.length > 0 ? (
+                                  employees.length
+                                ) : (
+                                  <Label variant="ghost" color="error">
+                                    0
+                                  </Label>
+                                )}
+                              </TableCell>
+                              <TableCell align="left">
+                                {tasks && tasks.length > 0 ? (
+                                  tasks.length
+                                ) : (
+                                  <Label variant="ghost" color="error">
+                                    0
+                                  </Label>
+                                )}
+                              </TableCell>
 
                               {user && user.role === 'Admin' && (
                                 <TableCell align="right">

@@ -37,16 +37,15 @@ const IconWrapperStyle = styled('div')(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-export default function AppNewUsers() {
-  const { employs } = useContext(DataContext);
+export default function AppNewUsers({ data }) {
   return (
     <RootStyle>
       <IconWrapperStyle>
         <Icon icon={appleFilled} width={24} height={24} />
       </IconWrapperStyle>
       <Typography variant="h3">
-        {employs ? (
-          fShortenNumber(employs.length)
+        {data ? (
+          fShortenNumber(data.length)
         ) : (
           <Loader
             type="Oval"

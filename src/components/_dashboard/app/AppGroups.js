@@ -37,16 +37,15 @@ const IconWrapperStyle = styled('div')(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-export default function AppBugReports() {
-  const { groups } = useContext(DataContext);
+export default function AppBugReports({ data }) {
   return (
     <RootStyle>
       <IconWrapperStyle>
         <Icon icon={bugFilled} width={24} height={24} />
       </IconWrapperStyle>
       <Typography variant="h3">
-        {groups ? (
-          fShortenNumber(groups.length)
+        {data ? (
+          fShortenNumber(data.length)
         ) : (
           <Loader
             type="Oval"

@@ -1,7 +1,6 @@
 // material
 import { Box, Grid, Container, Typography } from '@material-ui/core';
 import { AuthContext } from 'contexts/AuthContext';
-import { DataContext } from 'contexts/DataContext';
 import { useContext } from 'react';
 // components
 import Page from '../components/Page';
@@ -24,7 +23,6 @@ import {
 
 export default function DashboardApp() {
   const { user } = useContext(AuthContext);
-  const { employs, managers, tasks, groups } = useContext(DataContext);
   return (
     <Page title="Dashboard | Task Manager App">
       <Container maxWidth="xl">
@@ -34,19 +32,17 @@ export default function DashboardApp() {
         <Grid container spacing={3} style={{ justifyContent: 'center' }}>
           {user && user.role === 'Admin' && (
             <Grid item xs={12} sm={6} md={3}>
-              <AppManagers data={managers} />
+              <AppManagers />
             </Grid>
           )}
           <Grid item xs={12} sm={6} md={3}>
-            <AppEmploys data={employs} />
+            <AppEmploys />
           </Grid>
-          {user && user.role !== 'Manager' && (
-            <Grid item xs={12} sm={6} md={3}>
-              <AppTasks data={tasks} />
-            </Grid>
-          )}
           <Grid item xs={12} sm={6} md={3}>
-            <AppGroups data={groups} />
+            <AppTasks />
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <AppGroups />
           </Grid>
 
           {/* <Grid item xs={12} md={6} lg={8}>
