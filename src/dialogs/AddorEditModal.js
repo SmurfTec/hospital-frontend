@@ -61,6 +61,7 @@ const AddorEditModal = (props) => {
       if (editUser.deadLine) setDeadLine(new Date(editUser.deadLine));
     } else {
       setState(initialState);
+      setStages([initialStageState]);
     }
   }, [editUser, isEdit]);
 
@@ -110,6 +111,21 @@ const AddorEditModal = (props) => {
     setStages((st) => st.filter((el) => el._id !== id));
   };
 
+  const filterStages = () => {
+    console.clear();
+    console.log(`stages`, stages);
+    let newStages = [];
+    newStages = stages;
+    console.log(`newStages`, newStages);
+
+    newStages.forEach((el) => {
+      if (el._id) delete el._id;
+    });
+    console.log(`newStages`, newStages);
+
+    return newStages;
+  };
+
   const handleSubmit = (e) => {
     if (role === 'Task') {
       if (
@@ -132,7 +148,14 @@ const AddorEditModal = (props) => {
           stages,
           deadLine
         });
-      else createNew({ name: state.name, description: state.description, stages, deadLine });
+      else
+        createNew({
+          name: state.name,
+          description: state.description,
+          stages: filterStages(),
+          // stages,
+          deadLine
+        });
     } else if (isEdit) {
       updateUser(editUser._id, { name: state.name, email: state.email });
     } else {
