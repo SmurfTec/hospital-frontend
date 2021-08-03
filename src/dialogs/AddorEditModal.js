@@ -25,18 +25,18 @@ const useStyles = makeStyles((props) => ({
   cancelBtn: {}
 }));
 
+const initialStageState = {
+  name: '',
+  description: '',
+  _id: uuid()
+};
+
 const AddorEditModal = (props) => {
+  const [stages, setStages] = useState([initialStageState]);
+
   const { isOpen, closeDialog, createNew, role, isEdit, editUser, updateUser } = props;
   const [deadLine, setDeadLine] = useState(new Date());
   const classes = useStyles(props);
-
-  const initialStageState = {
-    name: '',
-    description: '',
-    _id: uuid()
-  };
-
-  const [stages, setStages] = useState([initialStageState]);
 
   const initialState = {
     name: '',
@@ -145,7 +145,7 @@ const AddorEditModal = (props) => {
         updateUser(editUser._id, {
           name: state.name,
           description: state.description,
-          stages,
+          stages: filterStages(),
           deadLine
         });
       else

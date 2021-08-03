@@ -60,10 +60,17 @@ export const DataProvider = ({ children }) => {
 
   const fetchGroups = async () => {
     try {
-      const resData = await makeReq(`/group`);
-      console.log(`RES GROUPS`, resData);
+      if (user && user.role === 'Employee') {
+        const resData = await makeReq(`/group/mygroup`);
+        console.log(`RES GROUPS`, resData);
 
-      setGroups(resData.groups);
+        setGroups([resData.group]);
+      } else {
+        const resData = await makeReq(`/group`);
+        console.log(`RES GROUPS`, resData);
+
+        setGroups(resData.groups);
+      }
     } catch (err) {
       handleCatch(err);
     }
