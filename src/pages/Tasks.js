@@ -311,6 +311,16 @@ const Tasks = () => {
                                   />
                                 </TableCell>
                               )}
+                              {user && user.role === 'Employee' && (
+                                <TableCell align="right">
+                                  <UserMoreMenu
+                                    currentUser={row}
+                                    setSelected={setSelected}
+                                    toggleEditOpen={toggleEditOpen}
+                                    noDelete
+                                  />
+                                </TableCell>
+                              )}
                             </TableRow>
                           );
                         })
@@ -385,6 +395,7 @@ const Tasks = () => {
         editUser={selected}
         isEdit
         role="Task"
+        viewOnly={user.role === 'Employee'}
       />
       <AddToTableModal
         isOpen={isAddToOpen}

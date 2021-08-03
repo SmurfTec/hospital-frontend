@@ -12,6 +12,7 @@ import { v4 as uuid } from 'uuid';
 import { makeStyles } from '@material-ui/styles';
 import { Divider } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
+import DoneIcon from '@material-ui/icons/Done';
 import AddIcon from '@material-ui/icons/AddCircleOutline';
 import { toast } from 'react-toastify';
 
@@ -34,7 +35,7 @@ const initialStageState = {
 const AddorEditModal = (props) => {
   const [stages, setStages] = useState([initialStageState]);
 
-  const { isOpen, closeDialog, createNew, role, isEdit, editUser, updateUser } = props;
+  const { isOpen, closeDialog, createNew, role, isEdit, editUser, updateUser, viewOnly } = props;
   const [deadLine, setDeadLine] = useState(new Date());
   const classes = useStyles(props);
 
@@ -191,6 +192,7 @@ const AddorEditModal = (props) => {
             value={state.name}
             name="name"
             onChange={handleChange}
+            disabled={viewOnly}
           />
 
           {role === 'Manager' ||
@@ -218,6 +220,7 @@ const AddorEditModal = (props) => {
                 fullWidth
                 value={state.description}
                 onChange={handleChange}
+                disabled={viewOnly}
               />
               <Box
                 display="flex"
@@ -237,7 +240,12 @@ const AddorEditModal = (props) => {
                 >
                   Deadline
                 </Typography>
-                <DateTimePicker value={deadLine} onChange={setDeadLine} disableClock />
+                <DateTimePicker
+                  disabled={viewOnly}
+                  value={deadLine}
+                  onChange={setDeadLine}
+                  disableClock
+                />
               </Box>
               <Divider style={{ marginBlock: 20 }} />
               <Typography
@@ -250,7 +258,7 @@ const AddorEditModal = (props) => {
               >
                 Stages
               </Typography>
-              <Button startIcon={<AddIcon />} onClick={addNewStage}>
+              <Button startIcon={<AddIcon />} onClick={addNewStage} disabled={viewOnly}>
                 Add Stage
               </Button>
               <Box>
@@ -270,11 +278,24 @@ const AddorEditModal = (props) => {
                       }}
                     >
                       Stage {idx + 1}
-                      {idx > 0 && (
-                        <CloseIcon
-                          onClick={() => deleteStage(stage._id)}
-                          style={{ cursor: 'pointer' }}
-                        />
+                      {viewOnly && (
+                        <>
+                          {stage.status === 'inProgress' ? (
+                            <Button startIcon={<DoneIcon />}>Complete Stage</Button>
+                          ) : (
+                            <Typography color="success">{stage.status}</Typography>
+                          )}
+                        </>
+                      )}
+                      {idx > 0 && !viewOnly && (
+                        <Button
+                          startIcon={
+                            <CloseIcon
+                              onClick={() => deleteStage(stage._id)}
+                              style={{ cursor: 'pointer' }}
+                            />
+                          }
+                        ></Button>
                       )}
                     </h4>
                     <TextField
@@ -286,6 +307,7 @@ const AddorEditModal = (props) => {
                       fullWidth
                       value={stage.name}
                       onChange={(e) => handleStageChange(e, stage)}
+                      disabled={viewOnly}
                     />
                     <TextField
                       margin="dense"
@@ -296,6 +318,7 @@ const AddorEditModal = (props) => {
                       fullWidth
                       value={stage.description}
                       onChange={(e) => handleStageChange(e, stage)}
+                      disabled={viewOnly}
                     />
                   </Box>
                 ))}
