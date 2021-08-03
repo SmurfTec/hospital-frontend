@@ -9,16 +9,16 @@ import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import DateTimePicker from 'react-datetime-picker';
 import { v4 as uuid } from 'uuid';
-import { toast } from 'react-toastify';
 import { makeStyles } from '@material-ui/styles';
 import { Divider } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import AddIcon from '@material-ui/icons/AddCircleOutline';
+import { toast } from 'react-toastify';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((props) => ({
   Dialog: {
     '& .MuiDialog-paper': {
-      minHeight: 450
+      minHeight: props.role === 'Task' && 450
     }
   },
   addBtn: {},
@@ -28,12 +28,12 @@ const useStyles = makeStyles((theme) => ({
 const AddorEditModal = (props) => {
   const { isOpen, closeDialog, createNew, role, isEdit, editUser, updateUser } = props;
   const [deadLine, setDeadLine] = useState(new Date());
-  const classes = useStyles();
+  const classes = useStyles(props);
 
   const initialStageState = {
     name: '',
     description: '',
-    id: uuid()
+    _id: uuid()
   };
 
   const [stages, setStages] = useState([initialStageState]);
@@ -69,7 +69,7 @@ const AddorEditModal = (props) => {
   };
 
   const handleStageChange = (e, stage) => {
-    let current = stages.find((el) => el.id === stage.id);
+    let current = stages.find((el) => JSON.stringify(el._id) === JSON.stringify(stage._id));
     if (!current) return;
 
     current = {
@@ -77,20 +77,54 @@ const AddorEditModal = (props) => {
       [e.target.name]: e.target.value
     };
 
-    setStages((st) => st.map((el) => (el.id === stage.id ? current : el)));
+    setStages((st) =>
+      st.map((el) => (JSON.stringify(el._id) === JSON.stringify(stage._id) ? current : el))
+    );
+  };
+
+  const checkStages = () => {
+    let condition = true;
+    stages.forEach((stage) => {
+      if (
+        !stage.name ||
+        !stage.description ||
+        !stage.name.length > 0 ||
+        !stage.description.length > 0
+      )
+        condition = false;
+    });
+
+    return condition;
   };
 
   const addNewStage = () => {
+    if (checkStages() === false) {
+      toast.error('Plz fill previous stages before creating new stage');
+      return;
+    }
     const newStage = initialStageState;
     setStages((st) => [...st, newStage]);
   };
 
   const deleteStage = (id) => {
-    setStages((st) => st.filter((el) => el.id !== id));
+    setStages((st) => st.filter((el) => el._id !== id));
   };
 
   const handleSubmit = (e) => {
     if (role === 'Task') {
+      if (
+        !state.name ||
+        !state.name.length > 0 ||
+        !state.description ||
+        !state.description.length > 0
+      ) {
+        toast.error('Plz fill in all fields before creating task');
+        return;
+      }
+      if (checkStages() === false) {
+        toast.error('Plz fill in all stages before creating task');
+        return;
+      }
       if (isEdit)
         updateUser(editUser._id, {
           name: state.name,
@@ -199,7 +233,7 @@ const AddorEditModal = (props) => {
               <Box>
                 {stages.map((stage, idx) => (
                   <Box
-                    key={stage.id}
+                    key={stage._id}
                     style={{
                       border: '1px solid #ccc',
                       padding: '15px 20px'
@@ -215,7 +249,7 @@ const AddorEditModal = (props) => {
                       Stage {idx + 1}
                       {idx > 0 && (
                         <CloseIcon
-                          onClick={() => deleteStage(stage.id)}
+                          onClick={() => deleteStage(stage._id)}
                           style={{ cursor: 'pointer' }}
                         />
                       )}

@@ -1,5 +1,3 @@
-import { UserListHead } from 'components/_dashboard/user';
-import { constant, keyBy } from 'lodash';
 import React, { useState, useEffect, useContext } from 'react';
 import { toast } from 'react-toastify';
 import { handleCatch, makeReq } from 'utils/constants';

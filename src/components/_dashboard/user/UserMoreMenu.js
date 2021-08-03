@@ -21,7 +21,9 @@ export default function UserMoreMenu({
   addToSlug,
   removeFromTable,
   handleRemoveFrom,
-  removeFromSlug
+  removeFromSlug,
+  noDelete,
+  noEdit
 }) {
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -57,19 +59,22 @@ export default function UserMoreMenu({
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <MenuItem sx={{ color: 'text.secondary' }} onClick={handleDelete}>
-          <ListItemIcon>
-            <Icon icon={trash2Outline} width={24} height={24} />
-          </ListItemIcon>
-          <ListItemText primary="Delete" primaryTypographyProps={{ variant: 'body2' }} />
-        </MenuItem>
-
-        <MenuItem sx={{ color: 'text.secondary' }} onClick={handleEdit}>
-          <ListItemIcon>
-            <Icon icon={editFill} width={24} height={24} />
-          </ListItemIcon>
-          <ListItemText primary="Edit" primaryTypographyProps={{ variant: 'body2' }} />
-        </MenuItem>
+        {!noDelete && (
+          <MenuItem sx={{ color: 'text.secondary' }} onClick={handleDelete}>
+            <ListItemIcon>
+              <Icon icon={trash2Outline} width={24} height={24} />
+            </ListItemIcon>
+            <ListItemText primary="Delete" primaryTypographyProps={{ variant: 'body2' }} />
+          </MenuItem>
+        )}
+        {!noEdit && (
+          <MenuItem sx={{ color: 'text.secondary' }} onClick={handleEdit}>
+            <ListItemIcon>
+              <Icon icon={editFill} width={24} height={24} />
+            </ListItemIcon>
+            <ListItemText primary="Edit" primaryTypographyProps={{ variant: 'body2' }} />
+          </MenuItem>
+        )}
         {addToTable && (
           <MenuItem sx={{ color: 'text.secondary' }} onClick={handleAddTo}>
             <ListItemIcon>

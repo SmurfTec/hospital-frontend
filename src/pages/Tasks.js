@@ -296,16 +296,18 @@ const Tasks = () => {
                                       toggleAddToOpen2();
                                     }}
                                     addToSlug="Assign to Group"
-                                    removeFromTable={!group}
+                                    removeFromTable={group}
                                     handleRemoveFrom={() => {
                                       console.clear();
                                       console.log(`row`, row);
                                       console.log(`_id`, _id);
                                       console.log(`group._id`, group._id);
-                                      const groupId =group ? group._id : group;
+                                      const groupId = group && group._id ? group._id : group;
                                       unAssignTaskFromGroup(_id, groupId);
                                     }}
                                     removeFromSlug="UnAssign"
+                                    noDelete
+                                    noEdit
                                   />
                                 </TableCell>
                               )}

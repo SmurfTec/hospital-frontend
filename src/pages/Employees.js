@@ -267,13 +267,13 @@ const Employees = () => {
                                     toggleDelOpen={toggleDelOpen}
                                     toggleEditOpen={toggleEditOpen}
                                     setSelected={setSelected}
-                                    addToTable
+                                    addToTable={!group}
                                     toggleAddToOpen={() => {
                                       setSelectedEmploy(_id);
                                       toggleAddToOpen();
                                     }}
                                     addToSlug="Add to Group"
-                                    removeFromTable
+                                    removeFromTable={!!group}
                                     handleRemoveFrom={() => {
                                       setSelectedEmploy(_id);
                                       toggleRemoveFromOpen();
