@@ -129,6 +129,7 @@ export const DataProvider = ({ children }) => {
         `Employee "${resData.employee.name}" Added to group "${resData.group.name}" Successfully`
       );
       setGroups((st) => st.map((el) => (el._id === groupId ? resData.group : el)));
+      setEmploys((st) => st.map((el) => (el._id === employeeId ? resData.employee : el)));
     } catch (err) {
       handleCatch(err);
     }
@@ -143,6 +144,7 @@ export const DataProvider = ({ children }) => {
       // );
       toast.success(`Employee removed from group "${resData.group.name}" Successfully`);
       setGroups((st) => st.map((el) => (el._id === groupId ? resData.group : el)));
+      setEmploys((st) => st.map((el) => (el._id === employeeId ? resData.employee : el)));
     } catch (err) {
       handleCatch(err);
     }

@@ -331,26 +331,31 @@ const AddorEditModal = (props) => {
           {(!isEdit && role === 'manager') ||
             (role === 'Employee' && (
               <>
-                <TextField
-                  margin="dense"
-                  id="password"
-                  name="password"
-                  label="Password"
-                  type="password"
-                  fullWidth
-                  value={state.password}
-                  onChange={handleChange}
-                />
-                <TextField
-                  margin="dense"
-                  id="passwordConfirm"
-                  name="passwordConfirm"
-                  label="Password Confirm"
-                  type="password"
-                  fullWidth
-                  value={state.passwordConfirm}
-                  onChange={handleChange}
-                />
+                {!isEdit && (
+                  <>
+                    {' '}
+                    <TextField
+                      margin="dense"
+                      id="password"
+                      name="password"
+                      label="Password"
+                      type="password"
+                      fullWidth
+                      value={state.password}
+                      onChange={handleChange}
+                    />
+                    <TextField
+                      margin="dense"
+                      id="passwordConfirm"
+                      name="passwordConfirm"
+                      label="Password Confirm"
+                      type="password"
+                      fullWidth
+                      value={state.passwordConfirm}
+                      onChange={handleChange}
+                    />
+                  </>
+                )}
               </>
             ))}
           {role === 'Manager' && (
