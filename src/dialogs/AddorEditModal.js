@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
@@ -15,6 +15,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import DoneIcon from '@material-ui/icons/Done';
 import AddIcon from '@material-ui/icons/AddCircleOutline';
 import { toast } from 'react-toastify';
+import { AuthContext } from 'contexts/AuthContext';
 
 const useStyles = makeStyles((props) => ({
   Dialog: {
@@ -34,6 +35,7 @@ const initialStageState = {
 
 const AddorEditModal = (props) => {
   const [stages, setStages] = useState([initialStageState]);
+  const { user } = useContext(AuthContext);
 
   const { isOpen, closeDialog, createNew, role, isEdit, editUser, updateUser, viewOnly } = props;
   const [deadLine, setDeadLine] = useState(new Date());
@@ -351,6 +353,44 @@ const AddorEditModal = (props) => {
                 />
               </>
             ))}
+          {role === 'Manager' && (
+            <>
+              <TextField
+                margin="dense"
+                id="email"
+                name="email"
+                label="Email"
+                type="email"
+                fullWidth
+                value={state.email}
+                onChange={handleChange}
+              />
+              {!isEdit && (
+                <>
+                  <TextField
+                    margin="dense"
+                    id="password"
+                    name="password"
+                    label="Password"
+                    type="password"
+                    fullWidth
+                    value={state.password}
+                    onChange={handleChange}
+                  />
+                  <TextField
+                    margin="dense"
+                    id="passwordConfirm"
+                    name="passwordConfirm"
+                    label="Password Confirm"
+                    type="password"
+                    fullWidth
+                    value={state.passwordConfirm}
+                    onChange={handleChange}
+                  />
+                </>
+              )}
+            </>
+          )}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleSubmit} variant="contained" color="primary">
