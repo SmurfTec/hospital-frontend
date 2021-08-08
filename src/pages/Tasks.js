@@ -295,6 +295,8 @@ const Tasks = () => {
                                       setSelectedTask(_id);
                                       toggleAddToOpen2();
                                     }}
+                                    viewTask
+                                    viewLink={`/dashboard/tasks/${_id}`}
                                     addToSlug="Assign to Group"
                                     removeFromTable={group}
                                     handleRemoveFrom={() => {
@@ -318,6 +320,8 @@ const Tasks = () => {
                                     setSelected={setSelected}
                                     toggleEditOpen={toggleEditOpen}
                                     noDelete
+                                    viewTask
+                                    viewLink={`/dashboard/tasks/${_id}`}
                                   />
                                 </TableCell>
                               )}

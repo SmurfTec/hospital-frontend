@@ -1,13 +1,14 @@
 import { Icon } from '@iconify/react';
 import { useRef, useState } from 'react';
 import editFill from '@iconify/icons-eva/edit-fill';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 import moreVerticalFill from '@iconify/icons-eva/more-vertical-fill';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import minusFill from '@iconify/icons-eva/minus-fill';
+import AssignmentIcon from '@material-ui/icons/Assignment';
 // material
-import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText } from '@material-ui/core';
+import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText, Button } from '@material-ui/core';
 
 // ----------------------------------------------------------------------
 
@@ -23,8 +24,11 @@ export default function UserMoreMenu({
   handleRemoveFrom,
   removeFromSlug,
   noDelete,
-  noEdit
+  noEdit,
+  viewTask,
+  viewLink
 }) {
+  const navigate = useNavigate();
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -95,6 +99,17 @@ export default function UserMoreMenu({
               <Icon icon={minusFill} width={24} height={24} />
             </ListItemIcon>
             <ListItemText primary={removeFromSlug} primaryTypographyProps={{ variant: 'body2' }} />
+          </MenuItem>
+        )}
+        {viewTask && (
+          <MenuItem
+            sx={{ color: 'text.secondary' }}
+            onClick={() => navigate(viewLink, { replace: true })}
+          >
+            <ListItemIcon>
+              <AssignmentIcon />
+            </ListItemIcon>
+            <ListItemText primary="View Task" primaryTypographyProps={{ variant: 'body2' }} />
           </MenuItem>
         )}
       </Menu>
