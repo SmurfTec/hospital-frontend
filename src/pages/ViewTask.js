@@ -1,5 +1,6 @@
 // material
 import { Box, Grid, Container, Typography } from '@material-ui/core';
+import Rating from '@material-ui/lab/Rating';
 // import { AuthContext } from 'contexts/AuthContext';
 import { useContext, useEffect, useState } from 'react';
 
@@ -125,6 +126,7 @@ const Styles = {
 const ViewTask = ({ classes }) => {
   // const { user } = useContext(AuthContext);s
   const [task, setTask] = useState();
+  const [taskReviews, setTaskReviews] = useState();
 
   const { id } = useParams();
 
@@ -134,6 +136,12 @@ const ViewTask = ({ classes }) => {
       console.clear();
       console.log(`resData`, resData);
       setTask(resData.task);
+    })();
+    (async () => {
+      const resData = await makeReq(`/task/getTaskReviews/${id}`);
+      console.clear();
+      console.log(`resData`, resData);
+      setTaskReviews(resData.reviews);
     })();
   }, [id]);
 
@@ -258,11 +266,62 @@ const ViewTask = ({ classes }) => {
             </Typography>
 
             {task && task.stages ? (
-              <StagesAccordian stages={task.stages} />
+              <StagesAccordian stages={task.stages} taskId={id} />
             ) : (
               <Skeleton height={200} />
             )}
           </Grid>
+        </Grid>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography paddingBottom={5} variant="h4" textAlign="center">
+              Task Reviews
+            </Typography>
+          </Grid>
+          {taskReviews ? (
+            taskReviews.map((review, idx) => (
+              <Grid item xs={12} sm={6} key={idx}>
+                <Typography variant="h5">{review._id.name}</Typography>
+                <Box component="fieldset" mb={3} borderColor="transparent">
+                  <Typography component="legend">Average Rating</Typography>
+                  <Rating
+                    name="half-rating-read"
+                    defaultValue={review.avgRating}
+                    precision={0.5}
+                    readOnly
+                  />
+                </Box>
+                <Box component="fieldset" mb={3} borderColor="transparent">
+                  <Typography component="legend">Minimum Rating</Typography>
+                  <Rating
+                    name="half-rating-read"
+                    defaultValue={review.minRating}
+                    precision={0.5}
+                    readOnly
+                  />
+                </Box>
+                <Box component="fieldset" mb={3} borderColor="transparent">
+                  <Typography component="legend">Maximum Rating</Typography>
+                  <Rating
+                    name="half-rating-read"
+                    defaultValue={review.maxRating}
+                    precision={0.5}
+                    readOnly
+                  />
+                </Box>
+                <Box component="fieldset" mb={3} borderColor="transparent">
+                  <Typography component="legend">Total Ratings</Typography>
+                  <Typography component="legend">{review.totalRating}</Typography>
+                </Box>
+                <Box component="fieldset" mb={3} borderColor="transparent">
+                  <Typography component="legend">Total Reviews</Typography>
+                  <Typography component="legend">{review.totalReviews}</Typography>
+                </Box>
+              </Grid>
+            ))
+          ) : (
+            <Skeleton />
+          )}
         </Grid>
       </Container>
     </Page>

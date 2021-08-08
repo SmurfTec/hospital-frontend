@@ -263,6 +263,8 @@ const Tasks = () => {
                                 <TableCell align="right">
                                   <UserMoreMenu
                                     currentUser={row}
+                                    viewTask
+                                    viewLink={`/dashboard/tasks/${_id}`}
                                     toggleDelOpen={toggleDelOpen}
                                     toggleEditOpen={toggleEditOpen}
                                     setSelected={setSelected}
@@ -272,7 +274,7 @@ const Tasks = () => {
                                       toggleAddToOpen();
                                     }}
                                     addToSlug="Assign to Manager"
-                                    removeFromTable={!!manager}
+                                    removeFromTable={!!manager && status !== 'complete'}
                                     handleRemoveFrom={() => {
                                       console.clear();
                                       console.log(`row`, row);
@@ -298,7 +300,7 @@ const Tasks = () => {
                                     viewTask
                                     viewLink={`/dashboard/tasks/${_id}`}
                                     addToSlug="Assign to Group"
-                                    removeFromTable={group}
+                                    removeFromTable={group && status !== 'complete'}
                                     handleRemoveFrom={() => {
                                       console.clear();
                                       console.log(`row`, row);
@@ -320,6 +322,7 @@ const Tasks = () => {
                                     setSelected={setSelected}
                                     toggleEditOpen={toggleEditOpen}
                                     noDelete
+                                    noEdit
                                     viewTask
                                     viewLink={`/dashboard/tasks/${_id}`}
                                   />

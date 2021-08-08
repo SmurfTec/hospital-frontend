@@ -29,12 +29,11 @@ const useStyles = makeStyles((props) => ({
 
 const initialStageState = {
   name: '',
-  description: '',
-  _id: uuid()
+  description: ''
 };
 
 const AddorEditModal = (props) => {
-  const [stages, setStages] = useState([initialStageState]);
+  const [stages, setStages] = useState([{ ...initialStageState, _id: uuid() }]);
   const { user } = useContext(AuthContext);
 
   const { isOpen, closeDialog, createNew, role, isEdit, editUser, updateUser, viewOnly } = props;
@@ -106,7 +105,7 @@ const AddorEditModal = (props) => {
       toast.error('Plz fill previous stages before creating new stage');
       return;
     }
-    const newStage = initialStageState;
+    const newStage = { ...initialStageState, _id: uuid() };
     setStages((st) => [...st, newStage]);
   };
 

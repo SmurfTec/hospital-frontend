@@ -266,6 +266,17 @@ export const DataProvider = ({ children }) => {
     }
   };
 
+  const completeTaskStage = async (taskId, stageId) => {
+    try {
+      const resData = await makeReq(`/task/manageTask/${taskId}`, { body: { stageId } }, 'PATCH');
+      console.log(`resData`, resData);
+      toast.success(`Task ${resData.task.name} Updated Successfully`);
+      window.location.reload();
+    } catch (err) {
+      handleCatch(err);
+    }
+  };
+
   // ! -Delete Operations
 
   const deleteManager = async (id) => {
@@ -340,18 +351,11 @@ export const DataProvider = ({ children }) => {
         addNewTask,
         updateTask,
         assignTaskToGroup,
-        unAssignTaskFromGroup
+        unAssignTaskFromGroup,
+        completeTaskStage
       }}
     >
       {children}
     </DataContext.Provider>
   );
 };
-
-const links = document.getElementsByTagName('a');
-
-Array.from(links).forEach((link) => {
-  link.addEventListener('click', (e) => {
-    window.localStorage.setItem('lastLink', link);
-  });
-});

@@ -87,7 +87,7 @@ export default function LoginForm() {
 
         <Stack direction="row" alignItems="center" justifyContent="flex-end" sx={{ my: 2 }}>
           <Link component={RouterLink} variant="subtitle2" to="#">
-            Forgot password?
+            {/* Forgot password? */}
           </Link>
         </Stack>
 
