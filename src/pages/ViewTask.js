@@ -1,7 +1,7 @@
 // material
 import { Box, Grid, Container, Typography, Button } from '@material-ui/core';
 import Rating from '@material-ui/lab/Rating';
-// import { AuthContext } from 'contexts/AuthContext';
+import { AuthContext } from 'contexts/AuthContext';
 import { useContext, useEffect, useState } from 'react';
 import RateReviewIcon from '@material-ui/icons/RateReview';
 import StagesAccordian from './StagesAccordian';
@@ -125,7 +125,7 @@ const Styles = {
 };
 
 const ViewTask = ({ classes }) => {
-  // const { user } = useContext(AuthContext);s
+  const { user } = useContext(AuthContext);
   const { addNewReview } = useContext(DataContext);
   const [task, setTask] = useState();
   const [taskReviews, setTaskReviews] = useState();
@@ -272,19 +272,22 @@ const ViewTask = ({ classes }) => {
                       <Grid item xs={12} sm={6} key={employee._id}>
                         <Typography variant="h6">{employee.name}</Typography>
                         <Typography variant="p">{employee.email}</Typography>
-                        {taskReviews && !taskReviews.find((item) => item._id._id === employee._id) && (
-                          <Button
-                            variant="outlined"
-                            color="primary"
-                            style={{
-                              marginTop: 10
-                            }}
-                            startIcon={<RateReviewIcon color="primary" />}
-                            onClick={() => handleReview(employee._id)}
-                          >
-                            Review
-                          </Button>
-                        )}
+                        {user &&
+                          user.role !== 'Admin' &&
+                          taskReviews &&
+                          !taskReviews.find((item) => item._id._id === employee._id) && (
+                            <Button
+                              variant="outlined"
+                              color="primary"
+                              style={{
+                                marginTop: 10
+                              }}
+                              startIcon={<RateReviewIcon color="primary" />}
+                              onClick={() => handleReview(employee._id)}
+                            >
+                              Review
+                            </Button>
+                          )}
                       </Grid>
                     ))}
                 </Grid>
