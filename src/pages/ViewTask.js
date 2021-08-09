@@ -1,9 +1,9 @@
 // material
-import { Box, Grid, Container, Typography } from '@material-ui/core';
+import { Box, Grid, Container, Typography, Button } from '@material-ui/core';
 import Rating from '@material-ui/lab/Rating';
 // import { AuthContext } from 'contexts/AuthContext';
 import { useContext, useEffect, useState } from 'react';
-
+import RateReviewIcon from '@material-ui/icons/RateReview';
 import StagesAccordian from './StagesAccordian';
 // components
 import Page from '../components/Page';
@@ -26,7 +26,8 @@ import { makeReq } from 'utils/constants';
 import { useParams } from 'react-router-dom';
 import Label from 'components/Label';
 import { withStyles } from '@material-ui/styles';
-
+import AddReviewModal from 'dialogs/AddReviewModal';
+import { DataContext } from 'contexts/DataContext';
 // ----------------------------------------------------------------------
 
 const Styles = {
@@ -125,8 +126,15 @@ const Styles = {
 
 const ViewTask = ({ classes }) => {
   // const { user } = useContext(AuthContext);s
+  const { addNewReview } = useContext(DataContext);
   const [task, setTask] = useState();
   const [taskReviews, setTaskReviews] = useState();
+  const [isAddReviewOpen, setIsAddReviewOpen] = useState(false);
+  const [currentEmployeeId, setCurrentEmployeeId] = useState();
+
+  const toggleAddReviewOpen = () => {
+    setIsAddReviewOpen(!isAddReviewOpen);
+  };
 
   const { id } = useParams();
 
@@ -144,6 +152,16 @@ const ViewTask = ({ classes }) => {
       setTaskReviews(resData.reviews);
     })();
   }, [id]);
+
+  const handleReview = (id) => {
+    setCurrentEmployeeId(id);
+    toggleAddReviewOpen();
+  };
+  const handleAddReview = (review, rating) => {
+    addNewReview(currentEmployeeId, id, { review, rating });
+    setCurrentEmployeeId(undefined);
+    toggleAddReviewOpen();
+  };
 
   return (
     <Page title="Dashboard | Task Manager App">
@@ -222,38 +240,6 @@ const ViewTask = ({ classes }) => {
               </Typography>
             </Box>
           </Grid>
-          {/* </Grid> */}
-          {/* <Grid item xs={12} md={6} lg={8}>
-            <AppWebsiteVisits />
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={4}>
-            <AppCurrentTasks />
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={8}>
-            <AppConversionRates />
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={4}>
-            <AppCurrentSubject />
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={8}>
-            <AppNewsUpdate />
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={4}>
-            <AppOrderTimeline />
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={4}>
-            <AppTrafficBySite />
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={8}>
-            <AppTodos />
-          </Grid> */}
 
           <Grid
             xs={12}
@@ -272,58 +258,149 @@ const ViewTask = ({ classes }) => {
             )}
           </Grid>
         </Grid>
-        <Grid container>
-          <Grid item xs={12}>
-            <Typography paddingBottom={5} variant="h4" textAlign="center">
-              Task Reviews
-            </Typography>
-          </Grid>
-          {taskReviews ? (
-            taskReviews.map((review, idx) => (
-              <Grid item xs={12} sm={6} key={idx}>
-                <Typography variant="h5">{review._id.name}</Typography>
-                <Box component="fieldset" mb={3} borderColor="transparent">
-                  <Typography component="legend">Average Rating</Typography>
-                  <Rating
-                    name="half-rating-read"
-                    defaultValue={review.avgRating}
-                    precision={0.5}
-                    readOnly
-                  />
-                </Box>
-                <Box component="fieldset" mb={3} borderColor="transparent">
-                  <Typography component="legend">Minimum Rating</Typography>
-                  <Rating
-                    name="half-rating-read"
-                    defaultValue={review.minRating}
-                    precision={0.5}
-                    readOnly
-                  />
-                </Box>
-                <Box component="fieldset" mb={3} borderColor="transparent">
-                  <Typography component="legend">Maximum Rating</Typography>
-                  <Rating
-                    name="half-rating-read"
-                    defaultValue={review.maxRating}
-                    precision={0.5}
-                    readOnly
-                  />
-                </Box>
-                <Box component="fieldset" mb={3} borderColor="transparent">
-                  <Typography component="legend">Total Ratings</Typography>
-                  <Typography component="legend">{review.totalRating}</Typography>
-                </Box>
-                <Box component="fieldset" mb={3} borderColor="transparent">
-                  <Typography component="legend">Total Reviews</Typography>
-                  <Typography component="legend">{review.totalReviews}</Typography>
-                </Box>
+        <Grid container marginTop={5}>
+          {task ? (
+            <>
+              <Grid item xs={12} sm={6} justifyContent="center">
+                <Typography paddingBottom={5} variant="h4" textAlign="center">
+                  Employees
+                </Typography>
+                <Grid container textAlign="center">
+                  {task.group &&
+                    task.group.employees &&
+                    task.group.employees.map((employee) => (
+                      <Grid item xs={12} sm={6} key={employee._id}>
+                        <Typography variant="h6">{employee.name}</Typography>
+                        <Typography variant="p">{employee.email}</Typography>
+                        {taskReviews && !taskReviews.find((item) => item._id._id === employee._id) && (
+                          <Button
+                            variant="outlined"
+                            color="primary"
+                            style={{
+                              marginTop: 10
+                            }}
+                            startIcon={<RateReviewIcon color="primary" />}
+                            onClick={() => handleReview(employee._id)}
+                          >
+                            Review
+                          </Button>
+                        )}
+                      </Grid>
+                    ))}
+                </Grid>
               </Grid>
-            ))
+              <Grid item xs={12} sm={6} justifyContent="center">
+                <Typography paddingBottom={5} variant="h4" textAlign="center">
+                  Manager
+                </Typography>
+                <Grid container justifyContent="center">
+                  <Grid item xs={12} sm={6} key={task.manager._id}>
+                    <Typography variant="h6">{task.manager.name}</Typography>
+                    <Typography variant="p">{task.manager.email}</Typography>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </>
           ) : (
             <Skeleton />
           )}
         </Grid>
+
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography marginTop={5} paddingBottom={5} variant="h4" textAlign="center">
+              Task Reviews
+            </Typography>
+          </Grid>
+          {taskReviews
+            ? taskReviews.map((review, idx) => (
+                <Grid item xs={12} sm={6} key={idx}>
+                  <Typography variant="h5">{review._id.name}</Typography>
+                  <Box component="fieldset" mb={3} borderColor="transparent">
+                    <Typography component="legend">Average Rating</Typography>
+                    <Rating
+                      name="half-rating-read"
+                      defaultValue={review.avgRating}
+                      precision={0.5}
+                      readOnly
+                    />
+                  </Box>
+                  <Box component="fieldset" mb={3} borderColor="transparent">
+                    <Typography component="legend">Minimum Rating</Typography>
+                    <Rating
+                      name="half-rating-read"
+                      defaultValue={review.minRating}
+                      precision={0.5}
+                      readOnly
+                    />
+                  </Box>
+                  <Box component="fieldset" mb={3} borderColor="transparent">
+                    <Typography component="legend">Maximum Rating</Typography>
+                    <Rating
+                      name="half-rating-read"
+                      defaultValue={review.maxRating}
+                      precision={0.5}
+                      readOnly
+                    />
+                  </Box>
+                  <Box component="fieldset" mb={3} borderColor="transparent">
+                    <Typography component="legend">Total Ratings</Typography>
+                    <Typography component="legend">{review.totalRating}</Typography>
+                  </Box>
+                  <Box component="fieldset" mb={3} borderColor="transparent">
+                    <Typography component="legend">Total Reviews</Typography>
+                    <Typography component="legend">{review.totalReviews}</Typography>
+                  </Box>
+                </Grid>
+              ))
+            : [1, 2].map((el) => (
+                <Grid item xs={12} sm={6}>
+                  <Typography variant="h5">
+                    <Skeleton />
+                  </Typography>
+                  <Box component="fieldset" mb={3} borderColor="transparent">
+                    <Typography component="legend">
+                      <Skeleton />
+                    </Typography>
+                    <Skeleton />
+                  </Box>
+                  <Box component="fieldset" mb={3} borderColor="transparent">
+                    <Typography component="legend">
+                      <Skeleton />
+                    </Typography>
+                    <Skeleton />
+                  </Box>
+                  <Box component="fieldset" mb={3} borderColor="transparent">
+                    <Typography component="legend">
+                      <Skeleton />
+                    </Typography>
+                    <Skeleton />
+                  </Box>
+                  <Box component="fieldset" mb={3} borderColor="transparent">
+                    <Typography component="legend">
+                      <Skeleton />
+                    </Typography>
+                    <Typography component="legend">
+                      <Skeleton />
+                    </Typography>
+                  </Box>
+                  <Box component="fieldset" mb={3} borderColor="transparent">
+                    <Typography component="legend">
+                      <Skeleton />
+                    </Typography>
+                    <Typography component="legend">
+                      <Skeleton />
+                    </Typography>
+                  </Box>
+                </Grid>
+              ))}
+        </Grid>
       </Container>
+      <AddReviewModal
+        isOpen={isAddReviewOpen}
+        closeDialog={toggleAddReviewOpen}
+        addReview={handleAddReview}
+      />
     </Page>
   );
 };

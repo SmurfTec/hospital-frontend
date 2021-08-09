@@ -134,6 +134,24 @@ export const DataProvider = ({ children }) => {
       handleCatch(err);
     }
   };
+
+  const addNewReview = async (employeeId, taskId, body) => {
+    try {
+      const resData = await makeReq(
+        `/employee/reviewEmployee/${employeeId}/task/${taskId} `,
+        { body: { ...body } },
+        'POST'
+      );
+      console.log(`resData`, resData);
+      toast.success(`Review Created Successfully`);
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } catch (err) {
+      handleCatch(err);
+    }
+  };
   const removeEmployeeGroup = async (employeeId, groupId) => {
     try {
       const resData = await makeReq(`/group/${groupId}/removeEmployee/${employeeId}`, {}, 'POST');
@@ -352,7 +370,8 @@ export const DataProvider = ({ children }) => {
         updateTask,
         assignTaskToGroup,
         unAssignTaskFromGroup,
-        completeTaskStage
+        completeTaskStage,
+        addNewReview
       }}
     >
       {children}
