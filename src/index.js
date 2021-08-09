@@ -24,7 +24,7 @@ ReactDOM.render(
       <DataProvider>
         <HelmetProvider>
           <App />
-          <ToastContainer />
+          <ToastContainer autoClose={4000} />
         </HelmetProvider>
       </DataProvider>
     </AuthProvider>

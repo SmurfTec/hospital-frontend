@@ -155,9 +155,8 @@ const Employees = () => {
   }, [employs, order, orderBy, filterName]);
 
   const handleDelete = () => {
-    toggleDelOpen();
     console.log(`selected`, selected);
-    deleteEmployee(selected);
+    deleteEmployee(selected, toggleDelOpen);
     setSelected(null);
   };
 
@@ -345,14 +344,18 @@ const Employees = () => {
       />
       <AddorEditModal
         isOpen={isCreateOpen}
-        closeDialog={toggleCreateOpen}
-        createNew={addNewEmployee}
+        createNew={(...props) => {
+          addNewEmployee(...props, toggleCreateOpen);
+        }}
+        closeDialog={addNewEmployee}
         role="Employee"
       />
       <AddorEditModal
         isOpen={isEditOpen}
         closeDialog={toggleEditOpen}
-        updateUser={editEmployee}
+        updateUser={(...props) => {
+          editEmployee(...props, toggleEditOpen);
+        }}
         editUser={selected}
         isEdit
         role="Employee"

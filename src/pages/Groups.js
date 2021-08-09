@@ -126,9 +126,8 @@ export default function Groups() {
   };
 
   const handleDelete = () => {
-    toggleDelOpen();
     console.log(`selected`, selected);
-    deleteGroup(selected);
+    deleteGroup(selected, toggleDelOpen);
     setSelected(null);
   };
 
@@ -331,13 +330,17 @@ export default function Groups() {
       <AddorEditModal
         isOpen={isCreateOpen}
         closeDialog={toggleCreateOpen}
-        createNew={addNewGroup}
+        createNew={(...props) => {
+          addNewGroup(...props, toggleCreateOpen);
+        }}
         role="Group"
       />
       <AddorEditModal
         isOpen={isEditOpen}
         closeDialog={toggleEditOpen}
-        updateUser={editGroup}
+        updateUser={(...props) => {
+          editGroup(...props, toggleEditOpen);
+        }}
         editUser={selected}
         isEdit
         role="Group"

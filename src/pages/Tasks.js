@@ -153,8 +153,7 @@ const Tasks = () => {
   }, [tasks, order, orderBy, filterName]);
 
   const handleDelete = () => {
-    toggleDelOpen();
-    deleteTask(selected);
+    deleteTask(selected, toggleDelOpen);
   };
 
   const getFormattedDate = (date) => {
@@ -392,13 +391,17 @@ const Tasks = () => {
       <AddorEditModal
         isOpen={isCreateOpen}
         closeDialog={toggleCreateOpen}
-        createNew={addNewTask}
+        createNew={(...props) => {
+          addNewTask(...props, toggleCreateOpen);
+        }}
         role="Task"
       />
       <AddorEditModal
         isOpen={isEditOpen}
         closeDialog={toggleEditOpen}
-        updateUser={updateTask}
+        updateUser={(...props) => {
+          updateTask(...props, toggleEditOpen);
+        }}
         editUser={selected}
         isEdit
         role="Task"

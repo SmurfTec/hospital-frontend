@@ -8,6 +8,7 @@ import Page from '../components/Page';
 import { AppEmploys, AppGroups, AppTasks, AppManagers } from '../components/_dashboard/app';
 import Skeleton from 'react-loading-skeleton';
 import { DataContext } from 'contexts/DataContext';
+import { makeReq } from 'utils/constants';
 
 // ----------------------------------------------------------------------
 
@@ -18,10 +19,10 @@ export default function ViewManager() {
   const { id } = useParams();
 
   useEffect(() => {
-    if (!employs || employs === null) return;
-    const tmp = employs.find((el) => el._id === id);
-    setCurrentEmployee(tmp);
-    console.clear();
+    (async () => {
+      const resData = await makeReq(`/employee/${id}`);
+      setCurrentEmployee(resData.employee);
+    })();
   }, [id, employs]);
 
   return (

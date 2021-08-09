@@ -138,9 +138,9 @@ export default function Managers() {
   }, [managers, order, orderBy, filterName]);
 
   const handleDelete = () => {
-    toggleDelOpen();
+    // toggleDelOpen();
     console.log(`selected`, selected);
-    deleteManager(selected);
+    deleteManager(selected, toggleDelOpen);
     setSelected(null);
   };
 
@@ -325,14 +325,18 @@ export default function Managers() {
       />
       <AddorEditModal
         isOpen={isCreateOpen}
+        createNew={(...props) => {
+          toggleCreateOpen(...props, addNewManager());
+        }}
         closeDialog={toggleCreateOpen}
-        createNew={addNewManager}
         role="Manager"
       />
       <AddorEditModal
         isOpen={isEditOpen}
         closeDialog={toggleEditOpen}
-        updateUser={editManager}
+        updateUser={(...props) => {
+          editManager(...props, toggleEditOpen);
+        }}
         editUser={selected}
         isEdit
         role="Manager"

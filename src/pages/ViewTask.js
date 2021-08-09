@@ -192,7 +192,7 @@ const ViewTask = ({ classes }) => {
             >
               <Label
                 variant="ghost"
-                color={`${task && task.status === 'complete' ? 'success' : 'error'}`}
+                color={`${task && task.status === 'complete' ? 'success' : 'warning'}`}
                 style={{
                   alignSelf: 'end'
                 }}
@@ -269,7 +269,7 @@ const ViewTask = ({ classes }) => {
                   {task.group &&
                     task.group.employees &&
                     task.group.employees.map((employee) => (
-                      <Grid item xs={12} sm={6} key={employee._id}>
+                      <Grid item xs={12} key={employee._id}>
                         <Typography variant="h6">{employee.name}</Typography>
                         <Typography variant="p">{employee.email}</Typography>
                         {user &&
@@ -290,17 +290,6 @@ const ViewTask = ({ classes }) => {
                           )}
                       </Grid>
                     ))}
-                </Grid>
-              </Grid>
-              <Grid item xs={12} sm={6} justifyContent="center">
-                <Typography paddingBottom={5} variant="h4" textAlign="center">
-                  Manager
-                </Typography>
-                <Grid container justifyContent="center">
-                  <Grid item xs={12} sm={6} key={task.manager._id}>
-                    <Typography variant="h6">{task.manager.name}</Typography>
-                    <Typography variant="p">{task.manager.email}</Typography>
-                  </Grid>
                 </Grid>
               </Grid>
             </>

@@ -10,6 +10,7 @@ import ConfirmDialog from 'dialogs/ConfirmDialogBox';
 import Label from 'components/Label';
 import { Button } from '@material-ui/core';
 import { DataContext } from 'contexts/DataContext';
+import { AuthContext } from 'contexts/AuthContext';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -41,6 +42,7 @@ const useStyles = makeStyles((theme) => ({
 
 const TaskStages = ({ stages, taskId }) => {
   const { completeTaskStage } = useContext(DataContext);
+  const { user } = useContext(AuthContext);
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState([]);
   const [currentStageId, setCurrentStageId] = useState();
@@ -109,7 +111,7 @@ const TaskStages = ({ stages, taskId }) => {
                 </Label>
               </Typography>
             )}
-            {stage.status !== 'complete' && (
+            {stage.status !== 'complete' && user.role !== 'Admin' && (
               <Button
                 startIcon={<CheckCircleIcon />}
                 color="primary"
