@@ -13,6 +13,7 @@ import AccountPopover from './AccountPopover';
 // import NotificationsPopover from './NotificationsPopover';
 
 // ----------------------------------------------------------------------
+import NotificationsPopover from './NotificationsPopover';
 
 const DRAWER_WIDTH = 280;
 const APPBAR_MOBILE = 64;
@@ -57,6 +58,7 @@ export default function DashboardNavbar({ onOpenSidebar }) {
 
         <Stack direction="row" alignItems="center" spacing={{ xs: 0.5, sm: 1.5 }}>
           <AccountPopover />
+          <NotificationsPopover />
         </Stack>
       </ToolbarStyle>
     </RootStyle>

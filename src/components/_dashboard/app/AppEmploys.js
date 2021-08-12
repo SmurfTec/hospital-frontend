@@ -37,7 +37,7 @@ const IconWrapperStyle = styled('div')(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-export default function AppNewUsers({ data }) {
+export default function AppNewUsers({ data, slug }) {
   return (
     <RootStyle>
       <IconWrapperStyle>
@@ -57,7 +57,7 @@ export default function AppNewUsers({ data }) {
         )}
       </Typography>
       <Typography variant="subtitle2" sx={{ opacity: 0.72 }}>
-        Employees
+        {slug && slug} Employees
       </Typography>
     </RootStyle>
   );

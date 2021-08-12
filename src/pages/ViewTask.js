@@ -192,6 +192,21 @@ const ViewTask = ({ classes }) => {
             >
               <Label
                 variant="ghost"
+                color={task && task.status === 'complete' ? 'info' : 'warning'}
+                style={{
+                  alignSelf: 'end'
+                }}
+              >
+                {task ? (
+                  new Date(
+                    task.status === 'complete' ? task.completionDate : task.deadLine
+                  ).toDateString()
+                ) : (
+                  <Skeleton />
+                )}
+              </Label>
+              <Label
+                variant="ghost"
                 color={`${task && task.status === 'complete' ? 'success' : 'warning'}`}
                 style={{
                   alignSelf: 'end'

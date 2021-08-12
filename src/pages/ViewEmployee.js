@@ -9,19 +9,26 @@ import { AppEmploys, AppGroups, AppTasks, AppManagers } from '../components/_das
 import Skeleton from 'react-loading-skeleton';
 import { DataContext } from 'contexts/DataContext';
 import { makeReq } from 'utils/constants';
+import Rating from '@material-ui/lab/Rating';
+import Label from 'components/Label';
 
 // ----------------------------------------------------------------------
 
-export default function ViewManager() {
+const ViewEmployee = () => {
   const [currentEmployee, setCurrentEmployee] = useState();
   const { user } = useContext(AuthContext);
   const { employs } = useContext(DataContext);
   const { id } = useParams();
+  const [reviews, setReviews] = useState();
 
   useEffect(() => {
     (async () => {
       const resData = await makeReq(`/employee/${id}`);
       setCurrentEmployee(resData.employee);
+    })();
+    (async () => {
+      const resData = await makeReq(`/employee/${id}/reviews`);
+      setReviews(resData.reviews);
     })();
   }, [id, employs]);
 
@@ -39,22 +46,74 @@ export default function ViewManager() {
           <Typography variant="h6" style={{ width: 'fit-content', minWidth: 180, color: '#ccc' }}>
             {currentEmployee ? currentEmployee.email : <Skeleton />}
           </Typography>
+          <Typography variant="h4" style={{ width: 'fit-content', minWidth: 200 }}>
+            Manager : {currentEmployee ? currentEmployee.manager.name : <Skeleton />}
+          </Typography>
         </Box>
         <Grid container spacing={3} style={{ justifyContent: 'space-around' }}>
           {currentEmployee ? (
             <>
               <Grid item xs={12} sm={6} md={3}>
-                <AppEmploys data={currentEmployee.employees} />
+                <AppEmploys slug="Team" data={currentEmployee.group.employees} />
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
-                <AppTasks data={currentEmployee.tasks} />
+                <AppTasks data={currentEmployee.group.tasks} />
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
-                <AppGroups data={currentEmployee.groups} />
+                <AppGroups data={currentEmployee.group.name} />
+              </Grid>
+
+              <Grid item xs={12}>
+                {reviews && (
+                  <>
+                    <Typography variant="h4" marginBottom={5}>
+                      Reviews
+                    </Typography>
+                    {reviews.map((el) => (
+                      <Box
+                        display="flex"
+                        flexDirection="column"
+                        alignItems="space-around"
+                        justifyContent="center"
+                        marginBottom={5}
+                      >
+                        <Typography variant="h5">{el.user.name}</Typography>
+                        <Box
+                          display="flex"
+                          flexWrap="wrap"
+                          flexDirection="row"
+                          alignItems="center"
+                          justifyContent="space-around"
+                          width="fit-content"
+                        >
+                          <Rating
+                            name="half-rating-read"
+                            defaultValue={el.rating}
+                            precision={0.5}
+                            readOnly
+                          />
+                          <Label
+                            variant="ghost"
+                            color="info"
+                            style={{
+                              alignSelf: 'end'
+                            }}
+                          >
+                            {new Date(el.created_At).toDateString()}
+                          </Label>
+                        </Box>
+                        <Typography variant="p">{el.review}</Typography>
+                      </Box>
+                    ))}
+                  </>
+                )}
               </Grid>
             </>
           ) : (
             <>
+              <Grid item xs={12} sm={6} md={3}>
+                <Skeleton width={251} height={235} />
+              </Grid>
               <Grid item xs={12} sm={6} md={3}>
                 <Skeleton width={251} height={235} />
               </Grid>
@@ -70,4 +129,5 @@ export default function ViewManager() {
       </Container>
     </Page>
   );
-}
+};
+export default ViewEmployee;
