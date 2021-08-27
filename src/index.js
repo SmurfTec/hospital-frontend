@@ -15,18 +15,21 @@ import { DataProvider } from 'contexts/DataContext';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
+import { SocketProvider } from 'contexts/SocketContext';
 
 // ----------------------------------------------------------------------
 
 ReactDOM.render(
   <BrowserRouter>
     <AuthProvider>
-      <DataProvider>
-        <HelmetProvider>
-          <App />
-          <ToastContainer autoClose={4000} />
-        </HelmetProvider>
-      </DataProvider>
+      <SocketProvider>
+        <DataProvider>
+          <HelmetProvider>
+            <App />
+            <ToastContainer autoClose={4000} />
+          </HelmetProvider>
+        </DataProvider>
+      </SocketProvider>
     </AuthProvider>
   </BrowserRouter>,
   document.getElementById('root')

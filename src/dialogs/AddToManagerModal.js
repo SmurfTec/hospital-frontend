@@ -152,7 +152,7 @@ const AddToTableModal = (props) => {
         onClose={closeDialog}
         aria-labelledby="form-dialog-title"
       >
-        <DialogTitle id="form-dialog-title">Add Employee to Group</DialogTitle>
+        <DialogTitle id="form-dialog-title">Assign task to Manager</DialogTitle>
         <DialogContent>
           <Card>
             <UserListToolbar

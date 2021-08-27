@@ -1,7 +1,7 @@
 import faker from 'faker';
 import PropTypes from 'prop-types';
 import { noCase } from 'change-case';
-import { useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { set, sub, formatDistanceToNow } from 'date-fns';
 import { Icon } from '@iconify/react';
@@ -14,7 +14,6 @@ import {
   Box,
   List,
   Badge,
-  Button,
   Avatar,
   Tooltip,
   Divider,
@@ -30,12 +29,13 @@ import { mockImgAvatar } from '../../utils/mockImages';
 // components
 import Scrollbar from '../../components/Scrollbar';
 import MenuPopover from '../../components/MenuPopover';
+import { AuthContext } from 'contexts/AuthContext';
 
 // ----------------------------------------------------------------------
 
 const NOTIFICATIONS = [
   {
-    id: faker.datatype.uuid(),
+    _id: faker.datatype.uuid(),
     title: 'Your order is placed',
     description: 'waiting for shipping',
     avatar: null,
@@ -44,7 +44,7 @@ const NOTIFICATIONS = [
     isUnRead: true
   },
   {
-    id: faker.datatype.uuid(),
+    _id: faker.datatype.uuid(),
     title: faker.name.findName(),
     description: 'answered to your comment on the Minimal',
     avatar: mockImgAvatar(2),
@@ -53,7 +53,7 @@ const NOTIFICATIONS = [
     isUnRead: true
   },
   {
-    id: faker.datatype.uuid(),
+    _id: faker.datatype.uuid(),
     title: 'You have new message',
     description: '5 unread messages',
     avatar: null,
@@ -62,7 +62,7 @@ const NOTIFICATIONS = [
     isUnRead: false
   },
   {
-    id: faker.datatype.uuid(),
+    _id: faker.datatype.uuid(),
     title: 'You have new mail',
     description: 'sent from Guido Padberg',
     avatar: null,
@@ -71,7 +71,7 @@ const NOTIFICATIONS = [
     isUnRead: false
   },
   {
-    id: faker.datatype.uuid(),
+    _id: faker.datatype.uuid(),
     title: 'Delivery processing',
     description: 'Your order is being shipped',
     avatar: null,
@@ -81,7 +81,7 @@ const NOTIFICATIONS = [
   }
 ];
 
-function renderContent(notification) {
+const renderContent = (notification) => {
   const title = (
     <Typography variant="subtitle2">
       {notification.title}
@@ -119,13 +119,9 @@ function renderContent(notification) {
     avatar: <img alt={notification.title} src={notification.avatar} />,
     title
   };
-}
-
-NotificationItem.propTypes = {
-  notification: PropTypes.object.isRequired
 };
 
-function NotificationItem({ notification }) {
+const NotificationItem = ({ notification }) => {
   const { avatar, title } = renderContent(notification);
 
   return (
@@ -164,14 +160,18 @@ function NotificationItem({ notification }) {
       />
     </ListItemButton>
   );
-}
+};
 
-export default function NotificationsPopover() {
+NotificationItem.propTypes = {
+  notification: PropTypes.object.isRequired
+};
+
+const NotificationsPopover = () => {
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
-  const [notifications, setNotifications] = useState(NOTIFICATIONS);
+  const { user } = useContext(AuthContext);
+  const [notifications, setNotifications] = useState([]);
   const totalUnRead = notifications.filter((item) => item.isUnRead === true).length;
-
   const handleOpen = () => {
     setOpen(true);
   };
@@ -179,6 +179,12 @@ export default function NotificationsPopover() {
   const handleClose = () => {
     setOpen(false);
   };
+
+  useEffect(() => {
+    console.log(`user`, user);
+    if (!user.notifications) return;
+    setNotifications(user.notifications);
+  }, [user]);
 
   const handleMarkAllAsRead = () => {
     setNotifications(
@@ -241,9 +247,12 @@ export default function NotificationsPopover() {
               </ListSubheader>
             }
           >
-            {notifications.slice(0, 2).map((notification) => (
-              <NotificationItem key={notification.id} notification={notification} />
-            ))}
+            {notifications.map(
+              (notification) =>
+                notification.isUnRead === true && (
+                  <NotificationItem key={notification._id} notification={notification} />
+                )
+            )}
           </List>
 
           <List
@@ -254,20 +263,17 @@ export default function NotificationsPopover() {
               </ListSubheader>
             }
           >
-            {notifications.slice(2, 5).map((notification) => (
-              <NotificationItem key={notification.id} notification={notification} />
-            ))}
+            {notifications.map(
+              (notification) =>
+                notification.isUnRead === false && (
+                  <NotificationItem key={notification._id} notification={notification} />
+                )
+            )}
           </List>
         </Scrollbar>
-
-        <Divider />
-
-        <Box sx={{ p: 1 }}>
-          <Button fullWidth disableRipple component={RouterLink} to="#">
-            View All
-          </Button>
-        </Box>
       </MenuPopover>
     </>
   );
-}
+};
+
+export default NotificationsPopover;
