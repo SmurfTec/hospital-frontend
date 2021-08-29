@@ -6,8 +6,10 @@ import { Card, CardHeader } from '@material-ui/core';
 // utils
 import { fNumber } from 'utils/formatNumber';
 //
-import { BaseOptionChart } from '../../charts';
-
+import { BaseOptionChart } from 'components/charts';
+import { useContext, useState, useEffect } from 'react';
+import { DataContext } from 'contexts/DataContext';
+import Skeleton from 'react-loading-skeleton';
 // ----------------------------------------------------------------------
 
 const CHART_HEIGHT = 372;
@@ -31,10 +33,35 @@ const ChartWrapperStyle = styled('div')(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-const CHART_DATA = [4344, 5435, 1443, 4443];
+// const chartDate = [4344, 5435, 1443, 4443];
 
-export default function AppCurrentTasks() {
+const TasksGraph = () => {
   const theme = useTheme();
+  const { tasks } = useContext(DataContext);
+  const [chartDate, setChartDate] = useState([]);
+
+  useEffect(() => {
+    if (!tasks) return;
+    // * Calculate tasks length
+    const unAssignedTasks = tasks.filter((task) => !task.manager);
+    const notStartedTasks = tasks.filter((task) => !task.group);
+    const inProgressTasks = tasks.filter(
+      (task) => task.manager && task.group && task.status === 'inProgress'
+    );
+    const completedTasks = tasks.filter((task) => task.status === 'complete');
+
+    console.log(`unAssignedTasks`, unAssignedTasks);
+    console.log(`notStartedTasks`, notStartedTasks);
+    console.log(`inProgressTasks`, inProgressTasks);
+    console.log(`completedTasks`, completedTasks);
+
+    setChartDate([
+      completedTasks.length,
+      inProgressTasks.length,
+      notStartedTasks.length,
+      unAssignedTasks.length
+    ]);
+  }, [tasks]);
 
   const chartOptions = merge(BaseOptionChart(), {
     colors: [
@@ -43,7 +70,7 @@ export default function AppCurrentTasks() {
       theme.palette.warning.main,
       theme.palette.error.main
     ],
-    labels: ['America', 'Asia', 'Europe', 'Africa'],
+    labels: ['Completed', 'In Progress', 'Not Started', 'Not Assigned'],
     stroke: { colors: [theme.palette.background.paper] },
     legend: { floating: true, horizontalAlign: 'center' },
     dataLabels: { enabled: true, dropShadow: { enabled: false } },
@@ -63,10 +90,16 @@ export default function AppCurrentTasks() {
 
   return (
     <Card>
-      <CardHeader title="Current Visits" />
-      <ChartWrapperStyle dir="ltr">
-        <ReactApexChart type="pie" series={CHART_DATA} options={chartOptions} height={280} />
-      </ChartWrapperStyle>
+      <CardHeader title="Current Tasks" />
+      {chartDate && chartDate.length > 0 ? (
+        <ChartWrapperStyle dir="ltr">
+          <ReactApexChart type="pie" series={chartDate} options={chartOptions} height={280} />
+        </ChartWrapperStyle>
+      ) : (
+        <Skeleton height={200} />
+      )}
     </Card>
   );
-}
+};
+
+export default TasksGraph;
