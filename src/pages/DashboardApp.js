@@ -1,5 +1,6 @@
 // material
 import { Box, Grid, Container, Typography } from '@material-ui/core';
+import ManagerStats from 'components/_dashboard/app/graphs/ManagerStats';
 import TasksGraph from 'components/_dashboard/app/graphs/Tasks';
 import { AuthContext } from 'contexts/AuthContext';
 import { DataContext } from 'contexts/DataContext';
@@ -49,6 +50,9 @@ export default function DashboardApp() {
           </Grid>
         </Grid>
         <Grid container spacing={3} marginTop={3}>
+          <Grid item xs={12} md={8} lg={8}>
+            <ManagerStats managers={managers} />
+          </Grid>
           <Grid item xs={12} md={4} lg={4}>
             <TasksGraph data={tasks} />
           </Grid>

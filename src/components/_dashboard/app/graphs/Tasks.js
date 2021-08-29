@@ -89,7 +89,7 @@ const TasksGraph = () => {
   });
 
   return (
-    <Card>
+    <Card style={{ height: 497 }}>
       <CardHeader title="Current Tasks" />
       {chartDate && chartDate.length > 0 ? (
         <ChartWrapperStyle dir="ltr">
