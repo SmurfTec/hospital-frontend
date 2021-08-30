@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { makeReq } from 'utils/constants';
+import { handleCatch, makeReq } from 'utils/constants';
 import { useNavigate } from 'react-router-dom';
 
 export const AuthContext = React.createContext();
@@ -34,6 +34,14 @@ export const AuthProvider = ({ children }) => {
       setToken(null);
       localStorage.removeItem('jwt');
       localStorage.removeItem('user');
+    }
+  };
+
+  const makeNotficationsAsRead = async () => {
+    try {
+      const resData = await makeReq('/users/read-my-notifications', {}, 'PATCH');
+    } catch (err) {
+      handleCatch(err);
     }
   };
 
@@ -72,7 +80,8 @@ export const AuthProvider = ({ children }) => {
         logoutUser,
         user,
         setUser,
-        signInUser
+        signInUser,
+        makeNotficationsAsRead
       }}
     >
       {children}
