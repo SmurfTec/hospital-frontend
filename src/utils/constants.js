@@ -2,8 +2,13 @@ import { toast } from 'react-toastify';
 
 const photoURL = '/static/mock-images/avatars/avatar_default.jpg';
 
+// * Developement URLs
+const API_BASE_ORIGIN = `http://localhost:8001`;
 const API_BASE_URL = `http://localhost:8001/api`;
-// const API_BASE_URL = `https://team-task-manager-backend.herokuapp.com//api`;
+
+// * Production URLs
+// const API_BASE_ORIGIN = `https://team-task-manager-backend.herokuapp.com`;
+// const API_BASE_URL = `https://team-task-manager-backend.herokuapp.com/api`;
 
 const handleCatch = (err) => {
   console.log(`err`, err);
@@ -47,4 +52,4 @@ const makeReq = (endpoint, { body, ...customConfig } = {}, method = 'GET') => {
   });
 };
 
-export { API_BASE_URL, makeReq, handleCatch, photoURL };
+export { API_BASE_URL, makeReq, handleCatch, photoURL, API_BASE_ORIGIN };

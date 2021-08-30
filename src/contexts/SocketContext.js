@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 
 import socketIo from 'socket.io-client';
 import { AuthContext } from './AuthContext';
+import { API_BASE_ORIGIN } from 'utils/constants';
 
 export const SocketContext = createContext();
 
@@ -11,7 +12,7 @@ export const SocketProvider = (props) => {
 
   useEffect(() => {
     // socket = socketIo.connect('https://mern-chat-project.herokuapp.com', {
-    const newSocket = socketIo.connect('localhost:8001', {
+    const newSocket = socketIo.connect(API_BASE_ORIGIN, {
       transports: ['websocket']
     });
 
@@ -35,14 +36,15 @@ export const SocketProvider = (props) => {
       console.log(`user`, user);
 
       console.log(`user._id`, user._id);
-      console.log(`condition`, JSON.stringify(data.user._id) !== JSON.stringify(user._id));
 
-      if (JSON.stringify(data.user._id) !== JSON.stringify(user._id)) return;
+      if (!!data.userIds.find((el) => JSON.stringify(el) === JSON.stringify(user?._id)) === false)
+        return;
+      // if (JSON.stringify(data.user._id) !== JSON.stringify(user._id)) return;
 
       console.log('updating user');
       const newUser = {
         ...user,
-        notifications: data.user.notifications
+        notifications: user.notifications
           ? [...user.notifications, data.newNotification]
           : [data.newNotification]
       };
