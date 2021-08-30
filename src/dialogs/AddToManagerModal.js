@@ -28,12 +28,14 @@ import Scrollbar from '../components/Scrollbar';
 import SearchNotFound from '../components/SearchNotFound';
 import { UserListHead, UserListToolbar } from '../components/_dashboard/user';
 //
+import uuid from 'uuid/dist/v4';
 
 import { DataContext } from 'contexts/DataContext';
 import { AuthContext } from 'contexts/AuthContext';
 
 import { withStyles } from '@material-ui/styles';
 import Label from 'components/Label';
+import { makeReq } from 'utils/constants';
 
 const Styles = {
   Dialog: {
@@ -43,14 +45,6 @@ const Styles = {
     }
   }
 };
-
-const TABLE_HEAD = [
-  { id: 'name', label: 'Name', alignRight: false },
-  { id: 'employees', label: 'Employees', alignRight: false },
-  { id: 'groups', label: 'Groups', alignRight: false },
-  { id: 'tasks', label: 'Tasks', alignRight: false },
-  { id: '' }
-];
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -63,7 +57,13 @@ function descendingComparator(a, b, orderBy) {
 }
 
 const AddToTableModal = (props) => {
-  const { isOpen, closeDialog, classes, targetId, data, addAction, slug } = props;
+  const { isOpen, closeDialog, classes, targetId, data, addAction, slug, resource } = props;
+  const [tableHeadings, setTableHeadings] = useState([
+    { id: 'name', label: 'Name', alignRight: false },
+    { id: 'employees', label: 'Employees', alignRight: false },
+    { id: 'groups', label: 'Groups', alignRight: false },
+    { id: 'tasks', label: 'Tasks', alignRight: false }
+  ]);
 
   const [filteredManagers, setFilteredManagers] = useState([]);
   const [page, setPage] = useState(0);
@@ -73,7 +73,60 @@ const AddToTableModal = (props) => {
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  useEffect(() => {}, [data]);
+  useEffect(() => {
+    if (!data || data === null) return;
+
+    if (!resource && resource !== 'managers') {
+      setFilteredManagers(applySortFilter(data, getComparator(order, orderBy), filterName));
+    } else {
+      console.clear();
+      console.log(`data`, data);
+      try {
+        (async () => {
+          var managersWithRatings = await Promise.all(
+            data.map(async (manager) => {
+              let returnObj = [];
+
+              var managerTasksRatings = await Promise.all(
+                manager.tasks.map(async (task) => {
+                  const resData = await makeReq(`/task/getTaskReviews/${task._id}`);
+                  console.log(`resData`, resData);
+                  if (resData.reviews.length > 0) {
+                    const avgRating =
+                      resData.reviews.reduce((prev, currentVal) => prev + currentVal.avgRating, 0) /
+                      resData.reviews.length;
+
+                    returnObj = [...returnObj, avgRating];
+
+                    console.log(`avgRating`, avgRating);
+                    return avgRating;
+                  } else {
+                    return 4.5; // * Task has no review , so avg rating = 4.5
+                  }
+                })
+              );
+              console.log(`managerTasksRatings`, managerTasksRatings);
+              console.log(`returnObj`, returnObj);
+              const managerRating =
+                returnObj.reduce((prev, currentVal) => prev + currentVal, 0) / returnObj.length;
+
+              console.log(`RETURNING manager ${manager.name} Rating`, managerRating);
+
+              return { ...manager, rating: !!managerRating ? managerRating : 0 };
+            })
+          );
+
+          console.log(`managersWithRatings`, managersWithRatings);
+          setTableHeadings((st) => [...st, { id: 'ratings', label: 'Ratings', alignRight: false }]);
+          setFilteredManagers(
+            applySortFilter(managersWithRatings, getComparator(order, orderBy), filterName)
+          );
+        })();
+      } catch (err) {
+        console.log('ERR', err);
+      }
+    }
+  }, [data]);
 
   function getComparator(order, orderBy) {
     return order === 'desc'
@@ -136,7 +189,9 @@ const AddToTableModal = (props) => {
 
   useEffect(() => {
     if (!data || data === null) return;
-    setFilteredManagers(applySortFilter(data, getComparator(order, orderBy), filterName));
+    setFilteredManagers(
+      applySortFilter(filteredManagers, getComparator(order, orderBy), filterName)
+    );
   }, [data, order, orderBy, filterName]);
 
   const isAlreadyHere = (target, array) => {
@@ -159,7 +214,7 @@ const AddToTableModal = (props) => {
               numSelected={0}
               filterName={filterName}
               onFilterName={handleFilterByName}
-              slug="Groups"
+              slug={`${resource && resource === 'managers' ? 'Managers' : 'Groups'}`}
             />
 
             <Scrollbar>
@@ -168,7 +223,7 @@ const AddToTableModal = (props) => {
                   <UserListHead
                     order={order}
                     orderBy={orderBy}
-                    headLabel={TABLE_HEAD}
+                    headLabel={tableHeadings}
                     rowCount={data ? data.length : 0}
                     numSelected={0}
                     onRequestSort={handleRequestSort}
@@ -240,13 +295,24 @@ const AddToTableModal = (props) => {
                                     </Label>
                                   )}
                                 </TableCell>
+                                {resource && resource === 'managers' && (
+                                  <TableCell align="left">
+                                    {row.rating && row.rating > 0 ? (
+                                      row.rating
+                                    ) : (
+                                      <Label variant="ghost" color="error">
+                                        Not Rated
+                                      </Label>
+                                    )}
+                                  </TableCell>
+                                )}
                               </TableRow>
                             );
                           })
                       : Array(5)
                           .fill()
                           .map(() => (
-                            <TableRow>
+                            <TableRow key={uuid()}>
                               <TableCell></TableCell>
                               <TableCell>
                                 <Skeleton />

@@ -414,6 +414,7 @@ const Tasks = () => {
         addAction={assignTaskToManager}
         data={managers}
         slug="Assign"
+        resource="managers"
       />
       <AddToTableModal
         isOpen={isRemoveFromOpen}
@@ -422,6 +423,7 @@ const Tasks = () => {
         addAction={unAssignTaskFromManger}
         data={managers}
         slug="unAssign"
+        resource="managers"
       />
       <AddToGroupModal
         isOpen={isAddToOpen2}
