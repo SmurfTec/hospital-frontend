@@ -101,7 +101,11 @@ export const employeeConfig = [
     path: '/dashboard/tasks',
     icon: getIcon(listFill)
   },
-
+  {
+    title: 'Meetings',
+    path: '/dashboard/meetings',
+    icon: getIcon(videoFill)
+  },
   {
     title: 'logout',
     path: '/logout',
