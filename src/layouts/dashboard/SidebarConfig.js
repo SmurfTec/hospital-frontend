@@ -3,6 +3,7 @@ import pieChart2Fill from '@iconify/icons-eva/pie-chart-2-fill';
 import peopleFill from '@iconify/icons-eva/people-fill';
 import listFill from '@iconify/icons-eva/list-fill';
 import logOutFill from '@iconify/icons-eva/log-out-fill';
+import videoFill from '@iconify/icons-eva/video-fill';
 
 // ----------------------------------------------------------------------
 
@@ -66,6 +67,11 @@ export const managerConfig = [
     title: 'Tasks',
     path: '/dashboard/tasks',
     icon: getIcon(listFill)
+  },
+  {
+    title: 'Meetings',
+    path: '/dashboard/meetings',
+    icon: getIcon(videoFill)
   },
   {
     title: 'logout',

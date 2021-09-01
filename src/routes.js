@@ -20,6 +20,7 @@ import ViewManager from 'pages/ViewManager';
 import ViewEmployee from 'pages/ViewEmployee';
 import ViewGroup from 'pages/ViewGroup';
 import ViewTask from 'pages/ViewTask';
+import Meetings from 'components/_dashboard/app/Meetings';
 
 // ----------------------------------------------------------------------
 
@@ -64,6 +65,10 @@ export default function Router() {
         {
           path: 'tasks',
           element: <Tasks />
+        },
+        {
+          path: 'meetings',
+          element: <Meetings />
         },
         { path: 'managers/:id', element: <ViewManager /> },
         { path: 'employees/:id', element: <ViewEmployee /> },

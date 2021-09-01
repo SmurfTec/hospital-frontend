@@ -3,51 +3,6 @@ import ReactApexChart from 'react-apexcharts';
 import { Card, CardHeader } from '@material-ui/core';
 import Skeleton from 'react-loading-skeleton';
 
-const sampleState = {
-  series: [
-    {
-      data: [44, 55, 41, 64, 22, 43, 21]
-    },
-    {
-      data: [53, 32, 33, 52, 13, 44, 32]
-    }
-  ],
-  options: {
-    chart: {
-      type: 'bar',
-      height: 430
-    },
-    plotOptions: {
-      bar: {
-        horizontal: true,
-        dataLabels: {
-          position: 'top'
-        }
-      }
-    },
-    dataLabels: {
-      enabled: true,
-      offsetX: -6,
-      style: {
-        fontSize: '12px',
-        colors: ['#fff']
-      }
-    },
-    stroke: {
-      show: true,
-      width: 1,
-      colors: ['#fff']
-    },
-    tooltip: {
-      shared: true,
-      intersect: false
-    },
-    xaxis: {
-      categories: [2001, 2002, 2003, 2004, 2005, 2006, 2007]
-    }
-  }
-};
-
 const ManagerStats = ({ managers }) => {
   const [state, setState] = useState({
     series: [],
@@ -82,7 +37,7 @@ const ManagerStats = ({ managers }) => {
         intersect: false
       },
       xaxis: {
-        categories: ['tasks', 'employees', 'groups']
+        categories: ['TASKS', 'EMPLOYEES', 'GROUPS']
       }
     }
   });
