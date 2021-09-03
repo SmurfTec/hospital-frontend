@@ -10,7 +10,14 @@ import { DatePicker } from 'react-trip-date';
 import { useTheme } from '@emotion/react';
 import MeetingScheduleDialog from 'dialogs/MeetingSchedule';
 import { toast } from 'react-toastify';
-const useStyles = makeStyles((theme) => ({}));
+const useStyles = makeStyles((theme) => ({
+  upcomingMeetingBox: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    border: `1px solid ${theme.palette.grey[400]}`
+  }
+}));
 
 const ManagerMeeting = ({ user, classes }) => {
   const theme = useTheme();
@@ -27,6 +34,7 @@ const ManagerMeeting = ({ user, classes }) => {
   };
 
   const [meeting, setMeeting] = useState();
+  const [upcomingMeetings, setUpcomingMeetings] = useState();
   const [state, setState] = useState(initialState);
   const [isFetching, setIsFetching] = useState(true);
   const [selectedMeetingDays, setSelectedMeetingDays] = useState();
@@ -47,6 +55,11 @@ const ManagerMeeting = ({ user, classes }) => {
       try {
         const resData = await makeReq('/meeting');
         setMeeting(resData.meeting);
+
+        const resData2 = await makeReq('/meeting/slots', {}, 'GET');
+        if (resData2.meetings.length > 0) {
+          setUpcomingMeetings(resData2.meetings);
+        }
       } catch (err) {
       } finally {
         toggleFetching();
@@ -56,7 +69,10 @@ const ManagerMeeting = ({ user, classes }) => {
 
   const handleSchedule = async (body) => {
     try {
-      const resData = await makeReq('/meeting/schedule', { body: { ...body } }, 'PATCH');
+      let resData;
+
+      if (!meeting) resData = await makeReq('/meeting/schedule', { body: { ...body } }, 'POST');
+      else resData = await makeReq('/meeting/schedule', { body: { ...body } }, 'PATCH');
       console.log(`resData`, resData);
 
       setMeeting(resData.meeting);
@@ -91,7 +107,14 @@ const ManagerMeeting = ({ user, classes }) => {
           {meeting && (
             <Grid container>
               <Grid item xs={12} sm={5} style={{ paddingTop: '2rem' }}>
-                <Box>
+                <Box
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    maxWidth: 350
+                  }}
+                >
                   <Typography style={{ display: 'initial' }} variant="h3">
                     Start Time :{' '}
                   </Typography>
@@ -100,17 +123,20 @@ const ManagerMeeting = ({ user, classes }) => {
                     style={{
                       padding: '10px',
                       backgroundColor: '#ccc',
-                      marginLeft: 50,
-                      width: '100px',
                       display: 'initial'
                     }}
                   >
-                    {`${new Date(meeting.startTime).getHours()}:${new Date(
-                      meeting.startTime
-                    ).getMinutes()}`}
+                    {new Date(meeting.startTime).toTimeString().slice(0, 5)}
                   </Typography>
                 </Box>
-                <Box>
+                <Box
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    maxWidth: 350
+                  }}
+                >
                   <Typography variant="h3" style={{ display: 'initial' }}>
                     End Time :{' '}
                   </Typography>
@@ -119,14 +145,10 @@ const ManagerMeeting = ({ user, classes }) => {
                     style={{
                       padding: '10px',
                       backgroundColor: '#ccc',
-                      marginLeft: 50,
-                      width: '100px',
                       display: 'initial'
                     }}
                   >
-                    {`${new Date(meeting.endTime).getHours()}:${new Date(
-                      meeting.endTime
-                    ).getMinutes()}`}
+                    {new Date(meeting.endTime).toTimeString().slice(0, 5)}
                   </Typography>
                 </Box>{' '}
               </Grid>
@@ -147,6 +169,69 @@ const ManagerMeeting = ({ user, classes }) => {
               </Grid>
             </Grid>
           )}
+          {upcomingMeetings?.length > 0 && (
+            <Typography variant="h4" style={{ margin: 'auto', marginBottom: '2rem' }}>
+              Upcoming Meetings
+            </Typography>
+          )}
+          <Grid container spacing={4}>
+            {upcomingMeetings &&
+              upcomingMeetings.map((slot) => (
+                <Grid key={slot._id} item xs={12} sm={5} style={{ paddingTop: '2rem' }}>
+                  <Box className={classes.upcomingMeetingBox}>
+                    <Box>
+                      <Typography variant="h4">
+                        Date : {new Date(slot.startTime).toDateString()}
+                      </Typography>
+                      <Box
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          maxWidth: 350
+                        }}
+                      >
+                        <Typography style={{ display: 'initial' }} variant="h4">
+                          Start Time :{' '}
+                        </Typography>
+                        <Typography
+                          variant="h4"
+                          style={{
+                            padding: '10px',
+                            backgroundColor: '#ccc',
+                            display: 'initial'
+                          }}
+                        >
+                          {new Date(slot.startTime).toTimeString().slice(0, 5)}
+                        </Typography>
+                      </Box>
+                      <Box
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          maxWidth: 350
+                        }}
+                      >
+                        <Typography variant="h4" style={{ display: 'initial' }}>
+                          End Time :{' '}
+                        </Typography>
+                        <Typography
+                          variant="h4"
+                          style={{
+                            padding: '10px',
+                            backgroundColor: '#ccc',
+                            display: 'initial'
+                          }}
+                        >
+                          {new Date(slot.endTime).toTimeString().slice(0, 5)}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Box>
+                </Grid>
+              ))}
+          </Grid>
         </Box>
       )}
 
@@ -162,8 +247,8 @@ const ManagerMeeting = ({ user, classes }) => {
 };
 
 const MeetingsEmployee = ({ user }) => {
-  const [slots, setSlots] = useState([]);
-  const theme = useTheme();
+  const [meeting, setMeeting] = useState();
+  const [isFetching, setIsFetching] = useState(true);
 
   const handleReqMeeting = async () => {
     try {
@@ -174,80 +259,93 @@ const MeetingsEmployee = ({ user }) => {
       handleCatch(err);
     }
   };
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const resData = await makeReq('/meeting/slots', {}, 'GET');
+        if (resData.meetings.length > 0) {
+          setMeeting(resData.meetings[0]);
+        }
+      } catch (err) {
+        handleCatch(err);
+      } finally {
+        setIsFetching(false);
+      }
+    })();
+  }, [user]);
+
   return (
     <Box>
       <Box style={{ width: '100%' }} display="flex" justifyContent="flex-end" alignItems="center">
-        <Button variant="contained" color="primary" startIcon={<Add />} onClick={handleReqMeeting}>
+        <Button
+          disabled={isFetching || !!meeting}
+          variant="contained"
+          color="primary"
+          startIcon={<Add />}
+          onClick={handleReqMeeting}
+        >
           Request Meeting
         </Button>
       </Box>
 
       <Box display="flex" justifyContent="center" alignItems="flex-start" flexDirection="column">
-        {/* <Typography variant="h4" style={{ marginInline: 'auto' }} marginBottom={4}>
-            {meeting ? 'Your Meeting Schedule' : `You Don't have any meeting schedule`}
-          </Typography> */}
-        {slots &&
-          slots.length > 0 &&
-          slots.map((slot) => (
-            <Grid container key={slot._id}>
-              <Grid item xs={12} sm={5} style={{ paddingTop: '2rem' }}>
-                <Box>
-                  <Typography style={{ display: 'initial' }} variant="h3">
-                    Start Time :{' '}
-                  </Typography>
-                  <Typography
-                    variant="h3"
-                    style={{
-                      padding: '10px',
-                      backgroundColor: '#ccc',
-                      marginLeft: 50,
-                      width: '100px',
-                      display: 'initial'
-                    }}
-                  >
-                    {`${new Date(slot.startTime).getHours()}:${new Date(
-                      slot.startTime
-                    ).getMinutes()}`}
-                  </Typography>
-                </Box>
-                <Box>
-                  <Typography variant="h3" style={{ display: 'initial' }}>
-                    End Time :{' '}
-                  </Typography>
-                  <Typography
-                    variant="h3"
-                    style={{
-                      padding: '10px',
-                      backgroundColor: '#ccc',
-                      marginLeft: 50,
-                      width: '100px',
-                      display: 'initial'
-                    }}
-                  >
-                    {`${new Date(slot.endTime).getHours()}:${new Date(slot.endTime).getMinutes()}`}
-                  </Typography>
-                </Box>{' '}
-              </Grid>
-              <Grid item xs={12} sm={5}>
-                <Typography variant="h4">
-                  Date : {new Date(slot.startTime).toDateString()}
+        <Typography variant="h4" style={{ marginInline: 'auto' }} marginBottom={4}>
+          {meeting ? 'Your Upcoming Meeting' : `You Don't have any upcoming meeting `}
+        </Typography>
+        {meeting && (
+          <Grid container>
+            <Grid item xs={12} sm={5} style={{ paddingTop: '2rem' }}>
+              <Typography variant="h4">
+                Date : {new Date(meeting.startTime).toDateString()}
+              </Typography>
+              <Box
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  maxWidth: 350
+                }}
+              >
+                <Typography style={{ display: 'initial' }} variant="h3">
+                  Start Time :{' '}
                 </Typography>
-                {/*  <DatePicker
-                  theme={theme}
-                  handleChange={() => {}}
-                  onChange={() => {}}
-                  jalali={false}
-                  numberOfMonths={1}
-                  selectedDays={slot.startTime.toString()}
-                  numberOfSelectableDays={30} // number of days you need
-                  disabledBeforeToday
-                  // disabledAfterDate={new Date()}
-                  autoResponsive={false}
-                  disabled // disable calendar
-                />*/}
-              </Grid>
+                <Typography
+                  variant="h3"
+                  style={{
+                    padding: '10px',
+                    backgroundColor: '#ccc',
+                    display: 'initial'
+                  }}
+                >
+                  {new Date(meeting.startTime).toTimeString().slice(0, 5)}
+                </Typography>
+              </Box>
+              <Box
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  maxWidth: 350
+                }}
+              >
+                <Typography variant="h3" style={{ display: 'initial' }}>
+                  End Time :{' '}
+                </Typography>
+                <Typography
+                  variant="h3"
+                  style={{
+                    padding: '10px',
+                    backgroundColor: '#ccc',
+                    display: 'initial'
+                  }}
+                >
+                  {new Date(meeting.endTime).toTimeString().slice(0, 5)}
+                </Typography>
+              </Box>
             </Grid>
-          ))}
+          </Grid>
+        )}
       </Box>
     </Box>
   );
