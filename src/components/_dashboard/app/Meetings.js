@@ -3,13 +3,31 @@ import { makeStyles } from '@material-ui/styles';
 import { AuthContext } from 'contexts/AuthContext';
 import { handleCatch, makeReq } from 'utils/constants';
 import { Box } from '@material-ui/system';
-import { Button, Grid, Typography } from '@material-ui/core';
+import { Button, Grid, Popover, Typography } from '@material-ui/core';
 import Skeleton from 'react-loading-skeleton';
 import { Add } from '@material-ui/icons';
 import { DatePicker } from 'react-trip-date';
 import { useTheme } from '@emotion/react';
 import MeetingScheduleDialog from 'dialogs/MeetingSchedule';
 import { toast } from 'react-toastify';
+import DateRangeIcon from '@material-ui/icons/DateRange';
+import AccessTimeIcon from '@material-ui/icons/AccessTime';
+import Label from 'components/Label';
+import {
+  Card,
+  Table,
+  Stack,
+  Avatar,
+  TableRow,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TablePagination
+} from '@material-ui/core';
+import { UserListHead, UserListToolbar } from 'components/_dashboard/user';
+import uuid from 'uuid/dist/v4';
+import EventIcon from '@material-ui/icons/Event';
+
 const useStyles = makeStyles((theme) => ({
   upcomingMeetingBox: {
     display: 'flex',
@@ -38,6 +56,28 @@ const ManagerMeeting = ({ user, classes }) => {
   const [state, setState] = useState(initialState);
   const [isFetching, setIsFetching] = useState(true);
   const [selectedMeetingDays, setSelectedMeetingDays] = useState();
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const [page, setPage] = useState(0);
+  const [order, setOrder] = useState('asc');
+  const [selected, setSelected] = useState();
+  const [orderBy, setOrderBy] = useState('name');
+  const [filterName, setFilterName] = useState('');
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const handlePopover = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleSelectAllClick = (event) => {};
+
+  const [tableHeadings, setTableHeadings] = useState([
+    { id: 'number', label: 'No #', alignRight: false },
+    { id: 'timings', label: 'Timings', alignRight: false },
+    { id: 'date', label: 'Date', alignRight: false },
+    { id: 'employee', label: 'Employee', alignRight: false }
+  ]);
 
   useEffect(() => {
     if (!meeting) return;
@@ -83,76 +123,90 @@ const ManagerMeeting = ({ user, classes }) => {
     }
   };
 
+  const isPopoverOpen = Boolean(anchorEl);
+
+  const togglePopover = () => {
+    setAnchorEl(null);
+  };
+
+  const id = isPopoverOpen ? 'schedule-popover' : undefined;
+
+  function applySortFilter(array, comparator, query) {
+    const stabilizedThis = array.map((el, index) => [el, index]);
+    stabilizedThis.sort((a, b) => {
+      const order = comparator(a[0], b[0]);
+      if (order !== 0) return order;
+      return a[1] - b[1];
+    });
+    if (query) {
+      return filter(array, (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    }
+    return stabilizedThis.map((el) => el[0]);
+  }
+
+  const handleRequestSort = (event, property) => {
+    const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(property);
+  };
+
+  const emptyRows =
+    page > 0 && upcomingMeetings
+      ? Math.max(0, (1 + page) * rowsPerPage - upcomingMeetings.length)
+      : 0;
+  const isUserNotFound = upcomingMeetings ? upcomingMeetings.length === 0 : 0;
+
   return (
     <Box>
-      <Box style={{ width: '100%' }} display="flex" justifyContent="flex-end" alignItems="center">
+      <Box>
         {!isFetching ? (
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<Add />}
-            onClick={toggleScheduleOpen}
-          >
-            {meeting ? 'Update' : 'Create'} Meeting Schedule
-          </Button>
-        ) : (
-          <Skeleton height={30} width={250} />
-        )}
-      </Box>
-      {!isFetching && (
-        <Box display="flex" justifyContent="center" alignItems="flex-start" flexDirection="column">
-          <Typography variant="h4" style={{ marginInline: 'auto' }} marginBottom={4}>
-            {meeting ? 'Your Meeting Schedule' : `You Don't have any meeting schedule`}
-          </Typography>
-          {meeting && (
-            <Grid container>
-              <Grid item xs={12} sm={5} style={{ paddingTop: '2rem' }}>
-                <Box
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    maxWidth: 350
-                  }}
-                >
-                  <Typography style={{ display: 'initial' }} variant="h3">
-                    Start Time :{' '}
-                  </Typography>
-                  <Typography
-                    variant="h3"
-                    style={{
-                      padding: '10px',
-                      backgroundColor: '#ccc',
-                      display: 'initial'
-                    }}
-                  >
-                    {new Date(meeting.startTime).toTimeString().slice(0, 5)}
-                  </Typography>
-                </Box>
-                <Box
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    maxWidth: 350
-                  }}
-                >
-                  <Typography variant="h3" style={{ display: 'initial' }}>
-                    End Time :{' '}
-                  </Typography>
-                  <Typography
-                    variant="h3"
-                    style={{
-                      padding: '10px',
-                      backgroundColor: '#ccc',
-                      display: 'initial'
-                    }}
-                  >
-                    {new Date(meeting.endTime).toTimeString().slice(0, 5)}
-                  </Typography>
-                </Box>{' '}
-              </Grid>
-              <Grid item xs={12} sm={5}>
+          <Box display="flex" justifyContent="space-around" alignItems="center">
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center'
+              }}
+            >
+              <AccessTimeIcon style={{ marginRight: 10 }} />
+              <Typography variant="h5">Timings : </Typography>
+
+              <Typography variant="h6" fontWeight="normal" marginLeft={1}>
+                {meeting ? (
+                  new Date(meeting.startTime).toTimeString().slice(0, 5)
+                ) : (
+                  <Label variant="ghost" color="error">
+                    Not Set yet
+                  </Label>
+                )}
+                {'-'}
+                {meeting && new Date(meeting.endTime).toTimeString().slice(0, 5)}
+              </Typography>
+            </div>
+            <div>
+              <Button
+                aria-describedby={id}
+                variant="contained"
+                color="primary"
+                onClick={handlePopover}
+                endIcon={<DateRangeIcon />}
+                disabled={!meeting}
+              >
+                View Schedule
+              </Button>
+              <Popover
+                id={id}
+                open={isPopoverOpen}
+                anchorEl={anchorEl}
+                onClose={togglePopover}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'right'
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right'
+                }}
+              >
                 <DatePicker
                   theme={theme}
                   handleChange={() => {}}
@@ -166,75 +220,104 @@ const ManagerMeeting = ({ user, classes }) => {
                   autoResponsive={false}
                   disabled // disable calendar
                 />
-              </Grid>
-            </Grid>
-          )}
-          {upcomingMeetings?.length > 0 && (
-            <Typography variant="h4" style={{ margin: 'auto', marginBottom: '2rem' }}>
-              Upcoming Meetings
-            </Typography>
-          )}
-          <Grid container spacing={4}>
-            {upcomingMeetings &&
-              upcomingMeetings.map((slot) => (
-                <Grid key={slot._id} item xs={12} sm={5} style={{ paddingTop: '2rem' }}>
-                  <Box className={classes.upcomingMeetingBox}>
-                    <Box>
-                      <Typography variant="h4">
-                        Date : {new Date(slot.startTime).toDateString()}
-                      </Typography>
-                      <Box
-                        style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                          maxWidth: 350
-                        }}
-                      >
-                        <Typography style={{ display: 'initial' }} variant="h4">
-                          Start Time :{' '}
-                        </Typography>
-                        <Typography
-                          variant="h4"
-                          style={{
-                            padding: '10px',
-                            backgroundColor: '#ccc',
-                            display: 'initial'
-                          }}
-                        >
-                          {new Date(slot.startTime).toTimeString().slice(0, 5)}
-                        </Typography>
-                      </Box>
-                      <Box
-                        style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                          maxWidth: 350
-                        }}
-                      >
-                        <Typography variant="h4" style={{ display: 'initial' }}>
-                          End Time :{' '}
-                        </Typography>
-                        <Typography
-                          variant="h4"
-                          style={{
-                            padding: '10px',
-                            backgroundColor: '#ccc',
-                            display: 'initial'
-                          }}
-                        >
-                          {new Date(slot.endTime).toTimeString().slice(0, 5)}
-                        </Typography>
-                      </Box>
-                    </Box>
-                  </Box>
-                </Grid>
-              ))}
-          </Grid>
-        </Box>
-      )}
+              </Popover>
+            </div>
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<Add />}
+              onClick={toggleScheduleOpen}
+            >
+              {meeting ? 'Update' : 'Create'} Meeting Schedule
+            </Button>
+          </Box>
+        ) : (
+          <Skeleton height={30} width={250} />
+        )}
 
+        <Typography variant="h5" marginTop={5}>
+          Upcoming Meetings
+        </Typography>
+        <TableContainer sx={{ minWidth: 800 }}>
+          <Table>
+            <UserListHead
+              order={order}
+              orderBy={orderBy}
+              headLabel={tableHeadings}
+              rowCount={upcomingMeetings ? upcomingMeetings.length : 0}
+              numSelected={0}
+              onRequestSort={handleRequestSort}
+              onSelectAllClick={handleSelectAllClick}
+            />
+
+            <TableBody>
+              {upcomingMeetings
+                ? upcomingMeetings
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((row, idx) => {
+                      const { _id, employee, startTime, endTime } = row;
+
+                      return (
+                        <TableRow
+                          hover
+                          key={_id}
+                          tabIndex={-1}
+                          selected={false}
+                          aria-checked={false}
+                        >
+                          <TableCell padding="checkbox"></TableCell>
+                          <TableCell component="th" scope="row" padding="none">
+                            {idx + 1}
+                          </TableCell>
+                          <TableCell align="left">
+                            {new Date(startTime).toTimeString().slice(0, 5)}
+                            {'-'}
+                            {new Date(endTime).toTimeString().slice(0, 5)}
+                          </TableCell>
+
+                          <TableCell align="left">{new Date(startTime).toDateString()}</TableCell>
+
+                          <TableCell align="left">{employee.name}</TableCell>
+                        </TableRow>
+                      );
+                    })
+                : Array(5)
+                    .fill()
+                    .map(() => (
+                      <TableRow key={uuid()}>
+                        <TableCell></TableCell>
+                        <TableCell>
+                          <Skeleton />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton />
+                        </TableCell>
+                      </TableRow>
+                    ))}
+              {emptyRows > 0 && (
+                <TableRow style={{ height: 53 * emptyRows }}>
+                  <TableCell colSpan={6} />
+                </TableRow>
+              )}
+            </TableBody>
+            {upcomingMeetings && isUserNotFound && (
+              <TableBody>
+                <TableRow>
+                  <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                    <SearchNotFound searchQuery={filterName} />
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            )}
+          </Table>
+        </TableContainer>
+      </Box>
       <MeetingScheduleDialog
         open={isScheduleModalOpen}
         closeDialog={toggleScheduleOpen}
@@ -277,7 +360,51 @@ const MeetingsEmployee = ({ user }) => {
 
   return (
     <Box>
-      <Box style={{ width: '100%' }} display="flex" justifyContent="flex-end" alignItems="center">
+      {meeting && (
+        <Typography variant="h6" style={{ margin: 'auto' }} fontWeight="normal">
+          Upcoming Meeting
+        </Typography>
+      )}
+      <Box
+        style={{ width: '100%' }}
+        display="flex"
+        justifyContent="space-around"
+        alignItems="center"
+      >
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center'
+          }}
+        >
+          <AccessTimeIcon style={{ marginRight: 10 }} />
+          <Typography variant="h5">Timings : </Typography>
+
+          <Typography variant="h6" fontWeight="normal" marginLeft={1}>
+            {meeting ? (
+              new Date(meeting.startTime).toTimeString().slice(0, 5)
+            ) : (
+              <Label variant="ghost" color="error">
+                Not Set yet
+              </Label>
+            )}
+            {'-'}
+            {meeting && new Date(meeting.endTime).toTimeString().slice(0, 5)}
+          </Typography>
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center'
+          }}
+        >
+          <EventIcon style={{ marginRight: 10 }} />
+          <Typography variant="h5">Date : </Typography>
+
+          <Typography variant="h6" fontWeight="normal" marginLeft={1}>
+            {meeting && new Date(meeting.startTime).toDateString()}
+          </Typography>
+        </div>
         <Button
           disabled={isFetching || !!meeting}
           variant="contained"
@@ -287,65 +414,6 @@ const MeetingsEmployee = ({ user }) => {
         >
           Request Meeting
         </Button>
-      </Box>
-
-      <Box display="flex" justifyContent="center" alignItems="flex-start" flexDirection="column">
-        <Typography variant="h4" style={{ marginInline: 'auto' }} marginBottom={4}>
-          {meeting ? 'Your Upcoming Meeting' : `You Don't have any upcoming meeting `}
-        </Typography>
-        {meeting && (
-          <Grid container>
-            <Grid item xs={12} sm={5} style={{ paddingTop: '2rem' }}>
-              <Typography variant="h4">
-                Date : {new Date(meeting.startTime).toDateString()}
-              </Typography>
-              <Box
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  maxWidth: 350
-                }}
-              >
-                <Typography style={{ display: 'initial' }} variant="h3">
-                  Start Time :{' '}
-                </Typography>
-                <Typography
-                  variant="h3"
-                  style={{
-                    padding: '10px',
-                    backgroundColor: '#ccc',
-                    display: 'initial'
-                  }}
-                >
-                  {new Date(meeting.startTime).toTimeString().slice(0, 5)}
-                </Typography>
-              </Box>
-              <Box
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  maxWidth: 350
-                }}
-              >
-                <Typography variant="h3" style={{ display: 'initial' }}>
-                  End Time :{' '}
-                </Typography>
-                <Typography
-                  variant="h3"
-                  style={{
-                    padding: '10px',
-                    backgroundColor: '#ccc',
-                    display: 'initial'
-                  }}
-                >
-                  {new Date(meeting.endTime).toTimeString().slice(0, 5)}
-                </Typography>
-              </Box>
-            </Grid>
-          </Grid>
-        )}
       </Box>
     </Box>
   );
