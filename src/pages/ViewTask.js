@@ -290,12 +290,13 @@ const ViewTask = ({ classes }) => {
                         {user &&
                           user.role !== 'Admin' &&
                           taskReviews &&
-                          !taskReviews.find((item) => item._id._id === employee._id) && (
+                          !taskReviews.find((item) => item._id._id === user._id) && (
                             <Button
                               variant="outlined"
                               color="primary"
                               style={{
-                                marginTop: 10
+                                marginTop: 10,
+                                marginLeft: 20
                               }}
                               startIcon={<RateReviewIcon color="primary" />}
                               onClick={() => handleReview(employee._id)}
