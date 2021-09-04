@@ -16,6 +16,7 @@ const COMMANDS = {
 
 const UseAlan = () => {
   const [alanInstance, setAlanInstance] = useState();
+  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const homePage = useCallback(() => {
     alanInstance.playText(' going to home page ');
@@ -23,9 +24,13 @@ const UseAlan = () => {
   }, [alanInstance, history]);
 
   const logoutPage = useCallback(() => {
-    alanInstance.playText('Logging Out');
-    navigate('/logout', { replace: true });
-    toast.success('Logout success');
+    if (user) {
+      alanInstance.playText('Logging Out');
+      navigate('/logout', { replace: true });
+      toast.success('Logout success');
+    } else {
+      alanInstance.playText('You are NOT logged In');
+    }
   }, [alanInstance, history]);
 
   const managersPage = useCallback(() => {

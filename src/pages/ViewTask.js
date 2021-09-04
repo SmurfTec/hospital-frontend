@@ -128,6 +128,7 @@ const ViewTask = ({ classes }) => {
   const { user } = useContext(AuthContext);
   const { addNewReview } = useContext(DataContext);
   const [task, setTask] = useState();
+  // const [taskReviews, setTaskReviews] = useState();
   const [taskReviews, setTaskReviews] = useState();
   const [isAddReviewOpen, setIsAddReviewOpen] = useState(false);
   const [currentEmployeeId, setCurrentEmployeeId] = useState();
@@ -141,17 +142,50 @@ const ViewTask = ({ classes }) => {
   useEffect(() => {
     (async () => {
       const resData = await makeReq(`/task/${id}`);
-      console.clear();
       console.log(`resData`, resData);
       setTask(resData.task);
     })();
+    // (async () => {
+    //   const resData = await makeReq(`/task/getTaskReviews/${id}`);
+    //   console.clear();
+    //   console.log(`resData`, resData);
+    //   setTaskReviews(resData.reviews);
+    // })();
     (async () => {
-      const resData = await makeReq(`/task/getTaskReviews/${id}`);
-      console.clear();
+      const resData = await makeReq(`/users/${id}/reviews`);
       console.log(`resData`, resData);
-      setTaskReviews(resData.reviews);
+      // setTaskReviews(resData.reviews)
     })();
   }, [id]);
+
+  useEffect(() => {
+    console.log(`task`, task);
+    if (task) {
+      console.log(`task?.group`, task.group);
+    }
+    (async () => {
+      if (!task || !task.group || !task.group.employees) return;
+
+      console.log(`task.group.employees.length`, task.group.employees.length);
+      let employeeRatings = task.group.employees.map(async (el) => {
+        console.log(`el`, el);
+        const resData = await makeReq(`/employee/${el._id}/reviews`);
+        console.log(`resData employeeRatings`, resData);
+        return resData;
+      });
+
+      console.clear();
+      employeeRatings = await Promise.all(employeeRatings);
+      console.log(`employeeRatings`, employeeRatings);
+
+      employeeRatings = employeeRatings.map((el) => el.reviews);
+      employeeRatings = [].concat.apply([], employeeRatings);
+      employeeRatings = employeeRatings.filter((el) => el.task === id);
+      console.log(`employeeRatings`, employeeRatings);
+
+      setTaskReviews(employeeRatings);
+    })();
+  }, [task]);
 
   const handleReview = (id) => {
     setCurrentEmployeeId(id);
@@ -283,14 +317,16 @@ const ViewTask = ({ classes }) => {
                 <Grid container textAlign="center">
                   {task.group &&
                     task.group.employees &&
-                    task.group.employees.map((employee) => (
-                      <Grid item xs={12} key={employee._id}>
-                        <Typography variant="h6">{employee.name}</Typography>
-                        <Typography variant="p">{employee.email}</Typography>
+                    task.group.employees.map((el) => (
+                      <Grid item xs={12} key={el._id}>
+                        <Typography variant="h6">{el.name}</Typography>
+                        <Typography variant="p">{el.email}</Typography>
                         {user &&
                           user.role !== 'Admin' &&
                           taskReviews &&
-                          !taskReviews.find((item) => item._id._id === user._id) && (
+                          !!!taskReviews.find(
+                            (item) => item.user._id === user._id && item.employee === el._id
+                          ) && (
                             <Button
                               variant="outlined"
                               color="primary"
@@ -299,7 +335,7 @@ const ViewTask = ({ classes }) => {
                                 marginLeft: 20
                               }}
                               startIcon={<RateReviewIcon color="primary" />}
-                              onClick={() => handleReview(employee._id)}
+                              onClick={() => handleReview(el._id)}
                             >
                               Review
                             </Button>
@@ -320,88 +356,64 @@ const ViewTask = ({ classes }) => {
               Task Reviews
             </Typography>
           </Grid>
-          {taskReviews
-            ? taskReviews.map((review, idx) => (
-                <Grid item xs={12} sm={6} key={idx}>
-                  <Typography variant="h5">{review._id.name}</Typography>
-                  <Box component="fieldset" mb={3} borderColor="transparent">
-                    <Typography component="legend">Average Rating</Typography>
+          <Grid item xs={12}>
+            <Typography variant="h4" marginBottom={5}>
+              Reviews
+            </Typography>
+            {taskReviews ? (
+              taskReviews.map((el) => (
+                <Box
+                  display="flex"
+                  flexDirection="column"
+                  alignItems="space-around"
+                  justifyContent="center"
+                  marginBottom={5}
+                >
+                  <Typography variant="h5">{el.user.name}</Typography>
+                  <Box
+                    display="flex"
+                    flexWrap="wrap"
+                    flexDirection="row"
+                    alignItems="center"
+                    justifyContent="space-around"
+                    width="fit-content"
+                  >
                     <Rating
                       name="half-rating-read"
-                      defaultValue={review.avgRating}
+                      defaultValue={el.rating}
                       precision={0.5}
                       readOnly
                     />
+                    <Label
+                      variant="ghost"
+                      color="info"
+                      style={{
+                        alignSelf: 'end'
+                      }}
+                    >
+                      {new Date(el.created_At).toDateString()}
+                    </Label>
                   </Box>
-                  <Box component="fieldset" mb={3} borderColor="transparent">
-                    <Typography component="legend">Minimum Rating</Typography>
-                    <Rating
-                      name="half-rating-read"
-                      defaultValue={review.minRating}
-                      precision={0.5}
-                      readOnly
-                    />
-                  </Box>
-                  <Box component="fieldset" mb={3} borderColor="transparent">
-                    <Typography component="legend">Maximum Rating</Typography>
-                    <Rating
-                      name="half-rating-read"
-                      defaultValue={review.maxRating}
-                      precision={0.5}
-                      readOnly
-                    />
-                  </Box>
-                  <Box component="fieldset" mb={3} borderColor="transparent">
-                    <Typography component="legend">Total Ratings</Typography>
-                    <Typography component="legend">{review.totalRating}</Typography>
-                  </Box>
-                  <Box component="fieldset" mb={3} borderColor="transparent">
-                    <Typography component="legend">Total Reviews</Typography>
-                    <Typography component="legend">{review.totalReviews}</Typography>
-                  </Box>
-                </Grid>
+                  <Typography variant="p">{el.review}</Typography>
+                </Box>
               ))
-            : [1, 2].map((el) => (
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="h5">
-                    <Skeleton />
-                  </Typography>
-                  <Box component="fieldset" mb={3} borderColor="transparent">
-                    <Typography component="legend">
-                      <Skeleton />
-                    </Typography>
-                    <Skeleton />
-                  </Box>
-                  <Box component="fieldset" mb={3} borderColor="transparent">
-                    <Typography component="legend">
-                      <Skeleton />
-                    </Typography>
-                    <Skeleton />
-                  </Box>
-                  <Box component="fieldset" mb={3} borderColor="transparent">
-                    <Typography component="legend">
-                      <Skeleton />
-                    </Typography>
-                    <Skeleton />
-                  </Box>
-                  <Box component="fieldset" mb={3} borderColor="transparent">
-                    <Typography component="legend">
-                      <Skeleton />
-                    </Typography>
-                    <Typography component="legend">
-                      <Skeleton />
-                    </Typography>
-                  </Box>
-                  <Box component="fieldset" mb={3} borderColor="transparent">
-                    <Typography component="legend">
-                      <Skeleton />
-                    </Typography>
-                    <Typography component="legend">
-                      <Skeleton />
-                    </Typography>
-                  </Box>
+            ) : (
+              <>
+                <Grid item xs={12} sm={6} md={3}>
+                  <Skeleton width={251} height={235} />
                 </Grid>
-              ))}
+                <Grid item xs={12} sm={6} md={3}>
+                  <Skeleton width={251} height={235} />
+                </Grid>
+                <Grid item xs={12} sm={6} md={3}>
+                  <Skeleton width={251} height={235} />
+                </Grid>
+                <Grid item xs={12} sm={6} md={3}>
+                  <Skeleton width={251} height={235} />
+                </Grid>
+              </>
+            )}
+          </Grid>
         </Grid>
       </Container>
       <AddReviewModal
