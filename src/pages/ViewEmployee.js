@@ -11,6 +11,7 @@ import { DataContext } from 'contexts/DataContext';
 import { makeReq } from 'utils/constants';
 import Rating from '@material-ui/lab/Rating';
 import Label from 'components/Label';
+import { Email } from '@material-ui/icons';
 
 // ----------------------------------------------------------------------
 
@@ -41,26 +42,43 @@ const ViewEmployee = () => {
           </Typography>
           <br />
           <Typography variant="h5" style={{ width: 'fit-content', minWidth: 200 }}>
-            {currentEmployee ? currentEmployee.name : <Skeleton />}
+            Name : {currentEmployee ? currentEmployee.name : <Skeleton />}
           </Typography>
-          <Typography variant="h6" style={{ width: 'fit-content', minWidth: 180, color: '#ccc' }}>
+          <Typography
+            variant="h6"
+            style={{
+              width: 'fit-content',
+              minWidth: 180,
+              color: '#ccc',
+              display: 'flex',
+              alignItems: 'center'
+            }}
+          >
+            <Email
+              style={{
+                marginRight: 13
+              }}
+            />{' '}
             {currentEmployee ? currentEmployee.email : <Skeleton />}
           </Typography>
           <Typography variant="h4" style={{ width: 'fit-content', minWidth: 200 }}>
-            Manager : {currentEmployee ? currentEmployee.manager.name : <Skeleton />}
+            Managed By : {currentEmployee ? currentEmployee.manager.name : <Skeleton />}
           </Typography>
         </Box>
         <Grid container spacing={3} style={{ justifyContent: 'space-around' }}>
           {currentEmployee ? (
             <>
               <Grid item xs={12} sm={6} md={3}>
-                <AppEmploys slug="Team" data={currentEmployee.group.employees} />
+                <AppEmploys
+                  slug="Team"
+                  data={currentEmployee.group ? currentEmployee.group.employees : []}
+                />
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
-                <AppTasks data={currentEmployee.group.tasks} />
+                <AppTasks data={currentEmployee.group ? currentEmployee.group.tasks : []} />
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
-                <AppGroups data={currentEmployee.group.name} />
+                <AppGroups data={currentEmployee.group ? currentEmployee.group.name : []} />
               </Grid>
 
               <Grid item xs={12}>
@@ -69,6 +87,12 @@ const ViewEmployee = () => {
                     <Typography variant="h4" marginBottom={5}>
                       Reviews
                     </Typography>
+                    {reviews && reviews.length === 0 && (
+                      <Typography variant="h5" fontWeight="normal">
+                        This Employee has No Reviews Yet !
+                      </Typography>
+                    )}
+
                     {reviews.map((el) => (
                       <Box
                         display="flex"

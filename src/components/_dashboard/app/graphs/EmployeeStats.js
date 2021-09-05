@@ -92,7 +92,7 @@ const EmployeesStats = ({ employees }) => {
 
   return (
     <Card>
-      <CardHeader title="Managers Stats" />
+      <CardHeader title="Employee Stats" />
 
       {state.series.length > 0 ? (
         <ReactApexChart options={state.options} series={state.series} type="bar" height={430} />

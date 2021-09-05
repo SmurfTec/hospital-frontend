@@ -5,7 +5,7 @@ import DashboardLayout from './layouts/dashboard';
 //
 import Login from './pages/Login';
 import DashboardApp from './pages/DashboardApp';
-import Products from './pages/Products';
+import Settings from './pages/Settings';
 import Blog from './pages/Blog';
 import User from './pages/User';
 import { AuthContext } from 'contexts/AuthContext';
@@ -69,6 +69,10 @@ export default function Router() {
         {
           path: 'meetings',
           element: <Meetings />
+        },
+        {
+          path: 'settings',
+          element: <Settings />
         },
         { path: 'managers/:id', element: <ViewManager /> },
         { path: 'employees/:id', element: <ViewEmployee /> },

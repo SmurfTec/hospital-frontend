@@ -326,7 +326,7 @@ export default function Managers() {
       <AddorEditModal
         isOpen={isCreateOpen}
         createNew={(...props) => {
-          toggleCreateOpen(...props, addNewManager());
+          addNewManager(...props, toggleCreateOpen);
         }}
         closeDialog={toggleCreateOpen}
         role="Manager"

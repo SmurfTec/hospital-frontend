@@ -78,7 +78,7 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName,
 
       {numSelected > 0 && (
         <Button startIcon={<Icon icon={personOutline} />} component={Link} to={viewLink}>
-          View Profile
+          View
         </Button>
       )}
     </RootStyle>

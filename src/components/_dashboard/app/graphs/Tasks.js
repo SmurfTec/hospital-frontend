@@ -10,6 +10,7 @@ import { BaseOptionChart } from 'components/charts';
 import { useContext, useState, useEffect } from 'react';
 import { DataContext } from 'contexts/DataContext';
 import Skeleton from 'react-loading-skeleton';
+import { AuthContext } from 'contexts/AuthContext';
 // ----------------------------------------------------------------------
 
 const CHART_HEIGHT = 372;
@@ -38,6 +39,7 @@ const ChartWrapperStyle = styled('div')(({ theme }) => ({
 const TasksGraph = () => {
   const theme = useTheme();
   const { tasks } = useContext(DataContext);
+  const { user } = useContext(AuthContext);
   const [chartDate, setChartDate] = useState([]);
 
   useEffect(() => {
@@ -55,22 +57,43 @@ const TasksGraph = () => {
     console.log(`inProgressTasks`, inProgressTasks);
     console.log(`completedTasks`, completedTasks);
 
-    setChartDate([
-      completedTasks.length,
-      inProgressTasks.length,
-      notStartedTasks.length,
-      unAssignedTasks.length
-    ]);
+    switch (user.role) {
+      case 'Admin':
+        setChartDate([
+          completedTasks.length,
+          inProgressTasks.length,
+          notStartedTasks.length,
+          unAssignedTasks.length
+        ]);
+        break;
+
+      case 'Manager':
+        setChartDate([completedTasks.length, inProgressTasks.length, notStartedTasks.length]);
+        break;
+
+      default:
+        setChartDate([completedTasks.length, inProgressTasks.length]);
+        break;
+    }
   }, [tasks]);
 
+  const base_colors = [theme.palette.primary.main, theme.palette.info.main];
+
+  const base_labels = ['Completed', 'In Progress'];
+
   const chartOptions = merge(BaseOptionChart(), {
-    colors: [
-      theme.palette.primary.main,
-      theme.palette.info.main,
-      theme.palette.warning.main,
-      theme.palette.error.main
-    ],
-    labels: ['Completed', 'In Progress', 'Not Started', 'Not Assigned'],
+    colors:
+      user.role === 'Admin'
+        ? [...base_colors, theme.palette.error.main, theme.palette.warning.main]
+        : user.role === 'Manager'
+        ? [...base_colors, theme.palette.warning.main]
+        : base_colors,
+    labels:
+      user.role === 'Admin'
+        ? [...base_labels, 'Not Started', 'Not Assigned']
+        : user.role === 'Manager'
+        ? [...base_labels, 'Not Started']
+        : base_labels,
     stroke: { colors: [theme.palette.background.paper] },
     legend: { floating: true, horizontalAlign: 'center' },
     dataLabels: { enabled: true, dropShadow: { enabled: false } },

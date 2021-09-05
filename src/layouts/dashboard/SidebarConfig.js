@@ -4,6 +4,7 @@ import peopleFill from '@iconify/icons-eva/people-fill';
 import listFill from '@iconify/icons-eva/list-fill';
 import logOutFill from '@iconify/icons-eva/log-out-fill';
 import videoFill from '@iconify/icons-eva/video-fill';
+import settingsFill from '@iconify/icons-eva/settings-2-fill';
 
 // ----------------------------------------------------------------------
 
@@ -41,6 +42,11 @@ export const adminConfig = [
   //   icon: getIcon(listFill)
   // },
   {
+    title: 'Settings',
+    path: '/dashboard/settings',
+    icon: getIcon(settingsFill)
+  },
+  {
     title: 'logout',
     path: '/logout',
     icon: getIcon(logOutFill)
@@ -74,6 +80,11 @@ export const managerConfig = [
     icon: getIcon(videoFill)
   },
   {
+    title: 'Settings',
+    path: '/dashboard/settings',
+    icon: getIcon(settingsFill)
+  },
+  {
     title: 'logout',
     path: '/logout',
     icon: getIcon(logOutFill)
@@ -92,7 +103,7 @@ export const employeeConfig = [
     icon: getIcon(peopleFill)
   },
   {
-    title: 'Groups',
+    title: 'Group',
     path: '/dashboard/groups',
     icon: getIcon(peopleFill)
   },
@@ -105,6 +116,12 @@ export const employeeConfig = [
     title: 'Meetings',
     path: '/dashboard/meetings',
     icon: getIcon(videoFill)
+  },
+
+  {
+    title: 'Settings',
+    path: '/dashboard/settings',
+    icon: getIcon(settingsFill)
   },
   {
     title: 'logout',

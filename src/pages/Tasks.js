@@ -283,6 +283,7 @@ const Tasks = () => {
                                       unAssignTaskFromManger(_id, managerId);
                                     }}
                                     removeFromSlug="UnAssign"
+                                    noEdit={status === 'complete'}
                                   />
                                 </TableCell>
                               )}

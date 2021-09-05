@@ -11,6 +11,9 @@ const API_BASE_URL = `http://localhost:8001/api`;
 // const API_BASE_URL = `https://team-task-manager-backend.herokuapp.com/api`;
 
 const handleCatch = (err) => {
+  console.log('**********');
+  console.log('**********');
+  console.log('**********');
   console.log(`err`, err);
   let errMsg = 'Something Went Wrong';
   if (err.message) errMsg = err.message;
