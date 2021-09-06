@@ -21,9 +21,13 @@ const UseAlan = () => {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const homePage = useCallback(() => {
-    alanInstance.playText(' going to home page ');
-    navigate('/', { replace: true });
-  }, [alanInstance, history]);
+    if (user) {
+      alanInstance.playText(' going to home page ');
+      navigate('/', { replace: true });
+    } else {
+      alanInstance.playText('You Should Login First');
+    }
+  }, [alanInstance, history, user]);
 
   const logoutPage = useCallback(() => {
     if (user) {
@@ -33,37 +37,61 @@ const UseAlan = () => {
     } else {
       alanInstance.playText('You are NOT logged In');
     }
-  }, [alanInstance, history]);
+  }, [alanInstance, history, user]);
 
   const managersPage = useCallback(() => {
-    alanInstance.playText(' Showing Managers ');
-    navigate('/dashboard/managers', { replace: true });
-  }, [alanInstance, history]);
+    if (user) {
+      alanInstance.playText(' Showing Managers ');
+      navigate('/dashboard/managers', { replace: true });
+    } else {
+      alanInstance.playText('You Should Login First');
+    }
+  }, [alanInstance, history, user]);
 
   const employeesPage = useCallback(() => {
-    alanInstance.playText(' Showing Employees ');
-    navigate('/dashboard/employees', { replace: true });
-  }, [alanInstance, history]);
+    if (user) {
+      alanInstance.playText(' Showing Employees ');
+      navigate('/dashboard/employees', { replace: true });
+    } else {
+      alanInstance.playText('You Should Login First');
+    }
+  }, [alanInstance, history, user]);
 
   const groupsPage = useCallback(() => {
-    alanInstance.playText(' Showing Groups ');
-    navigate('/dashboard/groups', { replace: true });
-  }, [alanInstance, history]);
+    if (user) {
+      alanInstance.playText(' Showing Groups ');
+      navigate('/dashboard/groups', { replace: true });
+    } else {
+      alanInstance.playText('You Should Login First');
+    }
+  }, [alanInstance, history, user]);
 
   const tasksPage = useCallback(() => {
-    alanInstance.playText(' Showing Tasks ');
-    navigate('/dashboard/tasks', { replace: true });
-  }, [alanInstance, history]);
+    if (user) {
+      alanInstance.playText(' Showing Tasks ');
+      navigate('/dashboard/tasks', { replace: true });
+    } else {
+      alanInstance.playText('You Should Login First');
+    }
+  }, [alanInstance, history, user]);
 
   const settingsPage = useCallback(() => {
-    alanInstance.playText(' Showing Settings ');
-    navigate('/dashboard/settings', { replace: true });
-  }, [alanInstance, history]);
+    if (user) {
+      alanInstance.playText(' Showing Settings ');
+      navigate('/dashboard/settings', { replace: true });
+    } else {
+      alanInstance.playText('You Should Login First');
+    }
+  }, [alanInstance, history, user]);
 
   const meetingsPage = useCallback(() => {
-    alanInstance.playText(' Showing Meetings ');
-    navigate('/dashboard/meetings', { replace: true });
-  }, [alanInstance, history]);
+    if (user) {
+      alanInstance.playText(' Showing Meetings ');
+      navigate('/dashboard/meetings', { replace: true });
+    } else {
+      alanInstance.playText('You Should Login First');
+    }
+  }, [alanInstance, history, user]);
 
   useEffect(() => {
     window.addEventListener(COMMANDS.HOME_PAGE, homePage);

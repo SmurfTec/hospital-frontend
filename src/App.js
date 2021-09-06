@@ -11,12 +11,11 @@ import { AuthContext } from 'contexts/AuthContext';
 // ----------------------------------------------------------------------
 
 export default function App() {
-  const { user } = useContext(AuthContext);
   return (
     <ThemeConfig>
       <ScrollToTop />
       <Router />
-      {user && <UseAlan />}
+      <UseAlan />
     </ThemeConfig>
   );
 }
