@@ -25,7 +25,7 @@ const MENU_OPTIONS = [
   {
     label: 'Settings',
     icon: settings2Fill,
-    linkTo: '/settings'
+    linkTo: '/dashboard/settings'
   }
 ];
 

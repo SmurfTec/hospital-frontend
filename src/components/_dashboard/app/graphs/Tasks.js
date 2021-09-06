@@ -2,7 +2,7 @@ import { merge } from 'lodash';
 import ReactApexChart from 'react-apexcharts';
 // material
 import { useTheme, styled } from '@material-ui/core/styles';
-import { Card, CardHeader } from '@material-ui/core';
+import { Card, CardHeader, Typography } from '@material-ui/core';
 // utils
 import { fNumber } from 'utils/formatNumber';
 //
@@ -34,13 +34,13 @@ const ChartWrapperStyle = styled('div')(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-// const chartDate = [4344, 5435, 1443, 4443];
+// const chartData = [4344, 5435, 1443, 4443];
 
 const TasksGraph = () => {
   const theme = useTheme();
   const { tasks } = useContext(DataContext);
   const { user } = useContext(AuthContext);
-  const [chartDate, setChartDate] = useState([]);
+  const [chartData, setChartDate] = useState([]);
 
   useEffect(() => {
     if (!tasks) return;
@@ -114,10 +114,25 @@ const TasksGraph = () => {
   return (
     <Card style={{ height: 497 }}>
       <CardHeader title="Current Tasks" />
-      {chartDate && chartDate.length > 0 ? (
-        <ChartWrapperStyle dir="ltr">
-          <ReactApexChart type="pie" series={chartDate} options={chartOptions} height={280} />
-        </ChartWrapperStyle>
+      {chartData ? (
+        !!chartData.some((item) => item !== 0) ? (
+          <ChartWrapperStyle dir="ltr">
+            <ReactApexChart type="pie" series={chartData} options={chartOptions} height={280} />
+          </ChartWrapperStyle>
+        ) : (
+          <Typography
+            variant="h5"
+            color="textSecondary"
+            style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)'
+            }}
+          >
+            No Tasks to Show Graph
+          </Typography>
+        )
       ) : (
         <Skeleton height={200} />
       )}

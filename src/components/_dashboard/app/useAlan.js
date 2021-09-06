@@ -11,7 +11,9 @@ const COMMANDS = {
   MANAGERS_PAGE: 'managers',
   EMPLOYEES_PAGE: 'employees',
   GROUPS_PAGE: 'groups',
-  TASKS_PAGE: 'tasks'
+  TASKS_PAGE: 'tasks',
+  SETTINGS_PAGE: 'settings',
+  MEETINGS_PAGE: 'meetings'
 };
 
 const UseAlan = () => {
@@ -35,22 +37,32 @@ const UseAlan = () => {
 
   const managersPage = useCallback(() => {
     alanInstance.playText(' Showing Managers ');
-    navigate('/managers', { replace: true });
+    navigate('/dashboard/managers', { replace: true });
   }, [alanInstance, history]);
 
   const employeesPage = useCallback(() => {
     alanInstance.playText(' Showing Employees ');
-    navigate('/employees', { replace: true });
+    navigate('/dashboard/employees', { replace: true });
   }, [alanInstance, history]);
 
   const groupsPage = useCallback(() => {
     alanInstance.playText(' Showing Groups ');
-    navigate('/groups', { replace: true });
+    navigate('/dashboard/groups', { replace: true });
   }, [alanInstance, history]);
 
   const tasksPage = useCallback(() => {
     alanInstance.playText(' Showing Tasks ');
-    navigate('/tasks', { replace: true });
+    navigate('/dashboard/tasks', { replace: true });
+  }, [alanInstance, history]);
+
+  const settingsPage = useCallback(() => {
+    alanInstance.playText(' Showing Settings ');
+    navigate('/dashboard/settings', { replace: true });
+  }, [alanInstance, history]);
+
+  const meetingsPage = useCallback(() => {
+    alanInstance.playText(' Showing Meetings ');
+    navigate('/dashboard/meetings', { replace: true });
   }, [alanInstance, history]);
 
   useEffect(() => {
@@ -60,6 +72,8 @@ const UseAlan = () => {
     window.addEventListener(COMMANDS.EMPLOYEES_PAGE, employeesPage);
     window.addEventListener(COMMANDS.GROUPS_PAGE, groupsPage);
     window.addEventListener(COMMANDS.TASKS_PAGE, tasksPage);
+    window.addEventListener(COMMANDS.SETTINGS_PAGE, settingsPage);
+    window.addEventListener(COMMANDS.MEETINGS_PAGE, meetingsPage);
 
     return () => {
       window.removeEventListener(COMMANDS.HOME_PAGE, homePage);
@@ -67,6 +81,8 @@ const UseAlan = () => {
       window.removeEventListener(COMMANDS.EMPLOYEES_PAGE, employeesPage);
       window.removeEventListener(COMMANDS.GROUPS_PAGE, groupsPage);
       window.removeEventListener(COMMANDS.TASKS_PAGE, tasksPage);
+      window.removeEventListener(COMMANDS.SETTINGS_PAGE, settingsPage);
+      window.removeEventListener(COMMANDS.MEETINGS_PAGE, meetingsPage);
     };
   }, [homePage, logoutPage, managersPage, employeesPage, groupsPage]);
 

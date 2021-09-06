@@ -72,7 +72,9 @@ export const DataProvider = ({ children }) => {
         setGroups(resData.groups);
       }
     } catch (err) {
-      handleCatch(err);
+      // handleCatch(err);
+      toast.warning('You dont have any Group');
+      setGroups([]);
     }
   };
 

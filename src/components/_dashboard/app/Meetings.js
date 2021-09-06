@@ -336,7 +336,7 @@ const MeetingsEmployee = ({ user }) => {
   const handleReqMeeting = async () => {
     try {
       const resData = await makeReq('/meeting/request-meeting', {}, 'PATCH');
-      setSlots((st) => [...st, resData.slot]);
+      setMeeting(resData.slot);
       toast.success('Success');
     } catch (err) {
       handleCatch(err);
