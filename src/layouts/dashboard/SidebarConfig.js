@@ -17,23 +17,23 @@ export const adminConfig = [
     icon: getIcon(pieChart2Fill)
   },
   {
-    title: 'Managers',
-    path: '/dashboard/managers',
+    title: 'Doctors',
+    path: '/dashboard/doctors',
     icon: getIcon(peopleFill)
   },
   {
-    title: 'Employees',
-    path: '/dashboard/employees',
+    title: 'Patients',
+    path: '/dashboard/Patients',
     icon: getIcon(peopleFill)
   },
   {
-    title: 'Groups',
-    path: '/dashboard/groups',
+    title: 'Appointments',
+    path: '/dashboard/Appointments',
     icon: getIcon(peopleFill)
   },
   {
-    title: 'Tasks',
-    path: '/dashboard/tasks',
+    title: 'Invoices',
+    path: '/dashboard/invoices',
     icon: getIcon(listFill)
   },
   // {

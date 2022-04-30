@@ -168,7 +168,7 @@ const Tasks = () => {
           <Typography variant="h4" gutterBottom>
             Tasks
           </Typography>
-          {user && user.role === 'Admin' && (
+          {user && user.role === 'admin' && (
             <Button
               variant="contained"
               onClick={toggleCreateOpen}
@@ -258,7 +258,7 @@ const Tasks = () => {
                               <TableCell align="left">
                                 {deadLine && getFormattedDate(deadLine)}
                               </TableCell>
-                              {user && user.role === 'Admin' && (
+                              {user && user.role === 'admin' && (
                                 <TableCell align="right">
                                   <UserMoreMenu
                                     currentUser={row}

@@ -14,7 +14,7 @@ import Logout from 'pages/Logout';
 import Login from './pages/Login';
 import NotFound from 'pages/Page404';
 import Employees from 'pages/Employees';
-import Managers from 'pages/Managers';
+import Doctors from 'pages/Doctors';
 import Groups from 'pages/Groups';
 import Tasks from 'pages/Tasks';
 import ViewManager from 'pages/ViewManager';
@@ -250,16 +250,17 @@ export default function Router() {
           <Routes>
             <Route path="/dashboard" element={<DashboardLayout />}>
               <Route path="/app" element={<DashboardApp />} replace />
-              <Route path="/managers" element={<Managers />} />
+              <Route path="/doctors" element={<Doctors />} />
               <Route path="/employees" element={<Employees />} />
               <Route path="/groups" element={<Groups />} />
               <Route path="/tasks" element={<Tasks />} />
               <Route path="/settings" element={<Settings />} />
-              <Route path="/managers/:id" element={<ViewManager />} />
+              <Route path="/doctors/:id" element={<ViewManager />} />
               <Route path="/employees/:id" element={<ViewEmployee />} />
               <Route path="/groups/:id" element={<ViewGroup />} />
               <Route path="/tasks/:id" element={<ViewTask />} />
               <Route path="/users" element={<User />} />
+              <Route path="*" element={<Navigate to="/dashboard/app" replace />} />
             </Route>
             <Route path="/logout" element={<Logout />} />
             <Route path="/" element={<Navigate to="/dashboard/app" replace />} />

@@ -20,7 +20,7 @@ export const DataProvider = ({ children }) => {
 
   const fetchDoctors = async () => {
     try {
-      const resData = await makeReq('/users?role=');
+      const resData = await makeReq('/users?role=doctor');
       setDoctors(resData.users);
     } catch (err) {
       handleCatch(err);
@@ -29,7 +29,7 @@ export const DataProvider = ({ children }) => {
   };
   const fetchPatients = async () => {
     try {
-      const resData = await makeReq('/users?role=');
+      const resData = await makeReq('/users?role=patient');
       setPatients(resData.users);
     } catch (err) {
       handleCatch(err);
@@ -65,9 +65,10 @@ export const DataProvider = ({ children }) => {
   const addNewDoctor = async (body, callBack) => {
     try {
       // TODO
-      const resData = await makeReq(`/`, { body: { ...body } }, 'POST');
+      const resData = await makeReq(`/users`, { body: { ...body, role: 'doctor' } }, 'POST');
       console.log(`resData`, resData);
-      toast.success(`Task ${resData.task.name} Created Successfully`);
+      toast.success(`Doctor ${resData.user.fullName} Created Successfully`);
+      setDoctors((st) => [...st, resData.user]);
       callBack();
     } catch (err) {
       handleCatch(err);
@@ -148,6 +149,17 @@ export const DataProvider = ({ children }) => {
     }
   };
 
+  const editDoctor = async (id, doctor) => {
+    try {
+      const resData = await makeReq(`/users/${id}`, { body: { ...doctor } }, 'PATCH');
+      console.log(`resData`, resData);
+      toast.success(`Doctor ${resData.user.fullName} Updated Successfully`);
+      setDoctors((st) => st.map((el) => (el._id === id ? resData.user : el)));
+    } catch (err) {
+      handleCatch(err);
+    }
+  };
+
   const completeTaskStage = async (taskId, stageId) => {
     try {
       const resData = await makeReq(`/task/manageTask/${taskId}`, { body: { stageId } }, 'PATCH');
@@ -159,12 +171,13 @@ export const DataProvider = ({ children }) => {
     }
   };
 
-  const deleteTask = async (id, callBack) => {
+  const deleteDoctor = async (id, callBack) => {
     try {
-      const resData = await makeReq(`/task/${id}`, {}, 'DELETE');
+      const resData = await makeReq(`/users/${id}`, {}, 'DELETE');
       console.log(`resData`, resData);
-      toast.success(`Task ${resData.task.name} Deleted Successfully`);
+      toast.success(`Doctor ${resData.user.fullNname} Deleted Successfully`);
       callBack();
+      setDoctors((st) => st.filter((el) => el._id !== id));
     } catch (err) {
       handleCatch(err);
     }
@@ -175,7 +188,10 @@ export const DataProvider = ({ children }) => {
       displayName="Data Context"
       value={{
         doctors,
-        patients
+        patients,
+        deleteDoctor,
+        addNewDoctor,
+        editDoctor
       }}
     >
       {children}
