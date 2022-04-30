@@ -38,6 +38,7 @@ import { AuthContext } from 'contexts/AuthContext';
 import Label from 'components/Label';
 import ConfirmDeleteModal from 'dialogs/ConfirmDelete';
 import AddToTableModal from 'dialogs/AddToGroupModal';
+import DoctorDetails from 'dialogs/DoctorDetails';
 
 // ----------------------------------------------------------------------
 
@@ -101,6 +102,11 @@ export default function Appointments() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [selectedApointment, setSelectedApointment] = useState(null);
+  const [isDoctorOpen, setIsDoctorOpen] = useState(false);
+
+  const toggleDoctorOpen = () => {
+    setIsDoctorOpen((st) => !st);
+  };
 
   const toggleAddToOpen = () => {
     setIsAddOpen((sy) => !sy);
@@ -244,7 +250,16 @@ export default function Appointments() {
                                   </Typography>
                                 </Stack>
                               </TableCell>
-                              <TableCell align="left">{doctor?.fullName}</TableCell>
+                              <TableCell
+                                style={{ cursor: 'pointer' }}
+                                onClick={() => {
+                                  setSelected(doctor);
+                                  setIsDoctorOpen(true);
+                                }}
+                                align="left"
+                              >
+                                {doctor?.fullName}
+                              </TableCell>
                               <TableCell align="left">{symptoms}</TableCell>
                               <TableCell align="left">{patientStatus}</TableCell>
                               <TableCell
@@ -375,6 +390,7 @@ export default function Appointments() {
           />
         </Card>
       </Container>
+      <DoctorDetails open={isDoctorOpen} toggleDialog={toggleDoctorOpen} doctor={selected} />
       <ConfirmDeleteModal
         open={isDelOpen}
         toggleDialog={toggleDelOpen}
