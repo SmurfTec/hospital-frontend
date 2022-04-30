@@ -5,7 +5,6 @@ import { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 // components
 import Page from '../components/Page';
-import { AppEmploys, AppGroups, AppTasks, AppManagers } from '../components/_dashboard/app';
 import Skeleton from 'react-loading-skeleton';
 import { DataContext } from 'contexts/DataContext';
 
@@ -38,14 +37,7 @@ export default function ViewManager() {
         </Box>
         <Grid container spacing={3} style={{ justifyContent: 'space-around' }}>
           {currentGroup ? (
-            <>
-              <Grid item xs={12} sm={6} md={3}>
-                <AppEmploys data={currentGroup.employees} />
-              </Grid>
-              <Grid item xs={12} sm={6} md={3}>
-                <AppTasks data={currentGroup.tasks} />
-              </Grid>
-            </>
+            <></>
           ) : (
             <>
               <Grid item xs={12} sm={6} md={3}>

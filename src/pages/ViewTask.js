@@ -7,20 +7,7 @@ import RateReviewIcon from '@material-ui/icons/RateReview';
 import StagesAccordian from './StagesAccordian';
 // components
 import Page from '../components/Page';
-import {
-  AppTodos,
-  AppEmploys,
-  AppGroups,
-  AppTasks,
-  AppNewsUpdate,
-  AppManagers,
-  AppOrderTimeline,
-  AppCurrentTasks,
-  AppWebsiteVisits,
-  AppTrafficBySite,
-  AppCurrentSubject,
-  AppConversionRates
-} from '../components/_dashboard/app';
+
 import Skeleton from 'react-loading-skeleton';
 import { makeReq } from 'utils/constants';
 import { useParams } from 'react-router-dom';

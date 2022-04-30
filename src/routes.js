@@ -21,7 +21,6 @@ import ViewManager from 'pages/ViewManager';
 import ViewEmployee from 'pages/ViewEmployee';
 import ViewGroup from 'pages/ViewGroup';
 import ViewTask from 'pages/ViewTask';
-import Meetings from 'components/_dashboard/app/Meetings';
 
 // const LazyDashboardLayout = React.lazy(() => import('./layouts/dashboard'));
 // //
@@ -40,7 +39,6 @@ import Meetings from 'components/_dashboard/app/Meetings';
 // const LazyViewEmployee = React.lazy(() => import('pages/ViewEmployee'));
 // const LazyViewGroup = React.lazy(() => import('pages/ViewGroup'));
 // const LazyViewTask = React.lazy(() => import('pages/ViewTask'));
-// const LazyMeetings = React.lazy(() => import('components/_dashboard/app/Meetings'));
 
 // ----------------------------------------------------------------------
 
@@ -180,14 +178,7 @@ export default function Router() {
   //                 </React.Suspense>
   //               }
   //             />
-  //             <Route
-  //               path="/meetings"
-  //               element={
-  //                 <React.Suspense fallback="lazy loading">
-  //                   <Meetings />
-  //                 </React.Suspense>
-  //               }
-  //             />
+
   //             <Route
   //               path="/settings"
   //               element={
@@ -263,7 +254,6 @@ export default function Router() {
               <Route path="/employees" element={<Employees />} />
               <Route path="/groups" element={<Groups />} />
               <Route path="/tasks" element={<Tasks />} />
-              <Route path="/meetings" element={<Meetings />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/managers/:id" element={<ViewManager />} />
               <Route path="/employees/:id" element={<ViewEmployee />} />
