@@ -37,11 +37,15 @@ const useStyles = makeStyles({
 export default function Settings() {
   const { user, setUser } = useContext(AuthContext);
   const initialState = {
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
     password: '',
     passwordCurrent: '',
-    passwordConfirm: ''
+    passwordConfirm: '',
+    specialization: '',
+    address: '',
+    contact: ''
   };
   const [state, setState] = useState(initialState);
   const classes = useStyles();
@@ -51,8 +55,12 @@ export default function Settings() {
 
     setState((st) => ({
       ...st,
-      name: user.name,
-      email: user.email
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      specialization: user.specialization,
+      address: user.address,
+      contact: user.contact
     }));
   }, [user]);
 
@@ -65,7 +73,16 @@ export default function Settings() {
       console.log(`st`, state);
       const resData = await makeReq(
         '/users/me',
-        { body: { name: state.name, email: state.email } },
+        {
+          body: {
+            firstName: state.firstName,
+            lastName: state.lastName,
+            email: state.email,
+            specialization: state.specialization,
+            address: state.address,
+            contact: state.contact
+          }
+        },
         'PATCH'
       );
       console.log(`resData`, resData);
@@ -107,12 +124,56 @@ export default function Settings() {
                 fullWidth
                 className={classes.Input}
                 variant="outlined"
-                value={state.name}
-                name="name"
-                label="Name"
+                value={state.firstName}
+                name="firstName"
+                label="First name"
                 onChange={handleTxtChange}
                 type="text"
               />
+              <TextField
+                fullWidth
+                className={classes.Input}
+                variant="outlined"
+                value={state.lastName}
+                name="lastName"
+                label="Last Name"
+                onChange={handleTxtChange}
+                type="text"
+              />
+              {user.role === 'doctor' && (
+                <>
+                  <TextField
+                    fullWidth
+                    className={classes.Input}
+                    variant="outlined"
+                    value={state.specialization}
+                    name="specialization"
+                    label="Specialization"
+                    onChange={handleTxtChange}
+                    type="text"
+                  />
+                  <TextField
+                    fullWidth
+                    className={classes.Input}
+                    variant="outlined"
+                    value={state.address}
+                    name="address"
+                    label="Address"
+                    onChange={handleTxtChange}
+                    type="text"
+                  />
+                  <TextField
+                    fullWidth
+                    className={classes.Input}
+                    variant="outlined"
+                    value={state.contact}
+                    name="contact"
+                    label="Contact"
+                    onChange={handleTxtChange}
+                    type="number"
+                  />
+                </>
+              )}
               <TextField
                 fullWidth
                 className={classes.Input}

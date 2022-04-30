@@ -10,12 +10,13 @@ import Typography from '@material-ui/core/Typography';
 import DateTimePicker from 'react-datetime-picker';
 import { v4 as uuid } from 'uuid';
 import { makeStyles } from '@material-ui/styles';
-import { Divider } from '@material-ui/core';
+import { Divider, FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import DoneIcon from '@material-ui/icons/Done';
 import AddIcon from '@material-ui/icons/AddCircleOutline';
 import { toast } from 'react-toastify';
 import { AuthContext } from 'contexts/AuthContext';
+import { DataContext } from 'contexts/DataContext';
 
 const useStyles = makeStyles((props) => ({
   Dialog: {
@@ -28,7 +29,7 @@ const useStyles = makeStyles((props) => ({
 }));
 
 const AddorEditModal = (props) => {
-  const { user } = useContext(AuthContext);
+  const { appointments } = useContext(DataContext);
 
   const { isOpen, closeDialog, createNew, role, isEdit, editUser, updateUser, viewOnly } = props;
   const classes = useStyles(props);
@@ -39,7 +40,12 @@ const AddorEditModal = (props) => {
     email: '',
     password: '',
     passwordConfirm: '',
-    symptoms: ''
+    symptoms: '',
+    medicineCost: '',
+    roomCharges: '',
+    doctorCharges: '',
+    otherCharges: '',
+    appointment: ''
   };
 
   const [state, setState] = useState(initialState);
@@ -145,6 +151,64 @@ const AddorEditModal = (props) => {
             </>
           )}
 
+          {role === 'Invoice' && (
+            <>
+              <FormControl fullWidth className={classes.formControl}>
+                <InputLabel id="demo-simple-select-label">Appointment</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={state.appointment}
+                  name="appointment"
+                  onChange={handleChange}
+                >
+                  {appointments.map((el) => (
+                    <MenuItem value={el._id}>{el.symptoms}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <TextField
+                margin="dense"
+                id="medicineCost"
+                name="medicineCost"
+                label="MedicineCost"
+                type="number"
+                fullWidth
+                value={state.medicineCost}
+                onChange={handleChange}
+              />
+              <TextField
+                margin="dense"
+                id="roomCharges"
+                name="roomCharges"
+                label="RoomCharges"
+                type="number"
+                fullWidth
+                value={state.roomCharges}
+                onChange={handleChange}
+              />
+              <TextField
+                margin="dense"
+                id="doctorCharges"
+                name="doctorCharges"
+                label="DoctorCharges"
+                type="number"
+                fullWidth
+                value={state.doctorCharges}
+                onChange={handleChange}
+              />
+              <TextField
+                margin="dense"
+                id="otherCharges"
+                name="otherCharges"
+                label="OtherCharges"
+                type="number"
+                fullWidth
+                value={state.otherCharges}
+                onChange={handleChange}
+              />
+            </>
+          )}
           {(role === 'Doctor' || role === 'Employee') && (
             <TextField
               margin="dense"

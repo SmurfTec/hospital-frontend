@@ -11,6 +11,7 @@ export const DataProvider = ({ children }) => {
   const [doctors, setDoctors] = useState([]);
   const [patients, setPatients] = useState([]);
   const [appointments, setAppointments] = useState([]);
+  const [invoices, setInvoices] = useState([]);
 
   useEffect(() => {
     if (!user || user === null) return;
@@ -18,8 +19,18 @@ export const DataProvider = ({ children }) => {
     fetchDoctors();
     fetchPatients();
     fetchAppointments();
+    fetchInvoices();
   }, [user]);
 
+  const fetchInvoices = async () => {
+    try {
+      const resData = await makeReq('/invoices');
+      setInvoices(resData.invoices);
+    } catch (err) {
+      handleCatch(err);
+    } finally {
+    }
+  };
   const fetchAppointments = async () => {
     try {
       let url;
@@ -89,6 +100,18 @@ export const DataProvider = ({ children }) => {
     }
   };
 
+  const addNewInvoice = async (body, callBack) => {
+    try {
+      // TODO
+      const resData = await makeReq(`/invoices`, { body: { ...body, role: 'doctor' } }, 'POST');
+      console.log(`resData`, resData);
+      toast.success(`Invoice Created Successfully`);
+      setInvoices((st) => [...st, resData.invoice]);
+      callBack();
+    } catch (err) {
+      handleCatch(err);
+    }
+  };
   const addNewAppointment = async (body, callBack) => {
     try {
       // TODO
@@ -268,7 +291,9 @@ export const DataProvider = ({ children }) => {
         appointments,
         editAppointment,
         addNewAppointment,
-        deleteAppointment
+        deleteAppointment,
+        invoices,
+        addNewInvoice
       }}
     >
       {children}

@@ -23,6 +23,7 @@ import Tasks from 'pages/Tasks';
 // import ViewGroup from 'pages/ViewGroup';
 // import ViewTask from 'pages/ViewTask';
 import Patients from 'pages/Patients';
+import Invoices from 'pages/Invoice';
 import Appointments from 'pages/Appointments';
 
 // const LazyDashboardLayout = React.lazy(() => import('./layouts/dashboard'));
@@ -255,6 +256,7 @@ export default function Router() {
               <Route path="/app" element={<DashboardApp />} replace />
               <Route path="/doctors" element={<Doctors />} />
               <Route path="/patients" element={<Patients />} />
+              <Route path="/invoices" element={<Invoices />} />
               <Route path="/appointments" element={<Appointments />} />
               <Route path="/tasks" element={<Tasks />} />
               <Route path="/settings" element={<Settings />} />

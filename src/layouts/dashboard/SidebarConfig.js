@@ -36,11 +36,7 @@ export const adminConfig = [
     path: '/dashboard/invoices',
     icon: getIcon(listFill)
   },
-  // {
-  //   title: 'User',
-  //   path: '/dashboard/users',
-  //   icon: getIcon(listFill)
-  // },
+
   {
     title: 'Settings',
     path: '/dashboard/settings',
