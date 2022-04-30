@@ -8,7 +8,6 @@ import AuthLayout from '../layouts/AuthLayout';
 import Page from '../components/Page';
 import { MHidden } from '../components/@material-extend';
 import { RegisterForm } from '../components/authentication/register';
-import AuthSocial from '../components/authentication/AuthSocial';
 
 // ----------------------------------------------------------------------
 
@@ -49,15 +48,6 @@ export default function Register() {
         </Link>
       </AuthLayout>
 
-      <MHidden width="mdDown">
-        <SectionStyle>
-          <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}>
-            Manage the job more effectively with Minimal
-          </Typography>
-          <img alt="register" src="/static/illustrations/illustration_register.png" />
-        </SectionStyle>
-      </MHidden>
-
       <Container>
         <ContentStyle>
           <Box sx={{ mb: 5 }}>
@@ -69,21 +59,7 @@ export default function Register() {
             </Typography>
           </Box>
 
-          <AuthSocial />
-
           <RegisterForm />
-
-          <Typography variant="body2" align="center" sx={{ color: 'text.secondary', mt: 3 }}>
-            By registering, I agree to Minimal&nbsp;
-            <Link underline="always" sx={{ color: 'text.primary' }}>
-              Terms of Service
-            </Link>
-            &nbsp;and&nbsp;
-            <Link underline="always" sx={{ color: 'text.primary' }}>
-              Privacy Policy
-            </Link>
-            .
-          </Typography>
 
           <MHidden width="smUp">
             <Typography variant="subtitle2" sx={{ mt: 3, textAlign: 'center' }}>

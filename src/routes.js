@@ -12,6 +12,7 @@ import User from './pages/User';
 import { AuthContext } from 'contexts/AuthContext';
 import Logout from 'pages/Logout';
 import Login from './pages/Login';
+import Register from './pages/Register';
 import NotFound from 'pages/Page404';
 // import Employees f rom 'pages/Employees';
 import Doctors from 'pages/Doctors';
@@ -270,6 +271,7 @@ export default function Router() {
       ) : (
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/Register" element={<Register />} />
           <Route path="*" element={<Navigate to="/login" />} />
         </Routes>
       )}
