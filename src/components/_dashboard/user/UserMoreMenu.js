@@ -3,12 +3,15 @@ import { useRef, useState } from 'react';
 import editFill from '@iconify/icons-eva/edit-fill';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
+import checkIcon from '@iconify/icons-eva/checkmark-circle-2-fill';
+import crossIcon from '@iconify/icons-eva/close-circle-fill';
 import moreVerticalFill from '@iconify/icons-eva/more-vertical-fill';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import minusFill from '@iconify/icons-eva/minus-fill';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 // material
 import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText, Button } from '@material-ui/core';
+import { useTheme } from '@material-ui/core/styles';
 
 // ----------------------------------------------------------------------
 
@@ -26,10 +29,13 @@ export default function UserMoreMenu({
   noDelete,
   noEdit,
   viewTask,
-  viewLink
+  viewLink,
+  role,
+  status
 }) {
   const navigate = useNavigate();
   const ref = useRef(null);
+  const theme = useTheme();
   const [isOpen, setIsOpen] = useState(false);
 
   const handleDelete = () => {
@@ -66,7 +72,12 @@ export default function UserMoreMenu({
         {!noDelete && (
           <MenuItem sx={{ color: 'text.secondary' }} onClick={handleDelete}>
             <ListItemIcon>
-              <Icon icon={trash2Outline} width={24} height={24} />
+              <Icon
+                color={theme.palette.success.main}
+                icon={trash2Outline}
+                width={24}
+                height={24}
+              />
             </ListItemIcon>
             <ListItemText primary="Delete" primaryTypographyProps={{ variant: 'body2' }} />
           </MenuItem>
@@ -74,10 +85,55 @@ export default function UserMoreMenu({
         {!noEdit && (
           <MenuItem sx={{ color: 'text.secondary' }} onClick={handleEdit}>
             <ListItemIcon>
-              <Icon icon={editFill} width={24} height={24} />
+              <Icon color={theme.palette.error.main} icon={editFill} width={24} height={24} />
             </ListItemIcon>
             <ListItemText primary="Edit" primaryTypographyProps={{ variant: 'body2' }} />
           </MenuItem>
+        )}{' '}
+        {role === 'Appointment' && (
+          <>
+            {status === 'pending' ? (
+              <>
+                <MenuItem sx={{ color: 'text.secondary' }} onClick={handleEdit}>
+                  <ListItemIcon>
+                    <Icon
+                      color={theme.palette.success.main}
+                      icon={checkIcon}
+                      width={24}
+                      height={24}
+                    />
+                  </ListItemIcon>
+                  <ListItemText primary="Accept" primaryTypographyProps={{ variant: 'body2' }} />
+                </MenuItem>
+                <MenuItem sx={{ color: 'text.secondary' }} onClick={handleEdit}>
+                  <ListItemIcon>
+                    <Icon
+                      color={theme.palette.error.main}
+                      icon={checkIcon}
+                      width={24}
+                      height={24}
+                    />
+                  </ListItemIcon>
+                  <ListItemText primary="Reject" primaryTypographyProps={{ variant: 'body2' }} />
+                </MenuItem>
+              </>
+            ) : (
+              <>
+                <MenuItem sx={{ color: 'text.secondary' }} onClick={handleEdit}>
+                  <ListItemIcon>
+                    <Icon icon={checkIcon} width={24} height={24} />
+                  </ListItemIcon>
+                  <ListItemText primary="Admit" primaryTypographyProps={{ variant: 'body2' }} />
+                </MenuItem>
+                <MenuItem sx={{ color: 'text.secondary' }} onClick={handleEdit}>
+                  <ListItemIcon>
+                    <Icon icon={crossIcon} width={24} height={24} />
+                  </ListItemIcon>
+                  <ListItemText primary="Discharge" primaryTypographyProps={{ variant: 'body2' }} />
+                </MenuItem>
+              </>
+            )}
+          </>
         )}
         {addToTable && (
           <MenuItem sx={{ color: 'text.secondary' }} onClick={handleAddTo}>

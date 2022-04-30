@@ -52,32 +52,21 @@ export const adminConfig = [
     icon: getIcon(logOutFill)
   }
 ];
-export const managerConfig = [
+export const patientConfig = [
   {
     title: 'dashboard',
     path: '/dashboard/app',
     icon: getIcon(pieChart2Fill)
   },
-
   {
-    title: 'Employees',
-    path: '/dashboard/employees',
+    title: 'Appointments',
+    path: '/dashboard/Appointments',
     icon: getIcon(peopleFill)
   },
   {
-    title: 'Groups',
-    path: '/dashboard/groups',
-    icon: getIcon(peopleFill)
-  },
-  {
-    title: 'Tasks',
-    path: '/dashboard/tasks',
+    title: 'Invoices',
+    path: '/dashboard/invoices',
     icon: getIcon(listFill)
-  },
-  {
-    title: 'Meetings',
-    path: '/dashboard/meetings',
-    icon: getIcon(videoFill)
   },
   {
     title: 'Settings',

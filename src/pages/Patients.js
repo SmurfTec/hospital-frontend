@@ -41,7 +41,6 @@ import ConfirmDeleteModal from 'dialogs/ConfirmDelete';
 const TABLE_HEAD = [
   { id: 'fullName', label: 'Name', alignRight: false },
   { id: 'email', label: 'email', alignRight: false },
-  { id: 'actions', label: 'actions', alignRight: false },
   { id: '' }
 ];
 
@@ -76,17 +75,17 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function Doctors() {
-  const { doctors, deleteDoctor, editDoctor, addNewDoctor } = useContext(DataContext);
+export default function Patients() {
+  const { patients, deletePatient, editPatient, addNewPatient } = useContext(DataContext);
   const { user } = useContext(AuthContext);
-  const [filteredDoctors, setFilteredDoctors] = useState([]);
+  const [filteredPatients, setFilteredPatients] = useState([]);
   const [isDelOpen, setIsDelOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState();
-  const [selectedDoctor, setSelectedDoctor] = useState();
+  const [selectedPatient, setSelectedPatient] = useState();
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -103,7 +102,7 @@ export default function Doctors() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = doctors.map((n) => n.name);
+      const newSelecteds = patients.map((n) => n.name);
       setSelected(newSelecteds);
       return;
     }
@@ -124,52 +123,43 @@ export default function Doctors() {
   };
 
   const emptyRows =
-    page > 0 && doctors ? Math.max(0, (1 + page) * rowsPerPage - doctors.length) : 0;
+    page > 0 && patients ? Math.max(0, (1 + page) * rowsPerPage - patients.length) : 0;
 
-  const isUserNotFound = filteredDoctors.length === 0;
+  const isUserNotFound = filteredPatients.length === 0;
 
   useEffect(() => {
-    if (!doctors || doctors === null) return;
-    setFilteredDoctors(applySortFilter(doctors, getComparator(order, orderBy), filterName));
-  }, [doctors, order, orderBy, filterName]);
+    if (!patients || patients === null) return;
+    setFilteredPatients(applySortFilter(patients, getComparator(order, orderBy), filterName));
+  }, [patients, order, orderBy, filterName]);
 
   const handleDelete = () => {
     // toggleDelOpen();
     console.log(`selected`, selected);
-    deleteDoctor(selected, toggleDelOpen);
+    deletePatient(selected, toggleDelOpen);
     setSelected(null);
   };
 
   const handleClick = (id) => {
-    if (selectedDoctor === id) setSelectedDoctor(undefined);
-    else setSelectedDoctor(id);
+    if (selectedPatient === id) setSelectedPatient(undefined);
+    else setSelectedPatient(id);
   };
 
   return (
-    <Page title="Doctors | Task Doctor App">
+    <Page title="Patients | Task Patient App">
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Doctors
+            Patients
           </Typography>
-          {user && user.role === 'admin' && (
-            <Button
-              variant="contained"
-              onClick={toggleCreateOpen}
-              startIcon={<Icon icon={plusFill} />}
-            >
-              New Doctor
-            </Button>
-          )}
         </Stack>
 
         <Card>
           <UserListToolbar
-            numSelected={selectedDoctor ? 1 : 0}
+            numSelected={selectedPatient ? 1 : 0}
             filterName={filterName}
             onFilterName={handleFilterByName}
-            slug="Doctors"
-            viewLink={`/dashboard/doctors/${selectedDoctor}`}
+            slug="Patients"
+            viewLink={`/dashboard/patients/${selectedPatient}`}
           />
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
@@ -178,15 +168,15 @@ export default function Doctors() {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={doctors ? doctors.length : 0}
-                  numSelected={selectedDoctor ? 1 : 0}
+                  rowCount={patients ? patients.length : 0}
+                  numSelected={selectedPatient ? 1 : 0}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                 />
 
                 <TableBody>
-                  {doctors
-                    ? filteredDoctors
+                  {patients
+                    ? filteredPatients
                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                         .map((row) => {
                           const { _id, fullName, email } = row;
@@ -197,7 +187,7 @@ export default function Doctors() {
                               key={_id}
                               tabIndex={-1}
                               role="checkbox"
-                              selected={selectedDoctor === _id}
+                              selected={selectedPatient === _id}
                               aria-checked={false}
                             >
                               <TableCell padding="checkbox"></TableCell>
@@ -216,7 +206,7 @@ export default function Doctors() {
                               </TableCell>
                               <TableCell align="left">{email}</TableCell>
 
-                              {user && user.role === 'admin' && (
+                              {/* {user && user.role === 'admin' && (
                                 <TableCell align="left">
                                   <UserMoreMenu
                                     currentUser={row}
@@ -225,7 +215,7 @@ export default function Doctors() {
                                     setSelected={setSelected}
                                   />
                                 </TableCell>
-                              )}
+                              )} */}
                             </TableRow>
                           );
                         })
@@ -257,7 +247,7 @@ export default function Doctors() {
                     </TableRow>
                   )}
                 </TableBody>
-                {doctors && isUserNotFound && (
+                {patients && isUserNotFound && (
                   <TableBody>
                     <TableRow>
                       <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
@@ -273,7 +263,7 @@ export default function Doctors() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={doctors ? doctors.length : 0}
+            count={patients ? patients.length : 0}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
@@ -284,26 +274,26 @@ export default function Doctors() {
       <ConfirmDeleteModal
         open={isDelOpen}
         toggleDialog={toggleDelOpen}
-        dialogTitle="Delete This Doctor ?"
+        dialogTitle="Delete This Patient ?"
         success={handleDelete}
       />
       <AddorEditModal
         isOpen={isCreateOpen}
         createNew={(...props) => {
-          addNewDoctor(...props, toggleCreateOpen);
+          addNewPatient(...props, toggleCreateOpen);
         }}
         closeDialog={toggleCreateOpen}
-        role="Doctor"
+        role="Patient"
       />
       <AddorEditModal
         isOpen={isEditOpen}
         closeDialog={toggleEditOpen}
         updateUser={(id, body) => {
-          editDoctor(id, body, toggleEditOpen);
+          editPatient(id, body, toggleEditOpen);
         }}
         editUser={selected}
         isEdit
-        role="Doctor"
+        role="Patient"
       />
     </Page>
   );

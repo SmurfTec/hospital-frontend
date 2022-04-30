@@ -10,14 +10,25 @@ export const DataProvider = ({ children }) => {
 
   const [doctors, setDoctors] = useState([]);
   const [patients, setPatients] = useState([]);
+  const [appointments, setAppointments] = useState([]);
 
   useEffect(() => {
     if (!user || user === null) return;
 
     fetchDoctors();
     fetchPatients();
+    fetchAppointments();
   }, [user]);
 
+  const fetchAppointments = async () => {
+    try {
+      const resData = await makeReq('/appointments');
+      setAppointments(resData.appointments);
+    } catch (err) {
+      handleCatch(err);
+    } finally {
+    }
+  };
   const fetchDoctors = async () => {
     try {
       const resData = await makeReq('/users?role=doctor');
@@ -69,6 +80,19 @@ export const DataProvider = ({ children }) => {
       console.log(`resData`, resData);
       toast.success(`Doctor ${resData.user.fullName} Created Successfully`);
       setDoctors((st) => [...st, resData.user]);
+      callBack();
+    } catch (err) {
+      handleCatch(err);
+    }
+  };
+
+  const addNewAppointment = async (body, callBack) => {
+    try {
+      // TODO
+      const resData = await makeReq(`/appointments`, { body: { ...body, role: 'doctor' } }, 'POST');
+      console.log(`resData`, resData);
+      toast.success(`Appointment Created Successfully`);
+      setAppointments((st) => [...st, resData.appointment]);
       callBack();
     } catch (err) {
       handleCatch(err);
@@ -159,6 +183,16 @@ export const DataProvider = ({ children }) => {
       handleCatch(err);
     }
   };
+  const editAppointment = async (id, appointment) => {
+    try {
+      const resData = await makeReq(`/appointments/${id}`, { body: { ...appointment } }, 'PATCH');
+      console.log(`resData`, resData);
+      toast.success(`Appointment Updated Successfully`);
+      setAppointments((st) => st.map((el) => (el._id === id ? resData.appointment : el)));
+    } catch (err) {
+      handleCatch(err);
+    }
+  };
 
   const completeTaskStage = async (taskId, stageId) => {
     try {
@@ -191,7 +225,10 @@ export const DataProvider = ({ children }) => {
         patients,
         deleteDoctor,
         addNewDoctor,
-        editDoctor
+        editDoctor,
+        appointments,
+        editAppointment,
+        addNewAppointment
       }}
     >
       {children}

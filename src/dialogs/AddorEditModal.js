@@ -38,7 +38,8 @@ const AddorEditModal = (props) => {
     lastName: '',
     email: '',
     password: '',
-    passwordConfirm: ''
+    passwordConfirm: '',
+    symptoms: ''
   };
 
   const [state, setState] = useState(initialState);
@@ -61,32 +62,19 @@ const AddorEditModal = (props) => {
   };
 
   const handleSubmit = (e) => {
-    if (role === 'Task') {
-      if (
-        !state.firstName ||
-        !state.lastName ||
-        !state.firstName.length > 0 ||
-        !state.lastName.length > 0 ||
-        !state.description ||
-        !state.description.length > 0
-      ) {
-        toast.error('Plz fill in all fields before creating task');
+    if (role === 'Appointment') {
+      if (!state.symptoms || !state.symptoms.length > 0) {
+        toast.error('Plz fill in all fields before creating Appointment');
         return;
       }
 
       if (isEdit)
         updateUser(editUser._id, {
-          firstName: state.firstName,
-          lastName: state.lastName,
-          email: state.email
+          symptoms: state.symptoms
         });
       else
         createNew({
-          firstName: state.firstName,
-          lastName: state.lastName,
-          email: state.email,
-          password: state.password,
-          passwordConfirm: state.passwordConfirm
+          symptoms: state.symptoms
         });
     } else if (isEdit) {
       updateUser(editUser._id, { name: state.name, email: state.email });
@@ -113,31 +101,49 @@ const AddorEditModal = (props) => {
           {isEdit ? `Edit ${editUser && role}` : `Add New ${role}`}
         </DialogTitle>
         <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="firstName"
-            label="First Name"
-            type="text"
-            fullWidth
-            value={state.firstName}
-            name="firstName"
-            onChange={handleChange}
-            disabled={viewOnly}
-          />
-
-          <TextField
-            autoFocus
-            margin="dense"
-            id="lastName"
-            label="Last Name"
-            type="text"
-            fullWidth
-            value={state.lastName}
-            name="lastName"
-            onChange={handleChange}
-            disabled={viewOnly}
-          />
+          {role === 'Appointment' ? (
+            <TextField
+              autoFocus
+              margin="dense"
+              id="symptoms"
+              label="Symptoms"
+              type="text"
+              fullWidth
+              value={state.symptoms}
+              name="symptoms"
+              onChange={handleChange}
+              disabled={viewOnly}
+              multiline
+            />
+          ) : (
+            <>
+              {' '}
+              <TextField
+                autoFocus
+                margin="dense"
+                id="firstName"
+                label="First Name"
+                type="text"
+                fullWidth
+                value={state.firstName}
+                name="firstName"
+                onChange={handleChange}
+                disabled={viewOnly}
+              />
+              <TextField
+                autoFocus
+                margin="dense"
+                id="lastName"
+                label="Last Name"
+                type="text"
+                fullWidth
+                value={state.lastName}
+                name="lastName"
+                onChange={handleChange}
+                disabled={viewOnly}
+              />
+            </>
+          )}
 
           {(role === 'Doctor' || role === 'Employee') && (
             <TextField

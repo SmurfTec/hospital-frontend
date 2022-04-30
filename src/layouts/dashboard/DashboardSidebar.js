@@ -10,7 +10,7 @@ import Scrollbar from '../../components/Scrollbar';
 import NavSection from '../../components/NavSection';
 import { MHidden } from '../../components/@material-extend';
 //
-import { adminConfig, managerConfig, employeeConfig } from './SidebarConfig';
+import { adminConfig, patientConfig, employeeConfig } from './SidebarConfig';
 import { photoURL } from 'utils/constants';
 import { AuthContext } from 'contexts/AuthContext';
 
@@ -48,7 +48,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
   useEffect(() => {
     if (!user || user.role === null) return;
     if (user.role === 'admin') setSidebarCondig(adminConfig);
-    if (user.role === 'doctor') setSidebarCondig(managerConfig);
+    if (user.role === 'patient') setSidebarCondig(patientConfig);
     if (user.role === 'user') setSidebarCondig(employeeConfig);
   }, [user]);
 
