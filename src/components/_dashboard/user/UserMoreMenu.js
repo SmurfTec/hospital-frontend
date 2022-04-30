@@ -105,7 +105,7 @@ export default function UserMoreMenu({
                   </ListItemIcon>
                   <ListItemText primary="Accept" primaryTypographyProps={{ variant: 'body2' }} />
                 </MenuItem>
-                <MenuItem sx={{ color: 'text.secondary' }} onClick={handleEdit}>
+                <MenuItem sx={{ color: 'text.secondary' }} onClick={handleDelete}>
                   <ListItemIcon>
                     <Icon
                       color={theme.palette.error.main}

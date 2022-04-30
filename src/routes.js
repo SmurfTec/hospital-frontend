@@ -13,14 +13,14 @@ import { AuthContext } from 'contexts/AuthContext';
 import Logout from 'pages/Logout';
 import Login from './pages/Login';
 import NotFound from 'pages/Page404';
-import Employees from 'pages/Employees';
+// import Employees f rom 'pages/Employees';
 import Doctors from 'pages/Doctors';
-import Groups from 'pages/Groups';
+// import Groups from 'pages/Groups';
 import Tasks from 'pages/Tasks';
-import ViewManager from 'pages/ViewManager';
-import ViewEmployee from 'pages/ViewEmployee';
-import ViewGroup from 'pages/ViewGroup';
-import ViewTask from 'pages/ViewTask';
+// import ViewManager from 'pages/ViewManager';
+// import ViewEmployee from 'pages/ViewEmployee';
+// import ViewGroup from 'pages/ViewGroup';
+// import ViewTask from 'pages/ViewTask';
 import Patients from 'pages/Patients';
 import Appointments from 'pages/Appointments';
 
@@ -257,10 +257,6 @@ export default function Router() {
               <Route path="/appointments" element={<Appointments />} />
               <Route path="/tasks" element={<Tasks />} />
               <Route path="/settings" element={<Settings />} />
-              <Route path="/doctors/:id" element={<ViewManager />} />
-              <Route path="/employees/:id" element={<ViewEmployee />} />
-              <Route path="/groups/:id" element={<ViewGroup />} />
-              <Route path="/tasks/:id" element={<ViewTask />} />
               <Route path="/users" element={<User />} />
               <Route path="*" element={<Navigate to="/dashboard/app" replace />} />
             </Route>

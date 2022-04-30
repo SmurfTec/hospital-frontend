@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { toast } from 'react-toastify';
-import { handleCatch, makeReq } from 'utils/constants';
+import { API_BASE_URL, handleCatch, makeReq } from 'utils/constants';
 import { AuthContext } from './AuthContext';
 
 export const DataContext = React.createContext();
@@ -22,7 +22,10 @@ export const DataProvider = ({ children }) => {
 
   const fetchAppointments = async () => {
     try {
-      const resData = await makeReq('/appointments');
+      let url;
+      if (user.role === 'doctor') url = '/appointments';
+      else url = `/appointments?doctor=${user._id}`;
+      const resData = await makeReq(url);
       setAppointments(resData.appointments);
     } catch (err) {
       handleCatch(err);
@@ -185,10 +188,34 @@ export const DataProvider = ({ children }) => {
   };
   const editAppointment = async (id, appointment) => {
     try {
-      const resData = await makeReq(`/appointments/${id}`, { body: { ...appointment } }, 'PATCH');
-      console.log(`resData`, resData);
-      toast.success(`Appointment Updated Successfully`);
-      setAppointments((st) => st.map((el) => (el._id === id ? resData.appointment : el)));
+      let formData = new FormData();
+
+      // * Object foreach -Copied from mozilla docs
+      for (const [key, value] of Object.entries(appointment)) {
+        console.log(`${key}: ${value}`);
+        formData.append(key, value);
+      }
+
+      for (var pair of formData.entries()) {
+        console.log(pair[0] + ', ' + pair[1]);
+      }
+
+      fetch(`${API_BASE_URL}/appointments/${id}`, {
+        body: formData,
+        method: 'PATCH',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('jwt')}`
+        }
+      }).then(async (res) => {
+        if (res.ok) {
+          toast.success(`Appointment Updated Successfully`);
+          let data = await res.json();
+          console.log('data', data);
+          setAppointments((st) => st.map((el) => (el._id === id ? data.appointment : el)));
+        } else {
+          handleCatch(res);
+        }
+      });
     } catch (err) {
       handleCatch(err);
     }
@@ -217,6 +244,18 @@ export const DataProvider = ({ children }) => {
     }
   };
 
+  const deleteAppointment = async (id, callBack) => {
+    try {
+      const resData = await makeReq(`/appointments/${id}`, {}, 'DELETE');
+      console.log(`resData`, resData);
+      toast.success(`Appointment  Deleted Successfully`);
+      callBack();
+      setAppointments((st) => st.filter((el) => el._id !== id));
+    } catch (err) {
+      handleCatch(err);
+    }
+  };
+
   return (
     <DataContext.Provider
       displayName="Data Context"
@@ -228,7 +267,8 @@ export const DataProvider = ({ children }) => {
         editDoctor,
         appointments,
         editAppointment,
-        addNewAppointment
+        addNewAppointment,
+        deleteAppointment
       }}
     >
       {children}

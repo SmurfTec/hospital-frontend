@@ -22,7 +22,7 @@ import {
 import Page from '../components/Page';
 // import Skeleton from '@material-ui/lab/Skeleton';
 import Skeleton from 'react-loading-skeleton';
-import { ConfirmDialog as ConfirmDeleteModal } from 'mui-confirm-dialog';
+import ConfirmDeleteModal from 'dialogs/ConfirmDelete';
 
 import Scrollbar from '../components/Scrollbar';
 import SearchNotFound from '../components/SearchNotFound';

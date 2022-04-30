@@ -3,7 +3,8 @@ import { Icon } from '@iconify/react';
 import { useContext, useEffect, useState } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
 // material
-import { ConfirmDialog as ConfirmDeleteModal } from 'mui-confirm-dialog';
+import ConfirmDeleteModal from 'dialogs/ConfirmDelete';
+
 import {
   Card,
   Table,

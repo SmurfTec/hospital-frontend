@@ -45,11 +45,7 @@ const Styles = {
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', alignRight: false },
-  { id: 'manager', label: 'Manager', alignRight: false },
-  { id: 'employees', label: 'Employees', alignRight: false },
-  { id: 'tasks', label: 'Tasks', alignRight: false },
-  // { id: 'isVerified', label: 'Verified', alignRight: false },
-  // { id: 'status', label: 'Status', alignRight: false },
+  { id: 'email', label: 'Email', alignRight: false },
   { id: '' }
 ];
 
@@ -86,7 +82,6 @@ const AddToTableModal = (props) => {
   }
 
   const handleSubmit = (e) => {
-    console.log('where');
     addAction(targetId, selected);
     setSelected(null);
     closeDialog();
@@ -101,7 +96,10 @@ const AddToTableModal = (props) => {
       return a[1] - b[1];
     });
     if (query) {
-      return filter(array, (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+      return filter(
+        array,
+        (_user) => _user.fullName.toLowerCase().indexOf(query.toLowerCase()) !== -1
+      );
     }
     return stabilizedThis.map((el) => el[0]);
   }
@@ -163,14 +161,14 @@ const AddToTableModal = (props) => {
         onClose={closeDialog}
         aria-labelledby="form-dialog-title"
       >
-        <DialogTitle id="form-dialog-title">Add {resource} to Group</DialogTitle>
+        <DialogTitle id="form-dialog-title">Add {resource} to Doctor</DialogTitle>
         <DialogContent>
           <Card>
             <UserListToolbar
               numSelected={0}
               filterName={filterName}
               onFilterName={handleFilterByName}
-              slug="Groups"
+              slug="Doctors"
             />
 
             <Scrollbar>
@@ -191,7 +189,7 @@ const AddToTableModal = (props) => {
                       ? filteredGroups
                           .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                           .map((row) => {
-                            const { _id, name, manager, tasks, employees } = row;
+                            const { _id, fullName, email } = row;
 
                             return (
                               <TableRow
@@ -212,21 +210,17 @@ const AddToTableModal = (props) => {
                                 <TableCell component="th" scope="row" padding="none">
                                   <Stack direction="row" alignItems="center" spacing={2}>
                                     <Avatar
-                                      alt={name}
-                                      src={`https://ui-avatars.com/api/?background=0D8ABC&color=fff&name=${name
+                                      alt={fullName}
+                                      src={`https://ui-avatars.com/api/?background=0D8ABC&color=fff&name=${fullName
                                         .split(' ')
                                         .join('%20')}`}
                                     />
                                     <Typography variant="subtitle2" noWrap>
-                                      {name}
+                                      {fullName}
                                     </Typography>
                                   </Stack>
                                 </TableCell>
-                                <TableCell align="left">{manager && manager.name}</TableCell>
-                                <TableCell align="left">
-                                  {employees ? employees.length : 0}
-                                </TableCell>
-                                <TableCell align="left">{tasks ? tasks.length : 0}</TableCell>
+                                <TableCell align="left">{email}</TableCell>
                               </TableRow>
                             );
                           })

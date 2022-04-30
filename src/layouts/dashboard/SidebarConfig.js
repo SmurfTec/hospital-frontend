@@ -79,7 +79,7 @@ export const patientConfig = [
     icon: getIcon(logOutFill)
   }
 ];
-export const employeeConfig = [
+export const doctorConfig = [
   {
     title: 'dashboard',
     path: '/dashboard/app',
@@ -87,24 +87,14 @@ export const employeeConfig = [
   },
 
   {
-    title: 'Employees',
-    path: '/dashboard/employees',
+    title: 'Patients',
+    path: '/dashboard/patients',
     icon: getIcon(peopleFill)
   },
   {
-    title: 'Group',
-    path: '/dashboard/groups',
+    title: 'Appointments',
+    path: '/dashboard/appointments',
     icon: getIcon(peopleFill)
-  },
-  {
-    title: 'Tasks',
-    path: '/dashboard/tasks',
-    icon: getIcon(listFill)
-  },
-  {
-    title: 'Meetings',
-    path: '/dashboard/meetings',
-    icon: getIcon(videoFill)
   },
 
   {
