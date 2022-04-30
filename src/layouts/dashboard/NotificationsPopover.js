@@ -1,9 +1,8 @@
-import faker from 'faker';
 import PropTypes from 'prop-types';
 import { noCase } from 'change-case';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { set, sub, formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow } from 'date-fns';
 import { Icon } from '@iconify/react';
 import bellFill from '@iconify/icons-eva/bell-fill';
 import clockFill from '@iconify/icons-eva/clock-fill';
@@ -25,7 +24,6 @@ import {
   ListItemButton
 } from '@material-ui/core';
 // utils
-import { mockImgAvatar } from '../../utils/mockImages';
 // components
 import Scrollbar from '../../components/Scrollbar';
 import MenuPopover from '../../components/MenuPopover';

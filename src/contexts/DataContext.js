@@ -7,74 +7,33 @@ export const DataContext = React.createContext();
 
 export const DataProvider = ({ children }) => {
   const { user } = useContext(AuthContext);
-  const [managers, setManagers] = useState();
-  const [employs, setEmploys] = useState();
-  const [groups, setGroups] = useState();
-  const [tasks, setTasks] = useState();
+
+  const [doctors, setDoctors] = useState([]);
+  const [patients, setPatients] = useState([]);
 
   useEffect(() => {
     if (!user || user === null) return;
 
-    fetchUsers();
-    fetchTasks();
-    fetchGroups();
+    fetchDoctors();
+    fetchPatients();
   }, [user]);
 
-  // * Fetch Operations
-  const fetchUsers = async () => {
+  const fetchDoctors = async () => {
     try {
-      if (user && user.role === 'Admin') {
-        const resData1 = await makeReq(`/users?role=Manager`);
-        const resData2 = await makeReq(`/employee`);
-        const resManagers = resData1.users;
-        const resEmploys = resData2.employees;
-
-        // console.log(`RES MANAGERS`, resData1);
-        // console.log(`RES EMPLOYEES`, resData2);
-        setManagers(resManagers);
-        setEmploys(resEmploys);
-      } else if (user) {
-        const resData = await makeReq(`/employee`);
-        const resEmploys = resData.employees;
-
-        console.log(`RES employees`, resData);
-        setEmploys(resEmploys);
-      }
-      // } else if (user && user.role === 'Employee') {
-      // }
+      const resData = await makeReq('/users?role=');
+      setDoctors(resData.users);
     } catch (err) {
       handleCatch(err);
+    } finally {
     }
   };
-
-  const fetchTasks = async () => {
+  const fetchPatients = async () => {
     try {
-      const resData = await makeReq(`/task`);
-      console.log(`RES TASKS`, resData);
-
-      setTasks(resData.tasks);
+      const resData = await makeReq('/users?role=');
+      setPatients(resData.users);
     } catch (err) {
       handleCatch(err);
-    }
-  };
-
-  const fetchGroups = async () => {
-    try {
-      if (user && user.role === 'Employee') {
-        const resData = await makeReq(`/group/mygroup`);
-        console.log(`RES GROUPS`, resData);
-
-        setGroups([resData.group]);
-      } else {
-        const resData = await makeReq(`/group`);
-        console.log(`RES GROUPS`, resData);
-
-        setGroups(resData.groups);
-      }
-    } catch (err) {
-      // handleCatch(err);
-      toast.warning('You dont have any Group');
-      setGroups([]);
+    } finally {
     }
   };
 
@@ -103,24 +62,12 @@ export const DataProvider = ({ children }) => {
     }
   };
 
-  const addNewGroup = async (body, callBack) => {
+  const addNewDoctor = async (body, callBack) => {
     try {
-      const resData = await makeReq(`/group`, { body: { ...body } }, 'POST');
-      console.log(`resData`, resData);
-      toast.success(`Group ${resData.group.name} Created Successfully`);
-      setGroups((st) => [...st, resData.group]);
-      callBack();
-    } catch (err) {
-      handleCatch(err);
-    }
-  };
-
-  const addNewTask = async (body, callBack) => {
-    try {
-      const resData = await makeReq(`/task`, { body: { ...body } }, 'POST');
+      // TODO
+      const resData = await makeReq(`/`, { body: { ...body } }, 'POST');
       console.log(`resData`, resData);
       toast.success(`Task ${resData.task.name} Created Successfully`);
-      setTasks((st) => [...st, resData.task]);
       callBack();
     } catch (err) {
       handleCatch(err);
@@ -134,30 +81,11 @@ export const DataProvider = ({ children }) => {
       toast.success(
         `Employee "${resData.employee.name}" Added to group "${resData.group.name}" Successfully`
       );
-      setGroups((st) => st.map((el) => (el._id === groupId ? resData.group : el)));
-      setEmploys((st) => st.map((el) => (el._id === employeeId ? resData.employee : el)));
     } catch (err) {
       handleCatch(err);
     }
   };
 
-  const addNewReview = async (employeeId, taskId, body) => {
-    try {
-      const resData = await makeReq(
-        `/employee/reviewEmployee/${employeeId}/task/${taskId} `,
-        { body: { ...body } },
-        'POST'
-      );
-      console.log(`resData`, resData);
-      toast.success(`Review Created Successfully`);
-
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
-    } catch (err) {
-      handleCatch(err);
-    }
-  };
   const removeEmployeeGroup = async (employeeId, groupId) => {
     try {
       const resData = await makeReq(`/group/${groupId}/removeEmployee/${employeeId}`, {}, 'POST');
@@ -167,64 +95,6 @@ export const DataProvider = ({ children }) => {
       //   `Employee "${resData.employee.name}" removed from group "${resData.group.name}" Successfully`
       // );
       toast.success(`Employee removed from group "${resData.group.name}" Successfully`);
-      setGroups((st) => st.map((el) => (el._id === groupId ? resData.group : el)));
-      setEmploys((st) => st.map((el) => (el._id === employeeId ? resData.employee : el)));
-    } catch (err) {
-      handleCatch(err);
-    }
-  };
-
-  // * /Edit Opetations
-
-  const editManager = async (id, body, callBack) => {
-    try {
-      const resData = await makeReq(`/users/${id}`, { body: { ...body } }, 'PATCH');
-      console.log(`resData`, resData);
-      toast.success(`Manager ${resData.user.name} Updated Successfully`);
-      setManagers((st) =>
-        st.map((el) => {
-          console.log(`el`, el);
-          console.log(`body`, body);
-          return el._id === id ? { ...el, ...body } : el;
-        })
-      );
-      callBack();
-    } catch (err) {
-      handleCatch(err);
-    }
-  };
-
-  const editEmployee = async (id, body, callBack) => {
-    try {
-      const resData = await makeReq(`/employee/${id}`, { body: { ...body } }, 'PATCH');
-      console.log(`resData`, resData);
-      toast.success(`Employee ${resData.employee.name} Updated Successfully`);
-      setEmploys((st) =>
-        st.map((el) => {
-          console.log(`el`, el);
-          console.log(`body`, body);
-          return el._id === id ? { ...el, ...body } : el;
-        })
-      );
-      callBack();
-    } catch (err) {
-      handleCatch(err);
-    }
-  };
-
-  const editGroup = async (id, body, callBack) => {
-    try {
-      const resData = await makeReq(`/group/${id}`, { body: { ...body } }, 'PATCH');
-      console.log(`resData`, resData);
-      toast.success(`Group ${resData.group.name} Updated Successfully`);
-      setGroups((st) =>
-        st.map((el) => {
-          console.log(`el`, el);
-          console.log(`body`, body);
-          return el._id === id ? { ...el, ...body } : el;
-        })
-      );
-      callBack();
     } catch (err) {
       handleCatch(err);
     }
@@ -235,8 +105,6 @@ export const DataProvider = ({ children }) => {
       const resData = await makeReq(`/task/assignTask/${taskId}/manager/${managerId}`, {}, 'PATCH');
       console.log(`resData ASSIGN TASK`, resData);
       toast.success(`Task ${resData.task.name} Assigned Successfully`);
-      setTasks((st) => st.map((el) => (el._id === taskId ? resData.task : el)));
-      setManagers((st) => st.map((el) => (el._id === managerId ? resData.manager : el)));
     } catch (err) {
       handleCatch(err);
     }
@@ -251,8 +119,6 @@ export const DataProvider = ({ children }) => {
       );
       console.log(`resData ASSIGN TASK`, resData);
       toast.success(`Task ${resData.task.name} UnAssigned Successfully`);
-      setTasks((st) => st.map((el) => (el._id === taskId ? resData.task : el)));
-      setManagers((st) => st.map((el) => (el._id === managerId ? resData.manager : el)));
     } catch (err) {
       handleCatch(err);
     }
@@ -282,18 +148,6 @@ export const DataProvider = ({ children }) => {
     }
   };
 
-  const updateTask = async (taskId, body, callBack) => {
-    try {
-      const resData = await makeReq(`/task/${taskId}`, { body: { ...body } }, 'PATCH');
-      console.log(`resData`, resData);
-      toast.success(`Task ${resData.task.name} Updated Successfully`);
-      setTasks((st) => st.map((el) => (el._id === taskId ? resData.task : el)));
-      callBack();
-    } catch (err) {
-      handleCatch(err);
-    }
-  };
-
   const completeTaskStage = async (taskId, stageId) => {
     try {
       const resData = await makeReq(`/task/manageTask/${taskId}`, { body: { stageId } }, 'PATCH');
@@ -305,50 +159,11 @@ export const DataProvider = ({ children }) => {
     }
   };
 
-  // ! -Delete Operations
-
-  const deleteManager = async (id, callBack) => {
-    try {
-      const resData = await makeReq(`/users/${id}`, {}, 'DELETE');
-      console.log(`resData`, resData);
-      toast.success(`Manager ${resData.user.name} Deleted Successfully`);
-      setManagers((st) => st.filter((el) => el._id !== id));
-      callBack();
-    } catch (err) {
-      handleCatch(err);
-    }
-  };
-
-  const deleteEmployee = async (id, callBack) => {
-    try {
-      const resData = await makeReq(`/employee/${id}`, {}, 'DELETE');
-      console.log(`resData`, resData);
-      toast.success(`Employee ${resData.employee.name} Deleted Successfully`);
-      setEmploys((st) => st.filter((el) => el._id !== id));
-      callBack();
-    } catch (err) {
-      handleCatch(err);
-    }
-  };
-
-  const deleteGroup = async (id, callBack) => {
-    try {
-      const resData = await makeReq(`/group/${id}`, {}, 'DELETE');
-      console.log(`resData`, resData);
-      toast.success(`Group ${resData.group.name} Deleted Successfully`);
-      setGroups((st) => st.filter((el) => el._id !== id));
-      callBack();
-    } catch (err) {
-      handleCatch(err);
-    }
-  };
-
   const deleteTask = async (id, callBack) => {
     try {
       const resData = await makeReq(`/task/${id}`, {}, 'DELETE');
       console.log(`resData`, resData);
       toast.success(`Task ${resData.task.name} Deleted Successfully`);
-      setTasks((st) => st.filter((el) => el._id !== id));
       callBack();
     } catch (err) {
       handleCatch(err);
@@ -357,35 +172,10 @@ export const DataProvider = ({ children }) => {
 
   return (
     <DataContext.Provider
+      displayName="Data Context"
       value={{
-        groups,
-        setGroups,
-        managers,
-        setManagers,
-        employs,
-        setEmploys,
-        tasks,
-        setTasks,
-        deleteManager,
-        deleteEmployee,
-        deleteGroup,
-        editManager,
-        editEmployee,
-        addNewManager,
-        addNewEmployee,
-        addNewGroup,
-        editGroup,
-        addEmployeeToGroups,
-        removeEmployeeGroup,
-        assignTaskToManager,
-        unAssignTaskFromManger,
-        deleteTask,
-        addNewTask,
-        updateTask,
-        assignTaskToGroup,
-        unAssignTaskFromGroup,
-        completeTaskStage,
-        addNewReview
+        doctors,
+        patients
       }}
     >
       {children}

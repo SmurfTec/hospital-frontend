@@ -1,33 +1,20 @@
 // material
 import { Box, Grid, Container, Typography } from '@material-ui/core';
-import ManagerStats from 'components/_dashboard/app/graphs/ManagerStats';
-import EmployeeStats from 'components/_dashboard/app/graphs/EmployeeStats';
-import TasksGraph from 'components/_dashboard/app/graphs/Tasks';
 import { AuthContext } from 'contexts/AuthContext';
 import { DataContext } from 'contexts/DataContext';
 import { useContext } from 'react';
 // components
 import Page from '../components/Page';
-import {
-  AppTodos,
-  AppEmploys,
-  AppGroups,
-  AppTasks,
-  AppNewsUpdate,
-  AppManagers,
-  AppOrderTimeline,
-  AppCurrentTasks,
-  AppWebsiteVisits,
-  AppTrafficBySite,
-  AppCurrentSubject,
-  AppConversionRates
-} from '../components/_dashboard/app';
+import { AppCard } from '../components/_dashboard/app';
+import checkIcon from '@iconify/icons-ant-design/usergroup-add';
+import publishedIcon from '@iconify/icons-ant-design/android-filled';
+import archievedIcon from '@iconify/icons-ant-design/customer-service-filled';
 
 // ----------------------------------------------------------------------
 
 export default function DashboardApp() {
   const { user } = useContext(AuthContext);
-  const { employs, managers, tasks, groups } = useContext(DataContext);
+  const { doctors, patients, appointments } = useContext(DataContext);
   return (
     <Page title="Dashboard | Task Manager App">
       <Container maxWidth="xl">
@@ -35,64 +22,33 @@ export default function DashboardApp() {
           <Typography variant="h4">Hi, Welcome back</Typography>
         </Box>
         <Grid container spacing={3} style={{ justifyContent: 'center' }}>
-          {user && user.role === 'Admin' && (
+          {user && user.role === 'admin' && (
             <Grid item xs={12} sm={6} md={3}>
-              <AppManagers data={managers} />
+              <AppCard
+                num={doctors?.length || 0}
+                icon={publishedIcon}
+                title="Doctors"
+                color="success"
+              />
             </Grid>
           )}
+
           <Grid item xs={12} sm={6} md={3}>
-            <AppEmploys data={employs} />
+            <AppCard
+              num={patients?.length || 0}
+              icon={publishedIcon}
+              title="Patients"
+              color="primary"
+            />
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
-            <AppTasks data={tasks} />
+            <AppCard
+              num={appointments?.length || 0}
+              icon={publishedIcon}
+              title="Appointments"
+              color="secondary"
+            />
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <AppGroups data={groups} />
-          </Grid>
-        </Grid>
-        <Grid container spacing={3} marginTop={3}>
-          <Grid item xs={12} md={8} lg={8}>
-            {user.role === 'Admin' ? (
-              <ManagerStats managers={managers} />
-            ) : (
-              <EmployeeStats employees={employs} />
-            )}
-          </Grid>
-          <Grid item xs={12} md={4} lg={4}>
-            <TasksGraph data={tasks} />
-          </Grid>
-
-          {/* <Grid item xs={12} md={6} lg={8}>
-            <AppWebsiteVisits />
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={4}>
-            <AppCurrentTasks />
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={8}>
-            <AppConversionRates />
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={4}>
-            <AppCurrentSubject />
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={8}>
-            <AppNewsUpdate />
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={4}>
-            <AppOrderTimeline />
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={4}>
-            <AppTrafficBySite />
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={8}>
-            <AppTodos />
-          </Grid> */}
         </Grid>
       </Container>
     </Page>

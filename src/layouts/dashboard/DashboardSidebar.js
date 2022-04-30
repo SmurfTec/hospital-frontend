@@ -47,9 +47,9 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
 
   useEffect(() => {
     if (!user || user.role === null) return;
-    if (user.role === 'Admin') setSidebarCondig(adminConfig);
-    if (user.role === 'Manager') setSidebarCondig(managerConfig);
-    if (user.role === 'Employee') setSidebarCondig(employeeConfig);
+    if (user.role === 'admin') setSidebarCondig(adminConfig);
+    if (user.role === 'doctor') setSidebarCondig(managerConfig);
+    if (user.role === 'user') setSidebarCondig(employeeConfig);
   }, [user]);
 
   useEffect(() => {
