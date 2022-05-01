@@ -59,6 +59,7 @@ export default function LoginForm() {
             fullWidth
             autoComplete="username"
             type="email"
+            placeholder="username"
             label="Email address"
             {...getFieldProps('email')}
             error={Boolean(touched.email && errors.email)}
@@ -70,6 +71,7 @@ export default function LoginForm() {
             autoComplete="current-password"
             type={showPassword ? 'text' : 'password'}
             label="Password"
+            placeholder="Password"
             {...getFieldProps('password')}
             InputProps={{
               endAdornment: (
