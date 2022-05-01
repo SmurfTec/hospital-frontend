@@ -5,6 +5,7 @@ import listFill from '@iconify/icons-eva/list-fill';
 import logOutFill from '@iconify/icons-eva/log-out-fill';
 import videoFill from '@iconify/icons-eva/video-fill';
 import settingsFill from '@iconify/icons-eva/settings-2-fill';
+import clipboardFill from '@iconify/icons-eva/clipboard-fill';
 
 // ----------------------------------------------------------------------
 
@@ -29,7 +30,7 @@ export const adminConfig = [
   {
     title: 'Appointments',
     path: '/dashboard/Appointments',
-    icon: getIcon(peopleFill)
+    icon: getIcon(clipboardFill)
   },
   {
     title: 'Invoices',
@@ -49,15 +50,15 @@ export const adminConfig = [
   }
 ];
 export const patientConfig = [
-  {
-    title: 'dashboard',
-    path: '/dashboard/app',
-    icon: getIcon(pieChart2Fill)
-  },
+  // {
+  //   title: 'dashboard',
+  //   path: '/dashboard/app',
+  //   icon: getIcon(pieChart2Fill)
+  // },
   {
     title: 'Appointments',
     path: '/dashboard/Appointments',
-    icon: getIcon(peopleFill)
+    icon: getIcon(clipboardFill)
   },
   {
     title: 'Invoices',
@@ -90,7 +91,7 @@ export const doctorConfig = [
   {
     title: 'Appointments',
     path: '/dashboard/appointments',
-    icon: getIcon(peopleFill)
+    icon: getIcon(clipboardFill)
   },
 
   {

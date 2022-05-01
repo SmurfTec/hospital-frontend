@@ -9,6 +9,8 @@ import { AppCard } from '../components/_dashboard/app';
 import checkIcon from '@iconify/icons-ant-design/usergroup-add';
 import publishedIcon from '@iconify/icons-ant-design/android-filled';
 import archievedIcon from '@iconify/icons-ant-design/customer-service-filled';
+import peopleFill from '@iconify/icons-eva/people-fill';
+import clipboardFill from '@iconify/icons-eva/clipboard-fill';
 
 // ----------------------------------------------------------------------
 
@@ -26,7 +28,7 @@ export default function DashboardApp() {
             <Grid item xs={12} sm={6} md={3}>
               <AppCard
                 num={doctors?.length || 0}
-                icon={publishedIcon}
+                icon={peopleFill}
                 title="Doctors"
                 color="success"
               />
@@ -36,7 +38,7 @@ export default function DashboardApp() {
           <Grid item xs={12} sm={6} md={3}>
             <AppCard
               num={patients?.length || 0}
-              icon={publishedIcon}
+              icon={peopleFill}
               title="Patients"
               color="primary"
             />
@@ -44,7 +46,7 @@ export default function DashboardApp() {
           <Grid item xs={12} sm={6} md={3}>
             <AppCard
               num={appointments?.length || 0}
-              icon={publishedIcon}
+              icon={clipboardFill}
               title="Appointments"
               color="secondary"
             />
