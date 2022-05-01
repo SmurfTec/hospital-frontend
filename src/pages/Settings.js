@@ -8,14 +8,15 @@ import {
   Button,
   Typography,
   TextField,
-  Box
+  Box,
+  Avatar
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
-
+import CameraAltIcon from '@material-ui/icons/CameraAlt';
 // components
 import Page from '../components/Page';
 import { AuthContext } from 'contexts/AuthContext';
-import { handleCatch, makeReq } from 'utils/constants';
+import { API_BASE_URL, handleCatch, makeReq } from 'utils/constants';
 import { toast } from 'react-toastify';
 // ----------------------------------------------------------------------
 const useStyles = makeStyles({
@@ -111,6 +112,32 @@ export default function Settings() {
     }
   };
 
+  const handlePhoto = async (e) => {
+    console.clear();
+    console.log('e.target.files', e.target.files);
+    let formData = new FormData();
+
+    // * Object foreach -Copied from mozilla docs
+    formData.append('photo', e.target.files[0]);
+
+    fetch(`${API_BASE_URL}/users/me`, {
+      body: formData,
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('jwt')}`
+      }
+    }).then(async (res) => {
+      if (res.ok) {
+        toast.success(`Photo Updated`);
+        let data = await res.json();
+        console.log('data', data);
+        setUser(data.user);
+      } else {
+        handleCatch(res);
+      }
+    });
+  };
+
   return (
     <Page title="Dashboard: Products | Task Manager App">
       <Container>
@@ -120,6 +147,30 @@ export default function Settings() {
               <Typography variant="h4" textAlign="center" color="textprimary" gutterBottom>
                 Settings
               </Typography>
+              {user.role !== 'admin' && (
+                <>
+                  {user.photo && (
+                    <Avatar
+                      src={user.photo}
+                      style={{
+                        margin: 'auto',
+                        width: '100px',
+                        height: '100px'
+                      }}
+                    />
+                  )}
+                  <input
+                    onChange={handlePhoto}
+                    type="file"
+                    style={{ display: 'none' }}
+                    id="photo"
+                  ></input>
+
+                  <label htmlFor="photo" style={{ cursor: 'pointer' }}>
+                    <CameraAltIcon />
+                  </label>
+                </>
+              )}
               <TextField
                 fullWidth
                 className={classes.Input}

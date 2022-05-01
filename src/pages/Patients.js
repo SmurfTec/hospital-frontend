@@ -195,9 +195,12 @@ export default function Patients() {
                                 <Stack direction="row" alignItems="center" spacing={2}>
                                   <Avatar
                                     alt={fullName}
-                                    src={`https://ui-avatars.com/api/?background=0D8ABC&color=fff&name=${fullName
-                                      .split(' ')
-                                      .join('%20')}`}
+                                    src={
+                                      row.photo ||
+                                      `https://ui-avatars.com/api/?background=0D8ABC&color=fff&name=${fullName
+                                        .split(' ')
+                                        .join('%20')}`
+                                    }
                                   />
                                   <Typography variant="subtitle2" noWrap>
                                     {fullName}

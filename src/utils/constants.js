@@ -4,7 +4,7 @@ const photoURL = '/static/mock-images/avatars/avatar_default.jpg';
 
 // * Developement URLs
 const API_BASE_ORIGIN = `http://localhost:5000`;
-const API_BASE_URL = `http://localhost:5000/api`;
+const API_BASE_URL = `http://localhost:5000/.netlify/functions/api`;
 
 // * Production URLs
 // const API_BASE_ORIGIN = `https://team-task-manager-backend.herokuapp.com`;

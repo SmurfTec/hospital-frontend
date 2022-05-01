@@ -253,6 +253,7 @@ export default function Router() {
         user ? (
           <Routes>
             <Route path="/dashboard" element={<DashboardLayout />}>
+              <Route path="/" element={<DashboardApp />} replace />
               <Route path="/app" element={<DashboardApp />} replace />
               <Route path="/doctors" element={<Doctors />} />
               <Route path="/patients" element={<Patients />} />

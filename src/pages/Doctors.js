@@ -189,7 +189,7 @@ export default function Doctors() {
                     ? filteredDoctors
                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                         .map((row) => {
-                          const { _id, fullName, email } = row;
+                          const { _id, fullName, email, photo } = row;
 
                           return (
                             <TableRow
@@ -205,9 +205,12 @@ export default function Doctors() {
                                 <Stack direction="row" alignItems="center" spacing={2}>
                                   <Avatar
                                     alt={fullName}
-                                    src={`https://ui-avatars.com/api/?background=0D8ABC&color=fff&name=${fullName
-                                      .split(' ')
-                                      .join('%20')}`}
+                                    src={
+                                      photo ||
+                                      `https://ui-avatars.com/api/?background=0D8ABC&color=fff&name=${fullName
+                                        .split(' ')
+                                        .join('%20')}`
+                                    }
                                   />
                                   <Typography variant="subtitle2" noWrap>
                                     {fullName}
